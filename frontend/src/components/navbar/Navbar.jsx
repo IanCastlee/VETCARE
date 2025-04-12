@@ -18,8 +18,6 @@ const Navbar = () => {
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showForm, setShowForm] = useState(false);
 
-  console.log("showForm : ", showForm);
-
   return (
     <>
       <div className="navbar">
@@ -50,7 +48,9 @@ const Navbar = () => {
         </div>
       </div>
 
-      {showMobileSidebar && <MobileSidebar />}
+      {showMobileSidebar && (
+        <MobileSidebar close={() => setShowMobileSidebar(false)} />
+      )}
       {showMobileSidebar && (
         <OverLay closeMobileSidebar={() => setShowMobileSidebar(false)} />
       )}

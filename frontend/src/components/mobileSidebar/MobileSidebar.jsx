@@ -2,7 +2,6 @@ import "./MobileSidebar.scss";
 import { motion } from "framer-motion";
 
 //ICONS
-import { FaUserCircle } from "react-icons/fa";
 import { RiHomeLine } from "react-icons/ri";
 import { HiMiniCalendarDateRange } from "react-icons/hi2";
 import { IoMdPower } from "react-icons/io";
@@ -10,7 +9,7 @@ import Signin from "../signinSignUp/Signin";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const MobileSidebar = () => {
+const MobileSidebar = ({ close }) => {
   const [showForm, setShowForm] = useState(false);
 
   return (
@@ -31,7 +30,7 @@ const MobileSidebar = () => {
             SIGN IN
           </button>
         </div>
-        <div className="menu-btn">
+        <div className="menu-btn" onClick={close}>
           <Link className="btn-link" to={"/home/"}>
             <RiHomeLine className="icon" /> Home
           </Link>
