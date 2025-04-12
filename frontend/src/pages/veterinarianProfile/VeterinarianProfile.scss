@@ -1,0 +1,306 @@
+.veterinarian {
+  width: 100%;
+  height: 100vh;
+  .veterinarian-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+
+    .veterinarian-top {
+      width: 60%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-bottom-right-radius: 50px;
+      border-top-right-radius: 50px;
+      margin-right: -50px;
+      background-color: #0c0950;
+      z-index: 2;
+      position: relative;
+      .btn-backlink {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        .back-icon {
+          font-size: 1.25rem;
+          color: #fff;
+          cursor: pointer;
+          margin-left: 30px;
+        }
+      }
+
+      .profile-wrapper {
+        width: 350px;
+        height: 350px;
+        border-radius: 50%;
+        object-fit: contain;
+        overflow: hidden;
+        border: 1px solid #161179;
+        box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+          rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+        .profile {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+        }
+      }
+    }
+
+    .veterinarian-bottom {
+      padding: 100px;
+      width: 60%;
+      background-color: #fbe4d6;
+      margin-top: -15px;
+      border-top-right-radius: 25px;
+      border-top-left-radius: 25px;
+      height: auto;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+      justify-content: center;
+      z-index: 1;
+
+      .profile-wrapper {
+        display: none;
+      }
+
+      .name-rule {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+
+        h3 {
+          font-size: 1.5625rem;
+          color: #0c0950;
+        }
+
+        .rule {
+          font-size: 0.875rem;
+          color: #0c0950;
+        }
+      }
+
+      .veterinarian-userinfo-card-wrapper {
+        width: 100%;
+        height: auto;
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        .userinfo-card {
+          width: 100px;
+          min-height: fit-content;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: lightgrey;
+          padding: 10px;
+
+          .experience {
+            font-size: 0.875rem;
+            color: #0c0950;
+          }
+
+          h6 {
+            font-size: 1rem;
+            color: #0c0950;
+          }
+        }
+      }
+
+      .about {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        color: #0c0950;
+
+        h2 {
+          font-size: 16px;
+          margin-bottom: 10px;
+          color: #0a4b5e;
+        }
+      }
+
+      .btn-sent-appointment {
+        width: 100%;
+        background-color: #0a4b5e;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-bottom: 20px;
+        margin-top: 10px;
+        padding: 10px 0;
+        border-radius: 7px;
+        border: none;
+      }
+    }
+  }
+}
+
+@media (max-width: 786px) {
+  .veterinarian {
+    width: 100%;
+    height: 100vh;
+    .veterinarian-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .veterinarian-top {
+        width: 100%;
+        height: 30%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-right: 0;
+        border-bottom-right-radius: 0;
+        border-top-right-radius: 0;
+        position: relative;
+
+        .btn-backlink {
+          position: absolute;
+          top: 20px;
+          left: 15px;
+          .back-icon {
+            font-size: 1.25rem;
+            color: #fff;
+            cursor: pointer;
+            margin-left: 10px;
+          }
+        }
+
+        .profile-wrapper {
+          display: none;
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          overflow: hidden;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+            rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+          .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+      }
+
+      .veterinarian-bottom {
+        padding: 10px 10px 10px 10px;
+        width: 100%;
+        background-color: rgb(248, 246, 246);
+        border-top-right-radius: 20px;
+        border-top-left-radius: 20px;
+        height: 80%;
+        z-index: 999;
+
+        .profile-wrapper {
+          display: flex;
+          background-color: #fbe4d6;
+          margin-top: -175px;
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          object-fit: cover;
+          overflow: hidden;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 30px 60px -12px inset,
+            rgba(0, 0, 0, 0.3) 0px 18px 36px -18px inset;
+          .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+          }
+        }
+
+        .name-rule {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-bottom: 10px;
+          margin-top: 10px;
+
+          h3 {
+            font-size: 1.5625rem;
+            color: #0c0950;
+          }
+
+          .rule {
+            font-size: 0.875rem;
+            color: #0c0950;
+          }
+        }
+
+        .veterinarian-userinfo-card-wrapper {
+          width: 100%;
+          height: auto;
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 20px;
+
+          .userinfo-card {
+            width: 100px;
+            min-height: fit-content;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgrey;
+            padding: 10px;
+
+            .experience {
+              font-size: 0.875rem;
+              color: #0a4b5e;
+            }
+
+            h6 {
+              font-size: 1rem;
+              color: #0a4b5e;
+            }
+          }
+        }
+
+        .about {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          color: #0c0950;
+
+          h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #0a4b5e;
+          }
+        }
+
+        .btn-sent-appointment {
+          width: 100%;
+          background-color: #261fb3;
+          color: #fff;
+          font-size: 14px;
+          font-weight: 500;
+          cursor: pointer;
+          margin-bottom: 20px;
+          margin-top: 10px;
+          padding: 10px 0;
+          border-radius: 7px;
+          border: none;
+        }
+      }
+    }
+  }
+}

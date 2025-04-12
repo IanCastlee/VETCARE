@@ -1,0 +1,19 @@
+.landing {
+  width: 100%;
+  height: 100vh;
+
+  .landing-container {
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    img {
+      height: 150px;
+      width: 150px;
+      object-fit: contain;
+    }
+  }
+}

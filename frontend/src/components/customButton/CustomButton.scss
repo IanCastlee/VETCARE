@@ -1,0 +1,17 @@
+.custom-button {
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  padding: 5px 10px;
+
+  &.primary {
+    background-color: #261fb3;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &.hundredpercentP {
+    width: 100%;
+  }
+}

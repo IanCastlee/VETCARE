@@ -1,0 +1,424 @@
+.home {
+  width: 100%;
+
+  .hero {
+    width: 100%;
+    display: flex;
+    height: 633px;
+    background-color: #fbe4d6;
+
+    .hero-left {
+      width: 75%;
+      position: relative;
+
+      .wave-bg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .hero-wrapper {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        padding: 0 200px 100px 100px;
+
+        h1 {
+          color: #fbe4d6;
+          font-size: 35px;
+          line-height: 2.3125rem;
+          letter-spacing: 0.5px;
+          margin-bottom: 15px;
+        }
+
+        h6 {
+          font-size: 0.875rem;
+          color: lightgrey;
+          margin-bottom: 7px;
+        }
+      }
+    }
+    .hero-right {
+      width: 25%;
+      padding-top: 80px;
+
+      .dog-img {
+        width: 80%;
+        height: 90%;
+      }
+    }
+  }
+
+  .services {
+    padding: 0 100px;
+    margin-top: -110px;
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    .servives-container {
+      width: 100%;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 7px;
+      overflow-x: scroll;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+
+      .services-card {
+        background-color: #fff;
+        padding: 7px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        width: 130px;
+        flex-shrink: 0;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        img {
+          height: 60px;
+          width: 60px;
+          object-fit: cover;
+        }
+        span {
+          color: #0c0950;
+          font-size: 1rem;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .search-container {
+    width: 100%;
+    padding: 10px 120px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: end;
+
+    .search-input-icon {
+      display: flex;
+      width: 50%;
+      height: 45px;
+      border-radius: 25px;
+      padding: 15px;
+      background-color: #fff;
+      border: 1px solid lightgrey;
+      align-items: center;
+
+      input {
+        width: 100%;
+        border: none;
+        height: 100%;
+        background-color: #fff;
+
+        &:focus {
+          outline: none;
+        }
+      }
+
+      .search-icon {
+        font-size: 1.625rem;
+        cursor: pointer;
+        color: #0c0950;
+      }
+    }
+  }
+
+  .veterinarian-container {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 120px;
+    margin-top: 20px;
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .veterinarian {
+      width: 100%;
+      display: flex;
+      gap: 25px;
+      height: auto;
+      flex-wrap: wrap;
+
+      .veterinarian-wrapper {
+        width: 48%;
+        display: flex;
+        gap: 10px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        padding: 10px;
+
+        .veterinarian-profile {
+          height: 140px;
+          width: 140px;
+          border-radius: 6px;
+          object-fit: cover;
+        }
+
+        .veterinarian-info {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+
+          .veterinarian-name-button-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+
+            .name-rule {
+              display: flex;
+              flex-direction: column;
+
+              .name {
+                font-size: 1rem;
+                font-weight: 500;
+              }
+              .rule {
+                font-size: 0.75rem;
+                color: gray;
+              }
+            }
+
+            button {
+              border: none;
+              font-size: 0.875rem;
+              font-weight: 500;
+              cursor: pointer;
+              background-color: #fff;
+              font-size: 1.375rem;
+              color: #0c0950;
+            }
+          }
+
+          .btn-set-appointment {
+            background-color: #261fb3;
+            padding: 8px 0;
+            color: #fff;
+            font-size: 0.75rem;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 786px) {
+  .home {
+    width: 100%;
+
+    .hero {
+      width: 100%;
+      display: flex;
+      height: 300px;
+      background-color: #fff;
+
+      .hero-left {
+        width: 75%;
+        position: relative;
+
+        .wave-bg {
+          width: 100%;
+          height: 100%;
+        }
+
+        .hero-wrapper {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: 100%;
+          padding: 120px 20px 100px 20px;
+
+          h1 {
+            color: #fbe4d6;
+            font-size: 1rem;
+            line-height: 1rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 15px;
+          }
+
+          h6 {
+            font-size: 0.875rem;
+            color: lightgrey;
+            margin-bottom: 7px;
+            margin-right: 20px;
+          }
+        }
+      }
+      .hero-right {
+        width: 25%;
+        padding-top: 80px;
+
+        .dog-img {
+          width: 80%;
+          height: 70%;
+        }
+      }
+    }
+
+    .services {
+      padding: 0 10px;
+      margin-top: 20px;
+
+      h2 {
+        font-size: 16px;
+        margin-bottom: 10px;
+        display: flex;
+      }
+
+      .servives-container {
+        width: 100%;
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 7px;
+        overflow-x: scroll;
+        .services-card {
+          background-color: rgb(241, 237, 237);
+
+          padding: 7px;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          width: 120px;
+          flex-shrink: 0;
+          align-items: center;
+          justify-content: center;
+          img {
+            height: 50px;
+            width: 50px;
+            object-fit: cover;
+          }
+          span {
+            color: #0c0950;
+          }
+        }
+      }
+    }
+
+    .search-container {
+      width: 100%;
+      padding: 10px;
+
+      .search-input-icon {
+        display: flex;
+        width: 100%;
+        height: 45px;
+        border-radius: 25px;
+        padding: 15px;
+        background-color: #fff;
+        border: 1px solid lightgray;
+        align-items: center;
+
+        input {
+          width: 100%;
+          border: none;
+          height: 100%;
+          background-color: #fff;
+
+          &::focus {
+            outline: none;
+          }
+        }
+
+        .search-icon {
+          font-size: 1.625rem;
+          cursor: pointer;
+          color: #0c0950;
+        }
+      }
+    }
+
+    .veterinarian-container {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+      margin-top: 20px;
+
+      h2 {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .veterinarian {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        height: auto;
+        position: relative;
+
+        .veterinarian-wrapper {
+          width: 100%;
+          display: flex;
+          gap: 10px;
+
+          .veterinarian-profile {
+            height: 90px;
+            width: 90px;
+            border-radius: 6px;
+            object-fit: cover;
+          }
+
+          .veterinarian-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .veterinarian-name-button-wrapper {
+              width: 100%;
+              display: flex;
+              justify-content: space-between;
+
+              .name-rule {
+                display: flex;
+                flex-direction: column;
+
+                .name {
+                  font-size: 1rem;
+                  font-weight: 500;
+                  color: #0c0950;
+                }
+                .rule {
+                  font-size: 0.75rem;
+                  color: gray;
+                }
+              }
+
+              button {
+                border: none;
+                font-size: 1.25rem;
+                font-weight: 500;
+                cursor: pointer;
+                color: #0c0950;
+                background-color: #fff;
+              }
+            }
+
+            .btn-set-appointment {
+              background-color: #261fb3;
+              padding: 8px 0;
+              color: #fff;
+              font-size: 0.75rem;
+              cursor: pointer;
+              border-radius: 5px;
+              border: none;
+            }
+          }
+        }
+      }
+    }
+  }
+}
