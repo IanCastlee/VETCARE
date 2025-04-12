@@ -26,12 +26,15 @@ const SetAppointment = () => {
           </div>
           {showDateTime === "1" && (
             <div className="petinfo-form">
-              <h3>Pet Information</h3>
+              <span className="note">
+                Hey Eyhan, please fill out the form for your pet's information.
+              </span>
               <div className="form">
                 <div className="type-breed">
                   <div className="input-wrapper">
                     <label htmlFor="type">Type of your Pet</label>
                     <select name="type" id="type">
+                      <option value=""></option>
                       <option value="">Dog</option>
                       <option value="">Cat</option>
                     </select>

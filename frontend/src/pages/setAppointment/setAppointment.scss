@@ -55,9 +55,14 @@
         background-color: #fff;
         padding: 20px;
         border-radius: 10px;
-        h3 {
-          font-size: 24px;
+        display: flex;
+        flex-direction: column;
+        .note {
+          font-size: 1.125rem;
           color: #0c0950;
+          align-self: center;
+          margin-bottom: 20px;
+          text-align: center;
         }
 
         .form {
@@ -344,9 +349,10 @@
           background-color: #fbe4d6;
           padding: 20px;
           border-radius: 10px;
-          h3 {
-            font-size: 24px;
+          .note {
+            font-size: 1.125rem;
             color: #0c0950;
+            text-align: center;
           }
 
           .form {
