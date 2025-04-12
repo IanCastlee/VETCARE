@@ -46,6 +46,146 @@
       justify-content: center;
       z-index: 1;
 
+      .profile-wrapper {
+        display: none;
+      }
+
+      .petinfo-form {
+        width: 100%;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        h3 {
+          font-size: 24px;
+          color: #0c0950;
+        }
+
+        .form {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          .type-breed {
+            display: flex;
+            gap: 10px;
+
+            .input-wrapper {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+
+              select {
+                height: 38px;
+                width: 100%;
+                padding: 0 10px;
+                border-radius: 5px;
+              }
+            }
+
+            .input-wrapper {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+
+              input {
+                height: 38px;
+                width: 100%;
+                padding: 0 10px;
+                border-radius: 5px;
+                border: 1px solid #0c0950;
+              }
+            }
+          }
+
+          .age-weight {
+            display: flex;
+            gap: 10px;
+            .input-wrapper {
+              width: 100%;
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+
+              input {
+                height: 38px;
+                width: 100%;
+                padding: 0 10px;
+                border-radius: 5px;
+                border: 1px solid #0c0950;
+              }
+            }
+          }
+
+          .radio-wrapper {
+            display: flex;
+            flex-direction: column;
+            label {
+              font-size: 0.75rem;
+              color: #0c0950;
+              margin-bottom: 5px;
+            }
+
+            .male-female {
+              display: flex;
+              gap: 30px;
+
+              .gender-wrapper {
+                display: flex;
+                flex-direction: column;
+
+                input {
+                }
+                label {
+                  font-size: 0.625rem;
+                }
+              }
+            }
+          }
+
+          .text-area-wrapper {
+            display: flex;
+            flex-direction: column;
+            label {
+              font-size: 0.75rem;
+              color: #0c0950;
+            }
+            textarea {
+              width: 100%;
+              border: none;
+              border: 1px solid #0c0950;
+              border-radius: 5px;
+              padding: 5px;
+              font-size: 14px;
+            }
+          }
+
+          .button {
+            display: flex;
+            width: 100%;
+            justify-content: end;
+
+            .next-icon {
+              align-items: end;
+              font-size: 1.25rem;
+              color: #0c0950;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+
       .date-available {
         width: 100%;
         display: flex;
@@ -185,6 +325,7 @@
         z-index: 2;
 
         .profile-wrapper {
+          display: flex;
           width: 130px;
           height: 130px;
           background-color: #fbe4d6;
@@ -195,6 +336,144 @@
             height: 100%;
             object-fit: cover;
             border-radius: 50%;
+          }
+        }
+
+        .petinfo-form {
+          width: 100%;
+          background-color: #fbe4d6;
+          padding: 20px;
+          border-radius: 10px;
+          h3 {
+            font-size: 24px;
+            color: #0c0950;
+          }
+
+          .form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            .type-breed {
+              display: flex;
+              gap: 10px;
+
+              .input-wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                label {
+                  font-size: 0.75rem;
+                  color: #0c0950;
+                }
+
+                select {
+                  height: 38px;
+                  width: 100%;
+                  padding: 0 10px;
+                  border-radius: 5px;
+                  border: none;
+                }
+              }
+
+              .input-wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                label {
+                  font-size: 0.75rem;
+                  color: #0c0950;
+                }
+
+                input {
+                  height: 38px;
+                  width: 100%;
+                  padding: 0 10px;
+                  border-radius: 5px;
+                  border: none;
+                }
+              }
+            }
+
+            .age-weight {
+              display: flex;
+              gap: 10px;
+              .input-wrapper {
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                label {
+                  font-size: 0.75rem;
+                  color: #0c0950;
+                }
+
+                input {
+                  height: 38px;
+                  width: 100%;
+                  padding: 0 10px;
+                  border-radius: 5px;
+                  border: none;
+                }
+              }
+            }
+
+            .radio-wrapper {
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+                margin-bottom: 5px;
+              }
+
+              .male-female {
+                display: flex;
+                gap: 30px;
+
+                .gender-wrapper {
+                  display: flex;
+                  flex-direction: column;
+
+                  input {
+                    border: none;
+                  }
+                  label {
+                    font-size: 0.625rem;
+                  }
+                }
+              }
+            }
+
+            .text-area-wrapper {
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+              textarea {
+                width: 100%;
+                border: none;
+                border: none;
+                border-radius: 5px;
+                padding: 5px;
+                font-size: 14px;
+              }
+            }
+
+            .button {
+              display: flex;
+              width: 100%;
+              justify-content: end;
+
+              .next-icon {
+                align-items: end;
+                font-size: 1.25rem;
+                color: #0c0950;
+                cursor: pointer;
+              }
+            }
           }
         }
 
