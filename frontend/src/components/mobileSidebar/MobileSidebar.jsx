@@ -8,6 +8,7 @@ import { HiMiniCalendarDateRange } from "react-icons/hi2";
 import { IoMdPower } from "react-icons/io";
 import Signin from "../signinSignUp/Signin";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const MobileSidebar = () => {
   const [showForm, setShowForm] = useState(false);
@@ -30,21 +31,20 @@ const MobileSidebar = () => {
             SIGN IN
           </button>
         </div>
-        <ul className="menu-btn">
-          <li className="btn">
+        <div className="menu-btn">
+          <Link className="btn-link" to={"/home/"}>
             <RiHomeLine className="icon" /> Home
-          </li>
-          <li className="btn">
+          </Link>
+          <Link className="btn-link">
             <HiMiniCalendarDateRange className="icon" /> Appointment
-          </li>
-          <li className="btn">
-            {" "}
+          </Link>
+          <Link className="btn-link">
             <HiMiniCalendarDateRange className="icon" /> Message
-          </li>
-          <li className="btn">
+          </Link>
+          <Link className="btn-link">
             <IoMdPower className="icon" /> Logout
-          </li>
-        </ul>
+          </Link>
+        </div>
       </motion.div>
 
       {showForm && <Signin close={() => setShowForm(false)} />}

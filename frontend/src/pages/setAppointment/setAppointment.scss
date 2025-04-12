@@ -6,31 +6,45 @@
     width: 100%;
     height: 100%;
     display: flex;
+    overflow-y: auto;
 
     .setappointment-top {
-      width: 100%;
+      width: 50%;
       height: 100%;
-      background-color: #0a4b5e;
+      background-color: #0c0950;
       display: flex;
       justify-content: center;
       align-items: center;
+      overflow-y: auto;
+      border-top-right-radius: 20px;
+      border-bottom-right-radius: 20px;
+      margin-right: -20px;
+      z-index: 2;
 
-      .profile {
-        width: 400px;
-        height: 400px;
-        object-fit: cover;
-        margin-top: 30px;
+      .profile-wrapper {
+        width: 450px;
+        height: 450px;
+        border-radius: 50%;
+
+        .profile {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 50%;
+        }
       }
     }
 
     .setappointment-bot {
-      background-color: #fff;
-      width: 100%;
+      background-color: #fbe4d6;
+      width: 50%;
       height: 100%;
-      margin-top: 90px;
-      border-top-right-radius: 15px;
-      border-top-left-radius: 15px;
-      padding: 10px;
+      padding: 10px 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1;
 
       .date-available {
         width: 100%;
@@ -40,8 +54,15 @@
 
         h6 {
           font-size: 0.875rem;
-          color: #0a4b5e;
+          color: #0c0950;
           margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+
+          .calendar-icon {
+            font-size: 20px;
+            margin-right: 5px;
+          }
         }
 
         .dates-wrapper {
@@ -70,8 +91,15 @@
 
         h6 {
           font-size: 0.875rem;
-          color: #0a4b5e;
+          color: #0c0950;
           margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+
+          .clock-icon {
+            font-size: 20px;
+            margin-right: 5px;
+          }
         }
 
         .times-wrapper {
@@ -95,12 +123,17 @@
           width: 100%;
           padding: 7px 0;
           font-size: 0.75rem;
-          background-color: #0a4b5e;
+          background-color: #261fb3;
           cursor: pointer;
           border: none;
           border-radius: 5px;
           color: #fff;
           margin-top: 25px;
+          height: 37px;
+
+          &:hover {
+            background-color: #161179;
+          }
         }
       }
     }
@@ -120,38 +153,61 @@
 
       .setappointment-top {
         width: 100%;
-        height: 40%;
-        background-color: #0a4b5e;
+        height: 30%;
+        background-color: #0c0950;
         display: flex;
         justify-content: center;
         align-items: center;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        z-index: 1;
 
-        .profile {
+        .profile-wrapper {
+          display: none;
           width: 150px;
           height: 150px;
-          object-fit: cover;
-          margin-top: 30px;
+          .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
         }
       }
 
       .setappointment-bot {
         background-color: #fff;
         width: 100%;
-        height: 63%;
+        height: 77%;
         margin-top: -10%;
         border-top-right-radius: 15px;
         border-top-left-radius: 15px;
-        padding: 10px;
+        padding: 50px 10px 10px 10px;
+        z-index: 2;
+
+        .profile-wrapper {
+          width: 130px;
+          height: 130px;
+          background-color: #fbe4d6;
+          border-radius: 50%;
+          margin-top: -150px;
+          .profile {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+          }
+        }
 
         .date-available {
           width: 100%;
           display: flex;
           flex-direction: column;
           align-items: center;
+          margin-top: 20px;
 
           h6 {
             font-size: 0.875rem;
-            color: #0a4b5e;
+            color: #0c0950;
             margin-bottom: 10px;
           }
 
@@ -163,7 +219,7 @@
 
             .date {
               font-size: 12px;
-              color: #0a4b5e;
+              color: #0c0950;
               cursor: pointer;
               border: 1px solid #0a4b5e;
               padding: 5px 8px;
@@ -181,7 +237,7 @@
 
           h6 {
             font-size: 0.875rem;
-            color: #0a4b5e;
+            color: #0c0950;
             margin-bottom: 10px;
           }
 
@@ -206,12 +262,16 @@
             width: 100%;
             padding: 7px 0;
             font-size: 0.75rem;
-            background-color: #0a4b5e;
+            background-color: #261fb3;
             cursor: pointer;
             border: none;
             border-radius: 5px;
             color: #fff;
             margin-top: 25px;
+
+            &:hover {
+              background-color: #161179;
+            }
           }
         }
       }

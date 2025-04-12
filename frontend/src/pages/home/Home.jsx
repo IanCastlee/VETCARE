@@ -46,7 +46,7 @@ const Home = () => {
                 Trusted by pet parents. Loved by furry friends.
               </motion.h6>
 
-              <CustomButton _bgcolor="primary" _label="Set Appointment" />
+              <CustomButton _bgcolor="primary" _label="Book Now" />
             </div>
           </div>
           <div className="hero-right">
