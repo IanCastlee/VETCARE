@@ -29,7 +29,7 @@ const SetAppointment = () => {
             <div className="dates-wrapper">
               <span className="date">Monday</span>
               <span className="date">Tuesday</span>
-              <span className="date">Friday</span>
+              <span className="date">Fridayf</span>
             </div>
           </div>
 
