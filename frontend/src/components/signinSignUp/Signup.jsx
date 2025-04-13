@@ -155,7 +155,7 @@ const Signup = ({ close }) => {
               <img src={logo} alt="logo" className="logo" />
 
               <div className="signin-label-wrapper">
-                <h3>SIGN UPx</h3>
+                <h3>SIGN UP</h3>
                 <span>to VETCARE</span>
                 <strong>OR</strong>
                 <Link
