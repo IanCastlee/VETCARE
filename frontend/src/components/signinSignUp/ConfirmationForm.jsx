@@ -41,7 +41,7 @@ const ConfirmationForm = ({ close }) => {
               <img src={logo} alt="logo" className="logo" />
 
               <div className="signin-label-wrapper">
-                <h3>CONFIRM YOUR EMAIL</h3>
+                <h3>CONFIRM YOUR EMAILc</h3>
               </div>
             </div>
 
