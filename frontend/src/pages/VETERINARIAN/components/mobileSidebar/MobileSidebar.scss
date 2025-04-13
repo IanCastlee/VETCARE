@@ -1,0 +1,74 @@
+.sidebar {
+  height: 100vh;
+  width: 80%;
+  background-color: #fff;
+  top: 0;
+  left: 0;
+  z-index: 1001;
+  position: fixed;
+
+  display: flex;
+  flex-direction: column;
+
+  .top-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #0c0950;
+    height: 100px;
+
+    .user-profile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 5px;
+
+      .profile {
+        font-size: 50px;
+        color: #fff;
+      }
+      .name {
+        font-size: 1rem;
+        font-weight: 500;
+        color: #fbe4d6;
+      }
+    }
+
+    .btn-signin {
+      width: 90%;
+      background-color: #261fb3;
+      font-size: 14px;
+      color: #fff;
+      height: 40px;
+      border-radius: 5px;
+      border: none;
+    }
+  }
+
+  .menu-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 50px;
+    padding: 20px;
+
+    .btn-link {
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      color: #0c0950;
+
+      .icon {
+        font-size: 1.5rem;
+        color: #0c0950;
+        margin-right: 10px;
+      }
+    }
+  }
+}

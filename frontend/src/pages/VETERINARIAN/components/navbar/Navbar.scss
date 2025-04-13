@@ -24,7 +24,7 @@
       display: flex;
       align-items: center;
       justify-content: end;
-      gap: 45px;
+      gap: 35px;
 
       .list-icon {
         list-style: none;
@@ -32,7 +32,7 @@
 
         .nav-icon {
           cursor: pointer;
-          color: #0a4b5e;
+          color: #0c0950;
           font-size: 1.25rem;
         }
       }
@@ -63,7 +63,7 @@
 @media (max-width: 786px) {
   .navbar {
     width: 100%;
-    height: 80px;
+    height: 65px;
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -71,6 +71,7 @@
     top: 0;
     left: 0;
     z-index: 999;
+    background-color: #0c0950;
 
     .nav-container {
       width: 100%;
@@ -84,10 +85,10 @@
       }
 
       .nav-buttons {
-        display: none;
+        display: flex;
         align-items: center;
         justify-content: end;
-        gap: 45px;
+        gap: 25px;
 
         .list-icon {
           list-style: none;
@@ -95,7 +96,7 @@
 
           .nav-icon {
             cursor: pointer;
-            color: #0a4b5e;
+            color: #fff;
             font-size: 1.25rem;
           }
         }

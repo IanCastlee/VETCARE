@@ -8,6 +8,7 @@ import dogImage from "../../assets/imges/dog.png";
 //ICONS
 import { CiSearch } from "react-icons/ci";
 import { LuView } from "react-icons/lu";
+import { CiStethoscope } from "react-icons/ci";
 
 //IMAGES (servives)
 import vaccine from "../../assets/icons/animals.png";
@@ -103,7 +104,10 @@ const Home = () => {
                     <div className="veterinarian-info">
                       <div className="veterinarian-name-button-wrapper">
                         <div className="name-rule">
-                          <span className="name">{item.fname}</span>
+                          <span className="name">
+                            <CiStethoscope className="icon" />
+                            {item.fname}
+                          </span>
                           <span className="rule">{item.rule}</span>
                         </div>
 
