@@ -8,6 +8,7 @@ import { IoCalendarNumberSharp } from "react-icons/io5";
 import { GoClockFill } from "react-icons/go";
 import { useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
+import { FaArrowLeft } from "react-icons/fa6";
 
 const SetAppointment = () => {
   const [showDateTime, setshowDateTime] = useState("1");
@@ -99,6 +100,9 @@ const SetAppointment = () => {
           )}
           {showDateTime === "2" && (
             <div className="date-available">
+              <span className="note">
+                Choose your appointment date and time.{" "}
+              </span>
               <h6>
                 <IoCalendarNumberSharp className="calendar-icon" /> Available
                 Date
@@ -137,7 +141,13 @@ const SetAppointment = () => {
                 <span className="time">8:00 AM</span>
               </div>
 
-              <button className="btn-setappointment">Set Appointment</button>
+              <div className="set-appointment-wrapper">
+                <FaArrowLeft
+                  className="back-icon"
+                  onClick={() => setshowDateTime("1")}
+                />
+                <button className="btn-setappointment">Set Appointment</button>
+              </div>
             </div>
           )}
         </div>
