@@ -1,4 +1,4 @@
-.navbar {
+.vnavbar {
   width: 100%;
   height: 80px;
   display: flex;
@@ -20,7 +20,7 @@
       width: auto;
     }
 
-    .nav-buttons {
+    .vnav-buttons {
       display: flex;
       align-items: center;
       justify-content: end;
@@ -61,7 +61,7 @@
 }
 
 @media (max-width: 786px) {
-  .navbar {
+  .vnavbar {
     width: 100%;
     height: 65px;
     display: flex;
@@ -84,7 +84,7 @@
         width: auto;
       }
 
-      .nav-buttons {
+      .vnav-buttons {
         display: flex;
         align-items: center;
         justify-content: end;

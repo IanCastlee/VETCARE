@@ -87,43 +87,42 @@ const Home = () => {
           <h2>Available Veterinarian</h2>
           <div className="veterinarian">
             {veterinarianData &&
-              veterinarianData.map((item) => (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
-                    className="veterinarian-wrapper"
-                  >
-                    <img
-                      src={item.profile}
-                      alt="veterinarian-profile"
-                      className="veterinarian-profile"
-                    />
+              veterinarianData.map((item, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7 }}
+                  className="veterinarian-wrapper"
+                >
+                  <img
+                    src={item.profile}
+                    alt="veterinarian-profile"
+                    className="veterinarian-profile"
+                  />
 
-                    <div className="veterinarian-info">
-                      <div className="veterinarian-name-button-wrapper">
-                        <div className="name-rule">
-                          <span className="name">
-                            <CiStethoscope className="icon" />
-                            {item.fname}
-                          </span>
-                          <span className="rule">{item.rule}</span>
-                        </div>
-
-                        <Link to={`/veterinarian/${item.id}`}>
-                          <button onClick={() => navigate("/veterinarian/")}>
-                            <LuView />
-                          </button>
-                        </Link>
+                  <div className="veterinarian-info">
+                    <div className="veterinarian-name-button-wrapper">
+                      <div className="name-rule">
+                        <span className="name">
+                          <CiStethoscope className="icon" />
+                          {item.fname}
+                        </span>
+                        <span className="rule">{item.rule}</span>
                       </div>
 
-                      <button className="btn-set-appointment">
-                        <Link to="/set-appointment/">Set Appointment</Link>
-                      </button>
+                      <Link to={`/veterinarian/${item.id}`}>
+                        <button onClick={() => navigate("/veterinarian/")}>
+                          <LuView />
+                        </button>
+                      </Link>
                     </div>
-                  </motion.div>
-                </>
+
+                    <button className="btn-set-appointment">
+                      <Link to="/set-appointment/">Set Appointment</Link>
+                    </button>
+                  </div>
+                </motion.div>
               ))}
           </div>
         </div>

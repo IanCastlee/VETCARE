@@ -2,7 +2,6 @@ import "./CustomButton.scss";
 import { motion } from "framer-motion";
 
 const CustomButton = ({ _bgcolor, _label, _width }) => {
-  console.log("WIDTH : ", _width);
   return (
     <motion.button
       initial={{ opacity: 0, y: 10 }}

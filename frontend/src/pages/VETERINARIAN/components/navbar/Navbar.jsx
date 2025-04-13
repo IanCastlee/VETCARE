@@ -16,10 +16,10 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="navbar">
+      <div className="vnavbar">
         <div className="nav-container">
           <img src={logo} alt="logo" className="logo" />
-          <div className="nav-buttons">
+          <div className="vnav-buttons">
             <Link className="list-icon">
               <GoHomeFill className="nav-icon" />
             </Link>
