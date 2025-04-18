@@ -28,7 +28,7 @@ const AdminSidebar = () => {
       <ul>
         <Link to="/admin/home/" className="item">
           <RiHomeLine className="link-icon" />
-          Home
+          Homie
         </Link>
         <li
           className="item"
