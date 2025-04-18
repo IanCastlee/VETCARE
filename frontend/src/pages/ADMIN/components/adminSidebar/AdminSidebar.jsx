@@ -26,10 +26,10 @@ const AdminSidebar = () => {
       </div>
 
       <ul>
-        <li className="item">
+        <Link to="/admin/home/" className="item">
           <RiHomeLine className="link-icon" />
           Home
-        </li>
+        </Link>
         <li
           className="item"
           onClick={() => setShowAppointmentDropdown(!showAppointmentDropdown)}
