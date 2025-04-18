@@ -1,0 +1,440 @@
+.appointment {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  padding: 0 150px;
+
+  .container {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    margin-top: 90px;
+
+    .top {
+      background-color: #0c0950;
+      height: 150px;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .title {
+        color: #fbe4d6;
+      }
+    }
+
+    .myappointment {
+      display: flex;
+      width: 100%;
+
+      .current-appointment {
+        width: 50%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+
+        .title {
+          color: #0c0950;
+          font-weight: 500;
+          font-size: 1.125rem;
+        }
+
+        .card {
+          width: 100%;
+          background-color: #fff;
+          display: flex;
+          padding: 20px;
+          gap: 20px;
+          border-radius: 10px;
+
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+          .profile {
+            height: 120px;
+            width: 120px;
+            object-fit: cover;
+          }
+
+          .right-card {
+            width: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+
+            .top-card {
+              display: flex;
+              flex-direction: column;
+
+              .dr {
+                font-size: 1.25rem;
+                color: #0c0950;
+                font-weight: 500;
+              }
+              .rule {
+                font-size: 0.875rem;
+                color: #0c0950;
+              }
+
+              .date-time {
+                display: flex;
+                flex-direction: column;
+                margin-top: 20px;
+
+                .date {
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #0c0950;
+                  display: flex;
+                  align-items: center;
+
+                  .iconn {
+                    margin-right: 5px;
+                  }
+                }
+                .time {
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #0c0950;
+                  display: flex;
+                  align-items: center;
+
+                  .iconn {
+                    margin-right: 5px;
+                  }
+                }
+              }
+            }
+
+            .icon-wrapper {
+              .icon {
+                font-size: 40px;
+                color: green;
+              }
+            }
+          }
+        }
+      }
+
+      .previous-appointment {
+        width: 50%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+
+        .title {
+          color: #0c0950;
+          font-weight: 500;
+          font-size: 1.125rem;
+        }
+
+        .card {
+          width: 100%;
+          background-color: #fff;
+          display: flex;
+          padding: 20px;
+          gap: 20px;
+          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+            rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+          border-radius: 10px;
+
+          .profile {
+            height: 120px;
+            width: 120px;
+            object-fit: cover;
+          }
+
+          .right-card {
+            width: 100%;
+            background-color: #fff;
+            display: flex;
+            justify-content: space-between;
+
+            .top-card {
+              display: flex;
+              flex-direction: column;
+
+              .dr {
+                font-size: 1.25rem;
+                color: #0c0950;
+                font-weight: 500;
+              }
+              .rule {
+                font-size: 0.875rem;
+                color: #0c0950;
+              }
+
+              .date-time {
+                display: flex;
+                flex-direction: column;
+                margin-top: 20px;
+
+                .date {
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #0c0950;
+                  display: flex;
+                  align-items: center;
+
+                  .iconn {
+                    margin-right: 5px;
+                  }
+                }
+                .time {
+                  font-size: 14px;
+                  font-weight: 500;
+                  color: #0c0950;
+                  display: flex;
+                  align-items: center;
+
+                  .iconn {
+                    margin-right: 5px;
+                  }
+                }
+              }
+            }
+
+            .icon-wrapper {
+              .icon {
+                font-size: 40px;
+                color: rgb(61, 55, 55);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 786px) {
+  .appointment {
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    padding: 0;
+
+    .container {
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      margin-top: 0;
+
+      .top {
+        background-color: #0c0950;
+        height: 200px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1;
+        padding-top: 70px;
+
+        .title {
+          color: #fbe4d6;
+          font-size: 1.5rem;
+        }
+      }
+
+      .myappointment {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+        background-color: #fff;
+        margin-top: -30px;
+        z-index: 999;
+
+        .current-appointment {
+          width: 100%;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          justify-content: center;
+
+          .title {
+            color: #0c0950;
+            font-weight: 500;
+            font-size: 1.125rem;
+          }
+
+          .card {
+            width: 100%;
+            background-color: #fff;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            border-radius: 10px;
+
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+              rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+            .profile {
+              height: 120px;
+              width: 120px;
+              object-fit: cover;
+            }
+
+            .right-card {
+              width: 100%;
+              background-color: #fff;
+              display: flex;
+              justify-content: space-between;
+              flex-direction: column;
+
+              .top-card {
+                display: flex;
+                flex-direction: column;
+
+                .dr {
+                  font-size: 1.25rem;
+                  color: #0c0950;
+                  font-weight: 500;
+                }
+                .rule {
+                  font-size: 0.875rem;
+                  color: #0c0950;
+                }
+
+                .date-time {
+                  display: flex;
+                  flex-direction: column;
+                  margin-top: 20px;
+
+                  .date {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+
+                    .iconn {
+                      margin-right: 5px;
+                    }
+                  }
+                  .time {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+
+                    .iconn {
+                      margin-right: 5px;
+                    }
+                  }
+                }
+              }
+
+              .icon-wrapper {
+                display: none;
+                .icon {
+                  font-size: 40px;
+                  color: green;
+                }
+              }
+            }
+          }
+        }
+
+        .previous-appointment {
+          width: 100%;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          justify-content: center;
+
+          .title {
+            color: #0c0950;
+            font-weight: 500;
+            font-size: 1.125rem;
+          }
+
+          .card {
+            width: 100%;
+            background-color: #fff;
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+              rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+            border-radius: 10px;
+
+            .profile {
+              height: 120px;
+              width: 120px;
+              object-fit: cover;
+            }
+
+            .right-card {
+              width: 100%;
+              background-color: #fff;
+              display: flex;
+              justify-content: space-between;
+
+              .top-card {
+                display: flex;
+                flex-direction: column;
+
+                .dr {
+                  font-size: 1.25rem;
+                  color: #0c0950;
+                  font-weight: 500;
+                }
+                .rule {
+                  font-size: 0.875rem;
+                  color: #0c0950;
+                }
+
+                .date-time {
+                  display: flex;
+                  flex-direction: column;
+                  margin-top: 20px;
+
+                  .date {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+
+                    .iconn {
+                      margin-right: 5px;
+                    }
+                  }
+                  .time {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+
+                    .iconn {
+                      margin-right: 5px;
+                    }
+                  }
+                }
+              }
+
+              .icon-wrapper {
+                display: none;
+
+                .icon {
+                  font-size: 40px;
+                  color: rgb(61, 55, 55);
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

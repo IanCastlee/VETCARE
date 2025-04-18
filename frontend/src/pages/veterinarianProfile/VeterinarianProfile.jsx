@@ -1,7 +1,6 @@
 import "./VeterinarianProfile.scss";
 
 //IMAGES
-import veterinarianProfile from "../../assets/imges/veterinarian1.png";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { veterinarianData } from "../../veterinarianData";
 import { useEffect, useState } from "react";

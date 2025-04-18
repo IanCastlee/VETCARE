@@ -4,17 +4,60 @@ import { motion } from "framer-motion";
 //IMAGE
 import catdog from "../../assets/imges/signinimaeg.png";
 import logo from "../../assets/icons/logo.png";
-import { Link } from "react-router-dom";
 
 //ICONS
 import { AiOutlineClose } from "react-icons/ai";
-import Signup from "./Signup";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ConfirmationForm from "./ConfirmationForm";
+import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const Signin = ({ close }) => {
-  const [showSignupForm, setshowSignupForm] = useState(false);
+const Signin = () => {
+  const { login, formToShow, setFormToShow, errorMessage, _navigate } =
+    useContext(AuthContext);
+
   const [showConfirmationForm, setShowConfirmationForm] = useState(false);
+
+  const [emptyEmail, setEmptyEmail] = useState("");
+  const [emptyPassword, setEmptyPassword] = useState("");
+
+  const [signinData, setSigninData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChangeData = (e) => {
+    const { name, value } = e.target;
+    setEmptyEmail("");
+    setEmptyPassword("");
+
+    setSigninData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  ///signin
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+
+    if (signinData.email === "" || signinData.password === "") {
+      if (signinData.email === "") {
+        setEmptyEmail("Email is required");
+      }
+      if (signinData.password === "") {
+        setEmptyPassword("Password is required");
+      }
+
+      return;
+    }
+
+    try {
+      await login(signinData);
+    } catch (error) {
+      console.log("Error : ", error);
+    }
+  };
 
   return (
     <>
@@ -30,18 +73,18 @@ const Signin = ({ close }) => {
               <img src={logo} alt="logo" className="logo" />
 
               <div className="signin-label-wrapper">
-                <h3>SIGN IN</h3>
+                <h3 className="h3">SIGN IN</h3>
                 <span>to your VETCARE account</span>
                 <strong>OR</strong>
-                <Link
+                <span
                   className="sign-up-btn"
                   onClick={() => {
-                    setshowSignupForm(true);
-                    close;
+                    setFormToShow("signup");
+                    nav;
                   }}
                 >
                   Sign Up
-                </Link>
+                </span>
               </div>
             </div>
 
@@ -50,30 +93,45 @@ const Signin = ({ close }) => {
             </div>
           </div>
           <div className="right">
+            <span className="errorMessage">{errorMessage}</span>
             <div className="form">
               <div className="input-wrapper">
-                <label htmlFor="email">Email</label>
+                <label
+                  style={{ color: emptyEmail !== "" ? "red" : "" }}
+                  htmlFor="email"
+                >
+                  {emptyEmail !== "" ? emptyEmail : "Email"}
+                </label>
                 <input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   name="email"
+                  onChange={handleChangeData}
                 />
               </div>
               <div className="input-wrapper">
-                <label htmlFor="password">Password</label>
+                <label
+                  style={{ color: emptyPassword !== "" ? "red" : "" }}
+                  htmlFor="password"
+                >
+                  {emptyPassword !== "" ? emptyPassword : "Password"}
+                </label>
                 <input
                   id="password"
                   type="email"
                   placeholder="Enter your password"
                   name="password"
+                  onChange={handleChangeData}
                 />
               </div>
 
-              <buttn className="btn-signin">SIGN IN</buttn>
+              <button className="btn-signin" onClick={handleSignIn}>
+                SIGN IN
+              </button>
 
               <div className="forgotpassword">
-                <span onClick={() => setShowConfirmationForm(true)}>
+                <span onClick={() => setFormToShow("confirm")}>
                   Forgot passord
                 </span>
               </div>
@@ -81,13 +139,18 @@ const Signin = ({ close }) => {
           </div>
         </motion.div>
 
-        <AiOutlineClose className="close-icon" onClick={close} />
+        <AiOutlineClose
+          className="close-icon"
+          onClick={() => setFormToShow(null)}
+        />
       </div>
 
-      {showSignupForm && <Signup close={() => setshowSignupForm(false)} />}
+      {/* {formToShow === "signup" && (
+        <Signup close={() => setshowSignupForm(false)} />
+      )} */}
 
       {showConfirmationForm && (
-        <ConfirmationForm close={() => setShowConfirmationForm(false)} />
+        <ConfirmationForm close={() => setFormToShow(null)} />
       )}
     </>
   );

@@ -1,6 +1,6 @@
 import "./Signup.scss";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 //IMAGE
 import catdog from "../../assets/imges/signinimaeg.png";
@@ -13,10 +13,17 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import Signin from "./Signin";
 import axiosIntance from "../../../axios";
+import axios from "axios";
+import Loader from "../loader/Loader";
+import Toaster from "../toaster/Toaster";
+import { AuthContext } from "../../contexts/AuthContext";
 
-const Signup = ({ close }) => {
+const Signup = () => {
+  const { setFormToShow, setMessageFromMail } = useContext(AuthContext);
   const [formToShow, setformToShow] = useState("1");
   const [showSignInForm, setshowSignInForm] = useState(false);
+  const [showLoader, setshowLoader] = useState(false);
+  const [toasterMessage, setToasterMessage] = useState(null);
 
   const [emptyFullname, setEmptyFullname] = useState("");
   const [emptyAddress, setEmptyAddress] = useState("");
@@ -75,6 +82,7 @@ const Signup = ({ close }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setshowLoader(true);
     if (
       signUpdata.email === "" ||
       signUpdata.password === "" ||
@@ -89,6 +97,8 @@ const Signup = ({ close }) => {
       if (signUpdata.cpassword === "") {
         setEmptyCPassword("Confirm your password");
       }
+
+      setshowLoader(false);
       return;
     }
 
@@ -96,11 +106,15 @@ const Signup = ({ close }) => {
     const gmailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!gmailRegex.test(signUpdata.email)) {
       setEmptyEmail("Please enter a valid Gmail address.");
+
+      setshowLoader(false);
       return;
     }
 
     if (signUpdata.password !== signUpdata.cpassword) {
       setEmptyCPassword("Passwords and confirm password not matched!");
+
+      setshowLoader(false);
 
       return;
     }
@@ -111,6 +125,7 @@ const Signup = ({ close }) => {
       setEmptyPassword(
         "Password must be at least 8 characters long and include a capital letter and a number."
       );
+      setshowLoader(false);
 
       return;
     }
@@ -132,9 +147,23 @@ const Signup = ({ close }) => {
           password: "",
           cpassword: "",
         });
-        console.log(res.data.message);
+        setshowLoader(true);
+
+        setTimeout(() => {
+          setshowLoader(false);
+          setMessageFromMail({
+            message: res.data.message,
+            email: res.data.email,
+          });
+          setFormToShow("confirm");
+        }, 2000);
+        // setToasterMessage(res.data.message);
+        // setTimeout(() => {
+        //   setToasterMessage(null);
+        // }, 8000);
       } else {
-        console.log(res.data);
+        setshowLoader(false);
+        setEmptyEmail(res.data.message);
       }
     } catch (error) {
       console.log("Error : ", error);
@@ -155,18 +184,17 @@ const Signup = ({ close }) => {
               <img src={logo} alt="logo" className="logo" />
 
               <div className="signin-label-wrapper">
-                <h3>SIGN UP</h3>
+                <h3 className="h3">SIGN UP</h3>
                 <span>to VETCARE</span>
                 <strong>OR</strong>
-                <Link
+                <span
                   className="sign-up-btn"
                   onClick={() => {
-                    setshowSignInForm(true);
-                    close;
+                    setFormToShow("signin");
                   }}
                 >
                   Sign In
-                </Link>
+                </span>
               </div>
             </div>
 
@@ -176,7 +204,7 @@ const Signup = ({ close }) => {
           </div>
           <div className="right">
             <h3 className="active-form-label">
-              {formToShow === "1" ? "Parent Information" : "Credentials"}
+              {formToShow === "1" ? "Pet Owner Information" : "Credentials"}
             </h3>
             {formToShow === "1" && (
               <div className="form">
@@ -312,9 +340,19 @@ const Signup = ({ close }) => {
           </div>
         </motion.div>
 
-        <AiOutlineClose className="close-icon" onClick={close} />
+        <AiOutlineClose
+          className="close-icon"
+          onClick={() => setFormToShow(null)}
+        />
       </div>
       {showSignInForm && <Signin close={() => setshowSignInForm(false)} />}{" "}
+      {showLoader && <Loader _label="Please wait..." />}
+      {toasterMessage != null && !showLoader && (
+        <Toaster
+          message={toasterMessage}
+          _click={() => setToasterMessage(null)}
+        />
+      )}
     </>
   );
 };

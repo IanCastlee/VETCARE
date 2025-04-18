@@ -19,9 +19,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { veterinarianData } from "../../veterinarianData";
 
 import CustomButton from "../../components/customButton/CustomButton";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Home = () => {
   const navigate = useNavigate();
+  // const { test } = useContext(AuthContext);
 
   return (
     <>
@@ -111,8 +114,8 @@ const Home = () => {
                         <span className="rule">{item.rule}</span>
                       </div>
 
-                      <Link to={`/veterinarian/${item.id}`}>
-                        <button onClick={() => navigate("/veterinarian/")}>
+                      <Link to={`/view-veterinarian/${item.id}`}>
+                        <button>
                           <LuView />
                         </button>
                       </Link>

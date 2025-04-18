@@ -43,7 +43,7 @@
           width: 100%;
           align-items: center;
 
-          h3 {
+          .h3 {
             font-size: 1.5625rem;
             color: #fbe4d6;
           }
@@ -241,7 +241,7 @@
       width: 100%;
       height: 100%;
       border-radius: 0;
-      background-color: #fff;
+      background-color: #0c0950;
       display: flex;
       border-radius: 10px;
       overflow: hidden;
@@ -273,8 +273,8 @@
             width: 100%;
             align-items: center;
 
-            h3 {
-              font-size: 1.5625rem;
+            .h3 {
+              font-size: 1.875rem;
               color: #fbe4d6;
             }
 
@@ -313,7 +313,7 @@
         flex-direction: column;
         padding: 20px;
         justify-content: center;
-        height: 75%;
+        height: 65%;
         border-top-right-radius: 15px;
         border-top-left-radius: 15px;
         margin-top: -10px;

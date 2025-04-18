@@ -22,34 +22,51 @@
 
     .nav-buttons {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: end;
-      gap: 45px;
+      gap: 15px;
 
-      .list-icon {
-        list-style: none;
-        text-decoration: none;
+      .top {
+        display: flex;
+        justify-content: end;
+        width: 100%;
 
-        .nav-icon {
-          cursor: pointer;
-          color: #0a4b5e;
-          font-size: 1.25rem;
+        span {
+          font-size: 1rem;
+          color: #0c0950;
         }
       }
+      .bot {
+        display: flex;
+        align-items: center;
+        gap: 45px;
 
-      .btn-signin {
-        background-color: #161179;
-        border: none;
-        color: #fff;
-        font-size: 0.875rem;
-        font-weight: 500;
-        height: 38px;
-        padding: 0 15px;
-        cursor: pointer;
-        border-radius: 5px;
+        .list-icon {
+          list-style: none;
+          text-decoration: none;
 
-        &:hover {
-          background-color: #0c0950;
+          .nav-icon {
+            cursor: pointer;
+            color: #0a4b5e;
+            font-size: 1.25rem;
+          }
+        }
+
+        .btn-signin {
+          background-color: #161179;
+          border: none;
+          color: #fff;
+          font-size: 0.875rem;
+          font-weight: 500;
+          height: 38px;
+          padding: 0 15px;
+          cursor: pointer;
+          border-radius: 5px;
+
+          &:hover {
+            background-color: #0c0950;
+          }
         }
       }
     }

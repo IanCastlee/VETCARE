@@ -17,7 +17,8 @@
     align-items: center;
     justify-content: center;
     background-color: #0c0950;
-    height: 100px;
+    height: auto;
+    padding: 15px;
 
     .user-profile {
       display: flex;
@@ -34,6 +35,11 @@
         font-size: 1rem;
         font-weight: 500;
         color: #fbe4d6;
+      }
+
+      p {
+        color: #fbe4d6;
+        font-size: 0.75rem;
       }
     }
 
