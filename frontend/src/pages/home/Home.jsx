@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 // import waveImage from "../../assets/imges/wave-bg.png";
 import waveImage from "../../assets/imges/wavebg3.png";
 import dogImage from "../../assets/imges/dog.png";
+import { Link, useNavigate } from "react-router-dom";
+import CustomButton from "../../components/customButton/CustomButton";
+import axiosIntance from "../../../axios";
+import { useEffect, useState } from "react";
 
 //ICONS
 import { CiSearch } from "react-icons/ci";
@@ -14,21 +18,38 @@ import { CiStethoscope } from "react-icons/ci";
 import vaccine from "../../assets/icons/animals.png";
 import deworm from "../../assets/icons/deworm (1).png";
 import dental from "../../assets/icons/veterinary.png";
-
-import { Link, useNavigate } from "react-router-dom";
-import { veterinarianData } from "../../veterinarianData";
-
-import CustomButton from "../../components/customButton/CustomButton";
-import { useContext } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
+import Loader2 from "../../components/loader/Loader2";
 
 const Home = () => {
-  const navigate = useNavigate();
-  // const { test } = useContext(AuthContext);
+  const [showLoader2, setShowLoader2] = useState(false);
+  const [veterinarian, setVeterinarian] = useState([]);
+
+  //get veterinarian
+  useEffect(() => {
+    setShowLoader2(true);
+    const veterinarian = async () => {
+      try {
+        const res = await axiosIntance(
+          "admin/veterinarian/GetVeterinarian.php"
+        );
+        if (res.data.success) {
+          setVeterinarian(res.data.data);
+          setShowLoader2(false);
+        } else {
+          console.log("Error : ", res.data.data);
+        }
+      } catch (error) {
+        setShowLoader2(false);
+        console.log("Error : ", error);
+      }
+    };
+
+    veterinarian();
+  }, []);
 
   return (
     <>
-      <div className="home">
+      <div className="client-home">
         <div className="hero">
           <div className="hero-left">
             <img src={waveImage} alt="wave-bg" className="wave-bg" />
@@ -89,8 +110,10 @@ const Home = () => {
         <div className="veterinarian-container">
           <h2>Available Veterinarian</h2>
           <div className="veterinarian">
-            {veterinarianData &&
-              veterinarianData.map((item, index) => (
+            {showLoader2 ? (
+              <Loader2 />
+            ) : veterinarian.length > 0 ? (
+              veterinarian.map((item, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -99,7 +122,7 @@ const Home = () => {
                   className="veterinarian-wrapper"
                 >
                   <img
-                    src={item.profile}
+                    src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
                     alt="veterinarian-profile"
                     className="veterinarian-profile"
                   />
@@ -109,12 +132,12 @@ const Home = () => {
                       <div className="name-rule">
                         <span className="name">
                           <CiStethoscope className="icon" />
-                          {item.fname}
+                          {item.fullname}
                         </span>
-                        <span className="rule">{item.rule}</span>
+                        <span className="rule">{item.specialization}</span>
                       </div>
 
-                      <Link to={`/view-veterinarian/${item.id}`}>
+                      <Link to={`/view-veterinarian/${item.user_id}`}>
                         <button>
                           <LuView />
                         </button>
@@ -122,11 +145,16 @@ const Home = () => {
                     </div>
 
                     <button className="btn-set-appointment">
-                      <Link to="/set-appointment/">Set Appointment</Link>
+                      <Link to={`/set-appointment/${item.user_id}`}>
+                        Set Appointment
+                      </Link>
                     </button>
                   </div>
                 </motion.div>
-              ))}
+              ))
+            ) : (
+              <p>No Data Record</p>
+            )}
           </div>
         </div>
       </div>

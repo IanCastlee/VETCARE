@@ -1,9 +1,15 @@
-.admin-container{
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.admin-container {
   display: flex;
   width: 100%;
 }
 
-.admin-left{
+.admin-left {
   width: 100%;
   margin-left: 220px;
 }

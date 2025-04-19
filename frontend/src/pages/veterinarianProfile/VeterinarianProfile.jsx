@@ -1,33 +1,46 @@
 import "./VeterinarianProfile.scss";
+import axiosIntance from "../../../axios";
 
 //IMAGES
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { veterinarianData } from "../../veterinarianData";
 import { useEffect, useState } from "react";
 
 //IC0NS
 import { BiLeftArrowAlt } from "react-icons/bi";
+import { CiStethoscope } from "react-icons/ci";
+import { IoMdTime } from "react-icons/io";
+import { PiCertificateBold } from "react-icons/pi";
+import { LuBadgeCheck } from "react-icons/lu";
+import { MdOutlineMail } from "react-icons/md";
+import { PiPhone } from "react-icons/pi";
 
 const VeterinarianProfile = () => {
   const userId = useParams();
-
-  const [currentVeterinarian, setcurrentVeterinarian] = useState({});
-
-  console.log(
-    "veterinarianData : ",
-    veterinarianData &&
-      veterinarianData.map((item) => userId.userId == item.id && item)
-  );
-
-  console.log("currentVeterinarian : ", currentVeterinarian);
+  const [veterinarianInfo, setVeterinarianInfo] = useState([]);
+  const [veterinarianServices, setVeterinarianServices] = useState([]);
 
   useEffect(() => {
-    if (veterinarianData && userId) {
-      const found = veterinarianData.find((item) => item.id == userId.userId);
-      if (found) {
-        setcurrentVeterinarian(found);
+    const getClickedVeterinarian = async () => {
+      try {
+        const res = await axiosIntance.post(
+          "admin/veterinarian/GetClickedVeterinarian.php",
+          { user_id: userId.userId }
+        );
+        if (res.data.success) {
+          setVeterinarianInfo(res.data.data.veterinarianInfo);
+          console.log(res.data.data.veterinarianInfo);
+          setVeterinarianServices(res.data.data.services);
+
+          console.log(res.data.data.veterinarianInfo);
+        } else {
+          console.log(res.data.message);
+        }
+      } catch (error) {
+        console.log("Error : ", error);
       }
-    }
+    };
+    getClickedVeterinarian();
   }, [userId]);
 
   return (
@@ -39,49 +52,77 @@ const VeterinarianProfile = () => {
           </Link>
           <div className="profile-wrapper">
             <img
-              src={currentVeterinarian.profile}
+              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />
+          </div>
+          <div className="name-rules">
+            <h3>
+              <CiStethoscope className="icon" /> Dr.{" "}
+              {veterinarianInfo?.fullname}
+            </h3>
+            <span className="rule">{veterinarianInfo?.specialization}</span>
           </div>
         </div>
         <div className="veterinarian-bottom">
           <div className="profile-wrapper">
             <img
-              src={currentVeterinarian.profile}
+              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />
           </div>
           <div className="name-rule">
-            <h3>{currentVeterinarian.fname}</h3>
-            <span className="rule">{currentVeterinarian.rule}</span>
+            <h3>Dr. {veterinarianInfo?.fullname}</h3>
+            <span className="rule">{veterinarianInfo?.specialization}</span>
           </div>
           <div className="veterinarian-userinfo-card-wrapper">
-            <div className="userinfo-card">
-              <span className="experience">Experience</span>
-              <h6>10 years</h6>
+            <div className="services">
+              <h3>Services</h3>
+              <div className="services-wrapper">
+                {veterinarianServices &&
+                  veterinarianServices.map((item, index) => (
+                    <div key={index} className="card">
+                      <span className="service">{item.vservices}</span>
+                      <span className="price">₱ {item.price}</span>
+                    </div>
+                  ))}
+              </div>
             </div>
 
-            <div className="userinfo-card">
-              <span className="experience">Experience</span>
-              <h6>10 years</h6>
+            <div className="vet-info">
+              <span>
+                <IoMdTime className="icon" />
+                Time Schedule : {veterinarianInfo?.time}
+              </span>
+              <span>
+                <PiCertificateBold className="icon" />
+                Certification : {veterinarianInfo?.certification}
+              </span>
+
+              <span>
+                <LuBadgeCheck className="icon" />
+                Experience : {veterinarianInfo?.experience}
+              </span>
             </div>
 
-            <div className="userinfo-card">
-              <span className="experience">Experience</span>
-              <h6>10 years</h6>
+            <div className="contact">
+              <h3>Contact</h3>
+              <span>
+                <MdOutlineMail className="icon" />
+                Email : {veterinarianInfo?.email}
+              </span>
+              <span>
+                <PiPhone className="icon" />
+                Phone : {veterinarianInfo?.phone}
+              </span>
             </div>
           </div>
 
           <div className="about">
-            <h2>About</h2>
-            <p className="about">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
-              aperiam accusamus iusto natus aliquid officiis magni quis earum
-              fugit! Vitae esse dignissimos earum quam, fuga nisi sed ad numquam
-              adipisci?
-            </p>
+            <h3>About</h3>
+            <p className="about">{veterinarianInfo?.about}</p>
           </div>
 
           <button className="btn-sent-appointment">

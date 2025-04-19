@@ -1,5 +1,10 @@
 import "./Signin.scss";
 import { motion } from "framer-motion";
+import { useContext, useEffect, useState } from "react";
+import ConfirmationForm from "./ConfirmationForm";
+import { AuthContext } from "../../contexts/AuthContext";
+import axiosIntance from "../../../axios";
+import Loader from "../loader/Loader";
 
 //IMAGE
 import catdog from "../../assets/imges/signinimaeg.png";
@@ -7,17 +12,16 @@ import logo from "../../assets/icons/logo.png";
 
 //ICONS
 import { AiOutlineClose } from "react-icons/ai";
-import { useContext, useEffect, useState } from "react";
-import ConfirmationForm from "./ConfirmationForm";
-import { AuthContext } from "../../contexts/AuthContext";
-import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
-  const { login, formToShow, setFormToShow, errorMessage, _navigate } =
+  const [showLoader, setshowLoader] = useState(false);
+
+  const { setFormToShow, errorMessage, setCurrentUser } =
     useContext(AuthContext);
 
   const [showConfirmationForm, setShowConfirmationForm] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorResponse, setErrorResponse] = useState(null);
   const [emptyEmail, setEmptyEmail] = useState("");
   const [emptyPassword, setEmptyPassword] = useState("");
 
@@ -30,7 +34,7 @@ const Signin = () => {
     const { name, value } = e.target;
     setEmptyEmail("");
     setEmptyPassword("");
-
+    setErrorResponse(null);
     setSigninData((prev) => ({
       ...prev,
       [name]: value,
@@ -41,6 +45,8 @@ const Signin = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
 
+    setshowLoader(true);
+
     if (signinData.email === "" || signinData.password === "") {
       if (signinData.email === "") {
         setEmptyEmail("Email is required");
@@ -49,13 +55,35 @@ const Signin = () => {
         setEmptyPassword("Password is required");
       }
 
+      setshowLoader(false);
       return;
     }
 
     try {
-      await login(signinData);
+      const res = await axiosIntance.post("client/auth/Signin.php", {
+        email: signinData.email,
+        password: signinData.password,
+      });
+
+      if (res.data.success) {
+        setCurrentUser(res.data.data);
+        setTimeout(() => {
+          setshowLoader(false);
+
+          if (res.data.isClient) {
+            setFormToShow(null);
+          } else {
+            window.location.href = `/veterinarian/home/${res.data.uid}`;
+          }
+        }, 3000);
+      } else {
+        setErrorResponse(res.data.message);
+        console.log("ERROR : ", res.data);
+        setshowLoader(false);
+      }
     } catch (error) {
       console.log("Error : ", error);
+      setshowLoader(false);
     }
   };
 
@@ -93,7 +121,7 @@ const Signin = () => {
             </div>
           </div>
           <div className="right">
-            <span className="errorMessage">{errorMessage}</span>
+            <span className="errorMessage">{errorResponse}</span>
             <div className="form">
               <div className="input-wrapper">
                 <label
@@ -119,7 +147,7 @@ const Signin = () => {
                 </label>
                 <input
                   id="password"
-                  type="email"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   name="password"
                   onChange={handleChangeData}
@@ -130,8 +158,15 @@ const Signin = () => {
                 SIGN IN
               </button>
 
+              <div className="showpass-wrapper">
+                <input
+                  type="checkbox"
+                  onChange={(e) => setShowPassword(e.target.checked)}
+                />
+                <span>Show password</span>
+              </div>
               <div className="forgotpassword">
-                <span onClick={() => setFormToShow("confirm")}>
+                <span onClick={() => setFormToShow("forgot")}>
                   Forgot passord
                 </span>
               </div>
@@ -145,13 +180,11 @@ const Signin = () => {
         />
       </div>
 
-      {/* {formToShow === "signup" && (
-        <Signup close={() => setshowSignupForm(false)} />
-      )} */}
-
       {showConfirmationForm && (
         <ConfirmationForm close={() => setFormToShow(null)} />
       )}
+
+      {showLoader && <Loader _label="Please wait..." />}
     </>
   );
 };

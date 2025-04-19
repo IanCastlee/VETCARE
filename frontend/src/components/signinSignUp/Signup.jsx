@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 //IMAGE
 import catdog from "../../assets/imges/signinimaeg.png";
 import logo from "../../assets/icons/logo.png";
-import { Link } from "react-router-dom";
 
 //ICONS
 import { AiOutlineClose } from "react-icons/ai";
@@ -13,7 +12,6 @@ import { FaArrowCircleRight } from "react-icons/fa";
 import { FaArrowCircleLeft } from "react-icons/fa";
 import Signin from "./Signin";
 import axiosIntance from "../../../axios";
-import axios from "axios";
 import Loader from "../loader/Loader";
 import Toaster from "../toaster/Toaster";
 import { AuthContext } from "../../contexts/AuthContext";

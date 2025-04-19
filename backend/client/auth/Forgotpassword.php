@@ -9,13 +9,12 @@ require '../../vendor/autoload.php';
 
 $input = json_decode(file_get_contents('php://input'), true);
 
-if (isset($input['fullname'], $input['address'], $input['phone'], $input['email'], $input['password'])) {
+if (isset($input['email'], $input['password'])) {
 
-    $fullname = $input['fullname'];
-    $address = $input['address'];
-    $phone = $input['phone'];
+
     $email = $input['email'];
     $password = password_hash($input['password'], PASSWORD_DEFAULT);
+    $status = 0;
     $verify_token = rand(1000, 9999);
 
 
@@ -26,12 +25,10 @@ if (isset($input['fullname'], $input['address'], $input['phone'], $input['email'
     $result = $stmt_check_email->get_result();
 
     if ($result->num_rows > 0) {
-        echo json_encode(['success' => false, 'message' => "Email already exists"]);
-    } else {
-        $stmt_insert = $conn->prepare("INSERT INTO users (fullname, address, phone, email, password, verify_token) VALUES (?,?,?,?,?,?)");
-        if ($stmt_insert) {
-            $stmt_insert->bind_param("ssssss", $fullname, $address, $phone, $email, $password, $verify_token);
-            if ($stmt_insert->execute()) {
+        $update_status = $conn->prepare("UPDATE users SET password = ?, verify_token = ?, status = ? WHERE email = ?");
+        if ($update_status) {
+            $update_status->bind_param("ssis", $password, $verify_token, $status, $email);
+            if ($update_status->execute()) {
 
                 $mail = new PHPMailer(true);
 
@@ -48,26 +45,26 @@ if (isset($input['fullname'], $input['address'], $input['phone'], $input['email'
                     $mail->addAddress($email);
 
                     $mail->isHTML(true);
-                    $mail->Subject = 'Verify your Email - VETCARE';
+                    $mail->Subject = 'Password Reset Verification Code - VETCARE';
 
                     $mail->Body = "
-                        <h2>Welcome to VETCARE!</h2>
-                        <p>Thank you for registering with us. To activate your account, please verify your email address using the code below:</p>
+                        <h2>Password Reset Request - VETCARE</h2>
+                        <p>We received a request to reset your password. Use the verification code below to proceed:</p>
                         <p style='font-size:18px;'><strong>Your Verification Code:</strong> <b>$verify_token</b></p>
-                        <p>If you did not sign up for a VETCARE account, please ignore this email.</p>
+                        <p>If you did not request a password reset, please ignore this email or contact our support team.</p>
                         <p>Best regards,<br>VETCARE Team</p>
                     ";
 
-                    $mail->AltBody = "Welcome to VETCARE!\n\n"
-                        . "Thank you for registering with us. To activate your account, please verify your email address using the code below:\n"
+                    $mail->AltBody = "Password Reset Request - VETCARE\n\n"
+                        . "We received a request to reset your password. Use the verification code below to proceed:\n"
                         . "Verification Code: $verify_token\n\n"
-                        . "If you did not sign up for a VETCARE account, please ignore this email.\n\n"
+                        . "If you did not request a password reset, please ignore this email or contact our support team.\n\n"
                         . "Best regards,\nVETCARE";
 
                     $mail->send();
                     echo json_encode([
                         'success' => true,
-                        'message' => "Successfully registered! Check your email ($email) to verify your account.",
+                        'message' => "A password reset code has been sent to your email ($email). Please check your inbox to proceed.",
                         'email' => $email
                     ]);
                 } catch (Exception $e) {
@@ -79,10 +76,12 @@ if (isset($input['fullname'], $input['address'], $input['phone'], $input['email'
             } else {
                 echo json_encode(['success' => false, 'message' => "Database error: " . $conn->error]);
             }
-            $stmt_insert->close();
+            $update_status->close();
         } else {
             echo json_encode(['success' => false, 'message' => "Prepare failed: " . $conn->error]);
         }
+    } else {
+        echo json_encode(['success' => false, 'message' => "Email not registered"]);
     }
 } else {
     echo json_encode(['success' => false, 'message' => "Invalid Input"]);

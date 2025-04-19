@@ -1,4 +1,6 @@
 import "./setAppointment.scss";
+import { useParams } from "react-router-dom";
+import axiosIntance from "../../../axios";
 
 //IMAGES
 import profile from "../../assets/imges/veterinarian1.png";
@@ -6,19 +8,57 @@ import profile from "../../assets/imges/veterinarian1.png";
 //ICONS
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { GoClockFill } from "react-icons/go";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { FaArrowLeft } from "react-icons/fa6";
+import { CiStethoscope } from "react-icons/ci";
 
 const SetAppointment = () => {
+  const userId = useParams();
+  const [veterinarianInfo, setVeterinarianInfo] = useState([]);
+  const [veterinarianServices, setVeterinarianServices] = useState([]);
+
   const [showDateTime, setshowDateTime] = useState("1");
+
+  useEffect(() => {
+    const getClickedVeterinarian = async () => {
+      try {
+        const res = await axiosIntance.post(
+          "admin/veterinarian/GetClickedVeterinarian.php",
+          { user_id: userId.userId }
+        );
+        if (res.data.success) {
+          setVeterinarianInfo(res.data.data.veterinarianInfo);
+          console.log(res.data.data.veterinarianInfo);
+          setVeterinarianServices(res.data.data.services);
+
+          console.log(res.data.data.services);
+        } else {
+          console.log(res.data.message);
+        }
+      } catch (error) {
+        console.log("Error : ", error);
+      }
+    };
+    getClickedVeterinarian();
+  }, [userId]);
+
   return (
     <div className="setappointment">
       <div className="setappointment-container">
         <div className="setappointment-top">
           <div className="profile-wrapper">
-            <img src={profile} alt="profile" className="profile" />
+            <img
+              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              alt="profile"
+              className="profile"
+            />
           </div>
+
+          <h3>
+            <CiStethoscope className="icon" /> Dr. {veterinarianInfo?.fullname}
+          </h3>
+          <span>{veterinarianInfo?.specialization}</span>
         </div>
 
         <div className="setappointment-bot">
@@ -31,6 +71,18 @@ const SetAppointment = () => {
                 Hey Eyhan, please fill out the form for your pet's information.
               </span>
               <div className="form">
+                <div className="input-wrapper-select-services">
+                  <label htmlFor="type">Choose Services</label>
+                  <select name="service" id="service">
+                    <option value="">Choose Services</option>
+                    {veterinarianServices &&
+                      veterinarianServices.map((item) => (
+                        <option key={item.vservices_id} value={item.services}>
+                          {item.vservices}
+                        </option>
+                      ))}
+                  </select>
+                </div>
                 <div className="type-breed">
                   <div className="input-wrapper">
                     <label htmlFor="type">Type of your Pet</label>

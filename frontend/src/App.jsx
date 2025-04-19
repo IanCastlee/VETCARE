@@ -31,7 +31,8 @@ import ActiveVeterinarian from "./pages/ADMIN/veterinarian/ActiveVeterinarian";
 const Layout = () => {
   const location = useLocation();
   const shouldHideNavbar =
-    location.pathname === "/" || location.pathname.startsWith("/veterinarian/");
+    location.pathname === "/" ||
+    location.pathname.startsWith("/view-veterinarian/");
   return (
     <>
       {!shouldHideNavbar && <Navbar />}
@@ -43,7 +44,7 @@ const Layout = () => {
           path="/view-veterinarian/:userId"
           element={<VeterinarianProfile />}
         />
-        <Route path="/set-appointment/" element={<SetAppointment />} />
+        <Route path="/set-appointment/:userId" element={<SetAppointment />} />
         <Route path="/myappointment/" element={<Appointment />} />
 
         <Route path="/signin/" element={<Signin />} />
@@ -59,7 +60,7 @@ const Veterinarian = () => {
     <>
       <VeterinarianNavbar />
       <Routes>
-        <Route path="/home/" element={<VeterinarianHome />} />
+        <Route path="/home/:vetId" element={<VeterinarianHome />} />
       </Routes>
     </>
   );
