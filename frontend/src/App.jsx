@@ -30,12 +30,15 @@ import ActiveVeterinarian from "./pages/ADMIN/veterinarian/ActiveVeterinarian";
 
 const Layout = () => {
   const location = useLocation();
+
+  const isHome = location.pathname === "/home/";
+
   const shouldHideNavbar =
     location.pathname === "/" ||
     location.pathname.startsWith("/view-veterinarian/");
   return (
     <>
-      {!shouldHideNavbar && <Navbar />}
+      {!shouldHideNavbar && <Navbar isHome={isHome} />}
 
       <Routes>
         <Route path="/" element={<LandingPage />} />

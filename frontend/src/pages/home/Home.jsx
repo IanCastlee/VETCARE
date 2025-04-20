@@ -1,13 +1,14 @@
 import "./Home.scss";
 import { motion } from "framer-motion";
+import { AuthContext } from "../../contexts/AuthContext";
+
 //IMAGES
-// import waveImage from "../../assets/imges/wave-bg.png";
 import waveImage from "../../assets/imges/wavebg3.png";
 import dogImage from "../../assets/imges/dog.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import CustomButton from "../../components/customButton/CustomButton";
 import axiosIntance from "../../../axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 //ICONS
 import { CiSearch } from "react-icons/ci";
@@ -21,6 +22,7 @@ import dental from "../../assets/icons/veterinary.png";
 import Loader2 from "../../components/loader/Loader2";
 
 const Home = () => {
+  const { setFormToShow, currentUser } = useContext(AuthContext);
   const [showLoader2, setShowLoader2] = useState(false);
   const [veterinarian, setVeterinarian] = useState([]);
 
@@ -30,7 +32,8 @@ const Home = () => {
     const veterinarian = async () => {
       try {
         const res = await axiosIntance(
-          "admin/veterinarian/GetVeterinarian.php"
+          //"admin/veterinarian/GetVeterinarian.php"
+          "https://vetcare.kesug.com/backend/admin/veterinarian/GetVeterinarian.php"
         );
         if (res.data.success) {
           setVeterinarian(res.data.data);
@@ -122,7 +125,8 @@ const Home = () => {
                   className="veterinarian-wrapper"
                 >
                   <img
-                    src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
+                    //src={`http://localhost/VETCARE/backend/uploads/${item?.profile}`}
+                    src={`https://vetcare.kesug.com/backend/uploads/${item?.profile}`}
                     alt="veterinarian-profile"
                     className="veterinarian-profile"
                   />
@@ -145,9 +149,15 @@ const Home = () => {
                     </div>
 
                     <button className="btn-set-appointment">
-                      <Link to={`/set-appointment/${item.user_id}`}>
-                        Set Appointment
-                      </Link>
+                      {currentUser === null ? (
+                        <Link onClick={() => setFormToShow("signin")}>
+                          Set Appointment
+                        </Link>
+                      ) : (
+                        <Link to={`/set-appointment/${item.user_id}`}>
+                          Set Appointment
+                        </Link>
+                      )}
                     </button>
                   </div>
                 </motion.div>

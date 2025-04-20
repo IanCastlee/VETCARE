@@ -85,9 +85,11 @@ const MobileSidebar = ({ close }) => {
           <Link className="btn-link">
             <HiMiniCalendarDateRange className="icon" /> Message
           </Link>
-          <Link className="btn-link" onClick={handleLogout}>
-            <IoMdPower className="icon" /> Logout
-          </Link>
+          {currentUser !== null && (
+            <Link className="btn-link" onClick={handleLogout}>
+              <IoMdPower className="icon" /> Logout
+            </Link>
+          )}
         </div>
       </motion.div>
       {formToShow === "signin" && <Signin close={() => setFormToShow(null)} />}

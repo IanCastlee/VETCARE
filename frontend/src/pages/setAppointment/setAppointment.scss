@@ -89,22 +89,45 @@
           display: flex;
           flex-direction: column;
           gap: 10px;
-
-          .input-wrapper-select-services {
-            width: 50%;
+          .service-petname {
+            width: 100%;
             display: flex;
-            flex-direction: column;
-            margin-bottom: 20px;
-            label {
-              font-size: 0.75rem;
-              color: #0c0950;
+            gap: 10px;
+
+            .input-wrapper-select-services {
+              width: 50%;
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+
+              select {
+                height: 38px;
+                width: 100%;
+                padding: 0 10px;
+                border-radius: 5px;
+                border: 1px solid #0c0950;
+              }
             }
 
-            select {
-              height: 38px;
-              width: 100%;
-              padding: 0 10px;
-              border-radius: 5px;
+            .input-wrapper {
+              width: 50%;
+              display: flex;
+              flex-direction: column;
+              label {
+                font-size: 0.75rem;
+                color: #0c0950;
+              }
+
+              input {
+                height: 38px;
+                width: 100%;
+                padding: 0 10px;
+                border-radius: 5px;
+                border: 1px solid #0c0950;
+              }
             }
           }
 
@@ -259,15 +282,42 @@
           width: 100%;
           display: flex;
           justify-content: center;
-          gap: 30px;
+          flex-direction: column;
+          align-items: center;
 
-          .date {
-            font-size: 12px;
-            color: #0a4b5e;
-            cursor: pointer;
+          span {
+            font-size: 0.875rem;
+            color: #0c0950;
+          }
+          .date-input {
+            height: 38px;
             border: 1px solid #0a4b5e;
-            padding: 5px 8px;
             border-radius: 5px;
+            display: flex;
+            align-items: center;
+            width: 200px;
+            justify-content: space-between;
+            padding: 0 10px;
+
+            input {
+              width: 100%;
+              font-size: 12px;
+              color: #0c0950;
+              cursor: pointer;
+              padding: 5px 8px;
+              border-radius: 5px;
+              border: none;
+              background-color: transparent;
+
+              &:focus {
+                outline: none;
+              }
+            }
+
+            .icon {
+              font-size: 1.125rem;
+              color: #0c0950;
+            }
           }
         }
       }
@@ -300,12 +350,21 @@
           flex-wrap: wrap;
 
           .time {
+            width: 30%;
             font-size: 12px;
             color: #0a4b5e;
             cursor: pointer;
             border: 1px solid #0a4b5e;
             padding: 5px 8px;
             border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            &.selected {
+              background-color: #0c0950;
+              color: #fff;
+            }
           }
         }
 
@@ -427,22 +486,45 @@
             flex-direction: column;
             gap: 10px;
 
-            .input-wrapper-select-services {
-              width: 50%;
+            .service-petname {
+              width: 100%;
               display: flex;
-              flex-direction: column;
-              margin-bottom: 20px;
-              label {
-                font-size: 0.75rem;
-                color: #0c0950;
+              gap: 10px;
+
+              .input-wrapper-select-services {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                label {
+                  font-size: 0.75rem;
+                  color: #0c0950;
+                }
+
+                select {
+                  height: 38px;
+                  width: 100%;
+                  padding: 0 10px;
+                  border-radius: 5px;
+                  border: 1px solid lightgray;
+                }
               }
 
-              select {
-                height: 38px;
-                width: 100%;
-                padding: 0 10px;
-                border-radius: 5px;
-                border: 1px solid lightgrey;
+              .input-wrapper {
+                width: 50%;
+                display: flex;
+                flex-direction: column;
+                label {
+                  font-size: 0.75rem;
+                  color: #0c0950;
+                }
+
+                input {
+                  height: 38px;
+                  width: 100%;
+                  padding: 0 10px;
+                  border-radius: 5px;
+                  border: 1px solid lightgray;
+                }
               }
             }
 
@@ -590,15 +672,41 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 30px;
 
-            .date {
-              font-size: 12px;
+            span {
+              font-size: 0.875rem;
               color: #0c0950;
-              cursor: pointer;
+            }
+
+            .date-input {
+              height: 38px;
               border: 1px solid #0a4b5e;
-              padding: 5px 8px;
               border-radius: 5px;
+              display: flex;
+              align-items: center;
+              width: 200px;
+              justify-content: space-between;
+              padding: 0 10px;
+
+              input {
+                width: 100%;
+                font-size: 12px;
+                color: #0c0950;
+                cursor: pointer;
+                padding: 5px 8px;
+                border-radius: 5px;
+                border: none;
+                background-color: transparent;
+
+                &:focus {
+                  outline: none;
+                }
+              }
+
+              .icon {
+                font-size: 1.125rem;
+                color: #0c0950;
+              }
             }
           }
         }
@@ -620,16 +728,25 @@
             width: 100%;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 10px;
             flex-wrap: wrap;
 
             .time {
+              width: 45%;
               font-size: 12px;
               color: #0a4b5e;
               cursor: pointer;
               border: 1px solid #0a4b5e;
               padding: 5px 8px;
               border-radius: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              &.selected {
+                background-color: #0c0950;
+                color: #fff;
+              }
             }
           }
 

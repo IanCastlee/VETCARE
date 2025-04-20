@@ -2,9 +2,9 @@ import "./Navbar.scss";
 import MobileSidebar from "../mobileSidebar/MobileSidebar";
 import OverLay from "../overlay/OverLay";
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
-import Signin from "../signinSignUp/Signin";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import axiosIntance from "../../../axios";
 
 //IMAGES
 import logo from "../../assets/icons/logo.png";
@@ -15,11 +15,38 @@ import { FaCalendarCheck } from "react-icons/fa";
 import { FaBell } from "react-icons/fa6";
 import { FaUserAlt } from "react-icons/fa";
 import { RiMenu3Line } from "react-icons/ri";
+import { IoSettingsOutline } from "react-icons/io5";
+import { IoMdLogOut } from "react-icons/io";
 
-const Navbar = () => {
-  const { setFormToShow, formToShow, currentUser } = useContext(AuthContext);
+const Navbar = ({ isHome }) => {
+  const navigate = useNavigate();
+  const { setFormToShow, setCurrentUser, currentUser } =
+    useContext(AuthContext);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-  // // const [showForm, setShowForm] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axiosIntance.post(
+        "client/auth/Logout.php",
+        {},
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        localStorage.removeItem("data");
+        localStorage.clear();
+        navigate("/home/");
+        setCurrentUser(null);
+        setFormToShow("signin");
+      } else {
+        console.error("Logout failed: ", res.data.message);
+      }
+    } catch (error) {
+      console.log("Error in logging out", error);
+    }
+  };
 
   return (
     <>
@@ -27,20 +54,25 @@ const Navbar = () => {
         <div className="nav-container">
           <img src={logo} alt="logo" className="logo" />
           <div className="nav-buttons">
-            <div className="top">
-              <span>Welcome, {currentUser?.fullname}</span>
-            </div>
+            {currentUser !== null && (
+              <div className="top">
+                <span>Welcome, {currentUser?.fullname}</span>
+              </div>
+            )}
             <div className="bot">
               <Link to="/home/" className="list-icon">
                 <GoHomeFill className="nav-icon" />
               </Link>
-              <Link className="list-icon">
+              <Link to="/myappointment/" className="list-icon">
                 <FaCalendarCheck className="nav-icon" />
               </Link>
               <Link className="list-icon">
                 <FaBell className="nav-icon" />
               </Link>
-              <Link className="list-icon">
+              <Link
+                onClick={() => setShowDropdown(!showDropdown)}
+                className="list-icon"
+              >
                 <FaUserAlt className="nav-icon" />
               </Link>
 
@@ -55,10 +87,23 @@ const Navbar = () => {
             </div>
           </div>
           <RiMenu3Line
-            className="menu-icon"
+            className={`menu-icon ${isHome ? "home_" : ""}`}
             onClick={() => setShowMobileSidebar(true)}
           />
         </div>
+
+        {showDropdown && (
+          <div className="dropdown-client">
+            <div className="container">
+              <span>
+                <IoSettingsOutline className="icon" /> Setting
+              </span>
+              <span onClick={handleLogout}>
+                <IoMdLogOut className="icon" /> Logout
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {showMobileSidebar && (

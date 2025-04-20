@@ -1,5 +1,6 @@
 import "./Navbar.scss";
-
+import axiosIntance from "../../../../../axios";
+import { AuthContext } from "../../../../contexts/AuthContext";
 import logo from "../../../../assets/icons/logo.png";
 
 //ICONS
@@ -11,8 +12,6 @@ import { FaUserCircle } from "react-icons/fa";
 import { BiSolidMessageRoundedDetail } from "react-icons/bi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdLogOut } from "react-icons/io";
-import axiosIntance from "../../../../../axios";
-import { AuthContext } from "../../../../contexts/AuthContext";
 
 const Navbar = () => {
   const navigate = useNavigate();

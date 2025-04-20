@@ -1,9 +1,9 @@
 import "./VeterinarianProfile.scss";
 import axiosIntance from "../../../axios";
+import { motion } from "framer-motion";
 
 //IMAGES
 import { Link, useParams } from "react-router-dom";
-import { veterinarianData } from "../../veterinarianData";
 import { useEffect, useState } from "react";
 
 //IC0NS
@@ -46,13 +46,19 @@ const VeterinarianProfile = () => {
   return (
     <div className="veterinarian">
       <div className="veterinarian-container">
-        <div className="veterinarian-top">
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7 }}
+          className="veterinarian-top"
+        >
           <Link to="/home/" className="btn-backlink">
             <BiLeftArrowAlt className="back-icon" />
           </Link>
           <div className="profile-wrapper">
             <img
-              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />
@@ -64,11 +70,12 @@ const VeterinarianProfile = () => {
             </h3>
             <span className="rule">{veterinarianInfo?.specialization}</span>
           </div>
-        </div>
+        </motion.div>
         <div className="veterinarian-bottom">
           <div className="profile-wrapper">
             <img
-              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />
@@ -126,7 +133,9 @@ const VeterinarianProfile = () => {
           </div>
 
           <button className="btn-sent-appointment">
-            <Link to="/set-appointment/">Set Appointment</Link>
+            <Link to={`/set-appointment/${veterinarianInfo?.user_id}`}>
+              Set Appointment
+            </Link>
           </button>
         </div>
       </div>

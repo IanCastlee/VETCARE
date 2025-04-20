@@ -33,7 +33,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        justify-content: center;
+        justify-content: start;
 
         .title {
           color: #0c0950;
@@ -110,7 +110,7 @@
 
             .icon-wrapper {
               .icon {
-                font-size: 40px;
+                font-size: 30px;
                 color: green;
               }
             }
@@ -124,7 +124,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        justify-content: center;
+        justify-content: start;
 
         .title {
           color: #0c0950;
@@ -200,7 +200,7 @@
 
             .icon-wrapper {
               .icon {
-                font-size: 40px;
+                font-size: 30px;
                 color: rgb(61, 55, 55);
               }
             }
