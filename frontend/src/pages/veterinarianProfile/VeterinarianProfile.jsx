@@ -57,8 +57,8 @@ const VeterinarianProfile = () => {
           </Link>
           <div className="profile-wrapper">
             <img
-              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />
@@ -74,8 +74,8 @@ const VeterinarianProfile = () => {
         <div className="veterinarian-bottom">
           <div className="profile-wrapper">
             <img
-              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+              //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />

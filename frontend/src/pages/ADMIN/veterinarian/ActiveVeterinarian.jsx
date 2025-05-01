@@ -103,7 +103,7 @@ const ActiveVeterinarian = () => {
   useEffect(() => {
     const veterinarian = async () => {
       try {
-        const res = await axiosIntance(
+        const res = await axiosIntance.get(
           "admin/veterinarian/GetVeterinarian.php"
         );
         if (res.data.success) {

@@ -7,16 +7,19 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 //IMAGES
-import profile from "../../assets/imges/veterinarian1.png";
+import cat from "../../assets/icons/mouth.png";
 
 //ICONS
-import { IoCalendarNumberSharp } from "react-icons/io5";
-import { GoClockFill } from "react-icons/go";
 import { useContext, useEffect, useState } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import { FaArrowLeft } from "react-icons/fa6";
 import { CiStethoscope } from "react-icons/ci";
 import { BsCalendar2Date } from "react-icons/bs";
+import { IoMdClose } from "react-icons/io";
+import { LuCalendarClock } from "react-icons/lu";
+import { MdOutlineMedicalServices } from "react-icons/md";
+import { AiOutlineSnippets } from "react-icons/ai";
+import Loader3 from "../../components/loader/Loader3";
 
 const SetAppointment = () => {
   const { currentUser } = useContext(AuthContext);
@@ -24,6 +27,8 @@ const SetAppointment = () => {
   const [veterinarianInfo, setVeterinarianInfo] = useState([]);
   const [veterinarianServices, setVeterinarianServices] = useState([]);
   const [showDateTime, setshowDateTime] = useState("1");
+  const [showSummaryForm, setShowSummaryForm] = useState(false);
+  const [showLoader3, setShowLoader3] = useState(false);
 
   //setAppointment
   const [appointmentForm, setAppointment] = useState({
@@ -44,6 +49,8 @@ const SetAppointment = () => {
   const [price, setPrice] = useState(null);
   const [slots, setSlots] = useState([]);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
+  const [notAvailableTimeSlot, setNotAvailableTimeSlot] = useState([]);
+  const [formattedDate_, setformattedDate] = useState(null);
 
   const [emptyService, setEmptyService] = useState("");
   const [emptypet_name, setEmptypet_name] = useState("");
@@ -86,7 +93,6 @@ const SetAppointment = () => {
   };
 
   //handleNext
-
   const handleNext = () => {
     if (
       appointmentForm.service === "" ||
@@ -134,20 +140,43 @@ const SetAppointment = () => {
     }
     setshowDateTime("2");
   };
+  //timeslots to remove
+  const handleTimeDateSlotToRemove = async () => {
+    const formattedDate = new Date(
+      appointmentForm.appointment_date
+    ).toLocaleDateString("en-CA");
+
+    try {
+      const res = await axiosIntance.get(
+        "client/appointment/GetTimeDateToRemove.php",
+        {
+          params: { choosenDate: formattedDate },
+        }
+      );
+      if (res.data.success) {
+        setNotAvailableTimeSlot(res.data.data);
+        console.log("NOT AVAILABLE TIME SLOT : ", res.data.data);
+      } else {
+        console.log("Error : ", res.data);
+      }
+    } catch (error) {
+      console.log("Error : ", error);
+    }
+  };
+
+  useEffect(() => {
+    handleTimeDateSlotToRemove();
+  }, [appointmentForm.appointment_date]);
 
   //handle submit
   const handleSubmitAppointment = async (e) => {
     e.preventDefault();
 
-    // Check if appointment_date is empty
-    if (!appointmentForm.appointment_date) {
-      setEmptyappointment_date("Select your preferred date");
-      return;
-    }
-
     const formattedDate = new Date(
       appointmentForm.appointment_date
     ).toLocaleDateString("en-CA");
+
+    setformattedDate(formattedDate);
 
     try {
       const res = await axiosIntance.post(
@@ -179,7 +208,7 @@ const SetAppointment = () => {
       console.log("Error : ", error);
     }
   };
-
+  console.log("formattedDate_ : ", formattedDate_);
   useEffect(() => {
     const getClickedVeterinarian = async () => {
       try {
@@ -189,7 +218,6 @@ const SetAppointment = () => {
         );
         if (res.data.success) {
           setVeterinarianInfo(res.data.data.veterinarianInfo);
-          console.log(res.data.data.veterinarianInfo);
           setVeterinarianServices(res.data.data.services);
         } else {
           console.log(res.data.message);
@@ -204,6 +232,7 @@ const SetAppointment = () => {
   //get time slot
   useEffect(() => {
     if (!veterinarianInfo?.time || !veterinarianInfo?.duration) return;
+    if (!notAvailableTimeSlot) return;
 
     const generateTimeSlots = (timeRange, duration) => {
       const [start, end] = timeRange.split(" - ");
@@ -260,374 +289,537 @@ const SetAppointment = () => {
       return `${hours}:${minutes.toString().padStart(2, "0")}${ampm}`;
     };
 
-    const results = generateTimeSlots(
+    const allSlots = generateTimeSlots(
       veterinarianInfo.time,
       veterinarianInfo.duration
     );
-    setSlots(results);
-  }, [veterinarianInfo]);
 
-  console.log("CLICKED : ", selectedTimeSlot);
+    // extract unavailable time slots from the array of objects
+    const unavailable = notAvailableTimeSlot.map(
+      (item) => item.appointment_time
+    );
+
+    // filter out unavailable slots
+    const availableSlots = allSlots.filter(
+      (slot) => !unavailable.includes(slot)
+    );
+
+    setSlots(availableSlots);
+  }, [veterinarianInfo, notAvailableTimeSlot]);
+
+  const handleShowSummary = () => {
+    // Check if appointment_date is empty
+    if (!appointmentForm.appointment_date) {
+      setEmptyappointment_date("Select your preferred date");
+      return;
+    }
+    if (selectedTimeSlot === null) {
+      return;
+    }
+
+    const formattedDate = new Date(
+      appointmentForm.appointment_date
+    ).toLocaleDateString("en-CA");
+
+    setformattedDate(formattedDate);
+    setShowSummaryForm(true);
+  };
+
+  const handlePayment = async (e) => {
+    e.preventDefault();
+
+    setShowLoader3(true);
+
+    try {
+      const data = {
+        description: `Payment for ${appointmentForm.service}`,
+        remarks: "Remarks",
+        amount: price * 100,
+      };
+
+      const response = await axiosIntance.post("paymongo.php", data, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.checkout_url) {
+        setTimeout(() => {
+          setShowLoader3(false);
+        }, 2000);
+        handleSubmitAppointment();
+        window.location.href = response.data.checkout_url;
+      } else {
+        setShowLoader3(false);
+        console.log("Error: Unable to fetch the checkout URL.");
+        console.log("Err :", response.data);
+      }
+    } catch (error) {
+      setShowLoader3(false);
+      console.error("Error:", error);
+    }
+  };
 
   return (
-    <div className="setappointment">
-      <div className="setappointment-container">
-        <motion.div
-          initial={{ opacity: 0, x: -100 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7 }}
-          className="setappointment-top"
-        >
-          <div className="profile-wrapper">
-            <img
-              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
-              alt="profile"
-              className="profile"
-            />
-          </div>
-
-          <h3>
-            <CiStethoscope className="icon" /> Dr. {veterinarianInfo?.fullname}
-          </h3>
-          <span>{veterinarianInfo?.specialization}</span>
-        </motion.div>
-
-        <div className="setappointment-bot">
-          <div className="profile-wrapper">
-            <img
-              //src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
-              alt="profile"
-              className="profile"
-            />
-          </div>
-          {showDateTime === "1" && (
-            <div className="petinfo-form">
-              <span className="note">
-                Hey Eyhan, please fill out the form for your pet's information.
-              </span>
-              <div className="form">
-                <div className="service-petname">
-                  <div className="input-wrapper-select-services">
-                    <label
-                      style={{ color: `${emptyService !== "" ? "red" : ""}` }}
-                      htmlFor="type"
-                    >
-                      {emptyService !== "" ? emptyService : "Choose Services"}
-                    </label>
-                    <select
-                      style={{
-                        border: `${emptyService !== "" ? "2px solid red" : ""}`,
-                      }}
-                      name="service"
-                      value={appointmentForm.service}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        setAppointment((prev) => ({
-                          ...prev,
-                          service: value,
-                        }));
-
-                        const selected = veterinarianServices.find(
-                          (item) => item.vservices_id.toString() === value
-                        );
-                        setPrice(selected ? selected.price : "");
-                      }}
-                      id="service"
-                    >
-                      <option value="">Choose Services</option>
-
-                      {veterinarianServices &&
-                        veterinarianServices.map((item) => (
-                          <option
-                            key={item.vservices_id}
-                            value={item.vservices}
-                          >
-                            {item.vservices} - ₱{item.price}
-                          </option>
-                        ))}
-                    </select>
-                  </div>
-
-                  <div className="input-wrapper">
-                    <label
-                      style={{ color: `${emptypet_name !== "" ? "red" : ""}` }}
-                      htmlFor="petname"
-                    >
-                      {emptypet_name !== "" ? emptypet_name : "Petname"}
-                    </label>
-                    <input
-                      style={{
-                        border: `${
-                          emptypet_name !== "" ? "2px solid red" : ""
-                        }`,
-                      }}
-                      type="text"
-                      name="pet_name"
-                      placeholder="Pet Name"
-                      value={appointmentForm.pet_name}
-                      onChange={handleChange}
-                    />
-                  </div>
-                </div>
-
-                <div className="type-breed">
-                  <div className="input-wrapper">
-                    <label
-                      style={{ color: `${emptypet_type !== "" ? "red" : ""}` }}
-                      htmlFor="type"
-                    >
-                      {emptypet_type !== "" ? emptypet_type : "Pet Type"}
-                    </label>
-                    <select
-                      style={{
-                        border: `${
-                          emptypet_type !== "" ? "2px solid red" : ""
-                        }`,
-                      }}
-                      value={appointmentForm.pet_type}
-                      onChange={handleChange}
-                      name="pet_type"
-                      id="type"
-                    >
-                      <option value=""></option>
-                      <option value="Dog">Dog</option>
-                      <option value="Cat">Cat</option>
-                    </select>
-                  </div>
-                  <div className="input-wrapper">
-                    <label
-                      style={{ color: `${emptybreed !== "" ? "red" : ""}` }}
-                      htmlFor="type"
-                    >
-                      {emptybreed !== "" ? emptybreed : "Breed"}
-                    </label>
-                    <input
-                      style={{
-                        border: `${emptybreed !== "" ? "2px solid red" : ""}`,
-                      }}
-                      value={appointmentForm.breed}
-                      onChange={handleChange}
-                      type="text"
-                      name="breed"
-                      placeholder="Breed"
-                    />
-                  </div>
-                </div>
-                <div className="age-weight">
-                  <div className="input-wrapper">
-                    <label
-                      style={{ color: `${emptyage !== "" ? "red" : ""}` }}
-                      htmlFor="age"
-                    >
-                      {" "}
-                      {emptyage !== "" ? emptyage : "Pet Age"}
-                    </label>
-                    <input
-                      style={{
-                        border: `${emptyage !== "" ? "2px solid red" : ""}`,
-                      }}
-                      value={appointmentForm.age}
-                      onChange={handleChange}
-                      type="text"
-                      name="age"
-                      placeholder="Age"
-                    />
-                  </div>
-                  <div className="input-wrapper">
-                    <label
-                      style={{ color: `${emptyweight !== "" ? "red" : ""}` }}
-                      htmlFor="weight"
-                    >
-                      {" "}
-                      {emptyweight !== "" ? emptyweight : "Pet Weight"}
-                    </label>
-                    <input
-                      style={{
-                        border: `${emptyweight !== "" ? "2px solid red" : ""}`,
-                      }}
-                      value={appointmentForm.weight}
-                      onChange={handleChange}
-                      type="text"
-                      name="weight"
-                      placeholder="Weight"
-                    />
-                  </div>
-                </div>
-
-                <div className="radio-wrapper">
-                  <label
-                    style={{ color: `${emptygender !== "" ? "red" : ""}` }}
-                    htmlFor="gender"
-                  >
-                    {emptygender !== "" ? emptygender : "Gender"}
-                  </label>
-                  <div className="male-female">
-                    <div className="gender-wrapper">
-                      <input
-                        value="Male"
-                        onChange={handleChange}
-                        type="radio"
-                        name="gender"
-                      />
-                      <label htmlFor="male">Male</label>
-                    </div>
-                    <div className="gender-wrapper">
-                      <input
-                        value="Female"
-                        onChange={handleChange}
-                        type="radio"
-                        name="gender"
-                      />
-                      <label htmlFor="female">Female</label>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-area-wrapper">
-                  <label
-                    style={{
-                      color: `${emptycurrent_health_issue !== "" ? "red" : ""}`,
-                    }}
-                    htmlFor="concern"
-                  >
-                    {" "}
-                    {emptycurrent_health_issue !== ""
-                      ? emptycurrent_health_issue
-                      : "Health Issues or Concerns"}{" "}
-                  </label>
-                  <textarea
-                    style={{
-                      border: `${
-                        emptycurrent_health_issue !== "" ? "2px solid red" : ""
-                      }`,
-                    }}
-                    value={appointmentForm.current_health_issue}
-                    onChange={handleChange}
-                    name="current_health_issue"
-                    id="concern"
-                    placeholder="Health Issues or Concerns"
-                  ></textarea>
-                </div>
-                <div className="text-area-wrapper">
-                  <label
-                    style={{
-                      color: `${emptyhistory_health_issue !== "" ? "red" : ""}`,
-                    }}
-                    htmlFor="history"
-                  >
-                    {emptyhistory_health_issue !== ""
-                      ? emptyhistory_health_issue
-                      : "Pet Health History"}{" "}
-                  </label>
-                  <textarea
-                    style={{
-                      border: `${
-                        emptyhistory_health_issue !== "" ? "2px solid red" : ""
-                      }`,
-                    }}
-                    value={appointmentForm.history_health_issue}
-                    onChange={handleChange}
-                    name="history_health_issue"
-                    id="history"
-                    placeholder="Health History"
-                  ></textarea>
-                </div>
-                <div className="button">
-                  <FaArrowRight onClick={handleNext} className="next-icon" />
-                </div>
-              </div>
+    <>
+      <div className="setappointment">
+        <div className="setappointment-container">
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7 }}
+            className="setappointment-top"
+          >
+            <div className="profile-wrapper">
+              <img
+                src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+                //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+                alt="profile"
+                className="profile"
+              />
             </div>
-          )}
-          {showDateTime === "2" && (
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7 }}
-              className="date-available"
-            >
-              <span className="note">
-                Choose your appointment date and time.{" "}
-              </span>
-              <h6>Select Your Preferred Date</h6>
 
-              <div className="dates-wrapper">
-                <span
-                  style={{
-                    color: `${emptyappointment_date !== "" ? "red" : ""}`,
-                  }}
-                >
-                  {emptyappointment_date !== "" ? emptyappointment_date : ""}
+            <h3>
+              <CiStethoscope className="icon" /> Dr.{" "}
+              {veterinarianInfo?.fullname}
+            </h3>
+            <span>{veterinarianInfo?.specialization}</span>
+          </motion.div>
+
+          <div className="setappointment-bot">
+            <div className="profile-wrapper">
+              <img
+                src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
+                //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+                alt="profile"
+                className="profile"
+              />
+            </div>
+            {showDateTime === "1" && (
+              <div className="petinfo-form">
+                <span className="note">
+                  Hey {currentUser?.fullname}, please fill out the form for your
+                  pet's information.
                 </span>
+                <div className="form">
+                  <div className="service-petname">
+                    <div className="input-wrapper-select-services">
+                      <label
+                        style={{ color: `${emptyService !== "" ? "red" : ""}` }}
+                        htmlFor="type"
+                      >
+                        {emptyService !== "" ? emptyService : "Choose Services"}
+                      </label>
 
-                <div
-                  style={{
-                    border: `${
-                      emptyappointment_date !== "" ? "red 2px solid" : ""
-                    }`,
-                  }}
-                  className="date-input"
-                >
-                  <DatePicker
-                    name="appointment_date"
-                    selected={appointmentForm.appointment_date}
-                    onChange={handleDateChange}
-                    minDate={new Date()}
-                    maxDate={
-                      new Date(new Date().setDate(new Date().getDate() + 6))
-                    }
-                    filterDate={(date) => date.getDay() !== 0}
-                    placeholderText="Select your preferred date"
-                    dateFormat="yyyy-MM-dd"
-                  />
+                      <select
+                        style={{
+                          border: `${
+                            emptyService !== "" ? "2px solid red" : ""
+                          }`,
+                        }}
+                        name="service"
+                        value={appointmentForm.service}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setAppointment((prev) => ({
+                            ...prev,
+                            service: value,
+                          }));
 
-                  <BsCalendar2Date className="icon" />
+                          const selected = veterinarianServices.find(
+                            (item) => item.vservices === value
+                          );
+                          setPrice(selected ? selected.price : "");
+                        }}
+                        id="service"
+                      >
+                        <option value="">Choose Services</option>
+
+                        {veterinarianServices &&
+                          veterinarianServices.map((item) => (
+                            <option
+                              key={item.vservices_id}
+                              value={item.vservices}
+                            >
+                              {item.vservices} - ₱{item.price}
+                            </option>
+                          ))}
+                      </select>
+                    </div>
+
+                    <div className="input-wrapper">
+                      <label
+                        style={{
+                          color: `${emptypet_name !== "" ? "red" : ""}`,
+                        }}
+                        htmlFor="petname"
+                      >
+                        {emptypet_name !== "" ? emptypet_name : "Petname"}
+                      </label>
+                      <input
+                        style={{
+                          border: `${
+                            emptypet_name !== "" ? "2px solid red" : ""
+                          }`,
+                        }}
+                        type="text"
+                        name="pet_name"
+                        placeholder="Pet Name"
+                        value={appointmentForm.pet_name}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="type-breed">
+                    <div className="input-wrapper">
+                      <label
+                        style={{
+                          color: `${emptypet_type !== "" ? "red" : ""}`,
+                        }}
+                        htmlFor="type"
+                      >
+                        {emptypet_type !== "" ? emptypet_type : "Pet Type"}
+                      </label>
+                      <select
+                        style={{
+                          border: `${
+                            emptypet_type !== "" ? "2px solid red" : ""
+                          }`,
+                        }}
+                        value={appointmentForm.pet_type}
+                        onChange={handleChange}
+                        name="pet_type"
+                        id="type"
+                      >
+                        <option value=""></option>
+                        <option value="Dog">Dog</option>
+                        <option value="Cat">Cat</option>
+                      </select>
+                    </div>
+                    <div className="input-wrapper">
+                      <label
+                        style={{ color: `${emptybreed !== "" ? "red" : ""}` }}
+                        htmlFor="type"
+                      >
+                        {emptybreed !== "" ? emptybreed : "Breed"}
+                      </label>
+                      <input
+                        style={{
+                          border: `${emptybreed !== "" ? "2px solid red" : ""}`,
+                        }}
+                        value={appointmentForm.breed}
+                        onChange={handleChange}
+                        type="text"
+                        name="breed"
+                        placeholder="Breed"
+                      />
+                    </div>
+                  </div>
+                  <div className="age-weight">
+                    <div className="input-wrapper">
+                      <label
+                        style={{ color: `${emptyage !== "" ? "red" : ""}` }}
+                        htmlFor="age"
+                      >
+                        {" "}
+                        {emptyage !== "" ? emptyage : "Pet Age"}
+                      </label>
+                      <input
+                        style={{
+                          border: `${emptyage !== "" ? "2px solid red" : ""}`,
+                        }}
+                        value={appointmentForm.age}
+                        onChange={handleChange}
+                        type="text"
+                        name="age"
+                        placeholder="Age"
+                      />
+                    </div>
+                    <div className="input-wrapper">
+                      <label
+                        style={{ color: `${emptyweight !== "" ? "red" : ""}` }}
+                        htmlFor="weight"
+                      >
+                        {" "}
+                        {emptyweight !== "" ? emptyweight : "Pet Weight"}
+                      </label>
+                      <input
+                        style={{
+                          border: `${
+                            emptyweight !== "" ? "2px solid red" : ""
+                          }`,
+                        }}
+                        value={appointmentForm.weight}
+                        onChange={handleChange}
+                        type="text"
+                        name="weight"
+                        placeholder="Weight"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="radio-wrapper">
+                    <label
+                      style={{ color: `${emptygender !== "" ? "red" : ""}` }}
+                      htmlFor="gender"
+                    >
+                      {emptygender !== "" ? emptygender : "Gender"}
+                    </label>
+                    <div className="male-female">
+                      <div className="gender-wrapper">
+                        <input
+                          value="Male"
+                          onChange={handleChange}
+                          type="radio"
+                          name="gender"
+                        />
+                        <label htmlFor="male">Male</label>
+                      </div>
+                      <div className="gender-wrapper">
+                        <input
+                          value="Female"
+                          onChange={handleChange}
+                          type="radio"
+                          name="gender"
+                        />
+                        <label htmlFor="female">Female</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-area-wrapper">
+                    <label
+                      style={{
+                        color: `${
+                          emptycurrent_health_issue !== "" ? "red" : ""
+                        }`,
+                      }}
+                      htmlFor="concern"
+                    >
+                      {" "}
+                      {emptycurrent_health_issue !== ""
+                        ? emptycurrent_health_issue
+                        : "Health Issues or Concerns"}{" "}
+                    </label>
+                    <textarea
+                      style={{
+                        border: `${
+                          emptycurrent_health_issue !== ""
+                            ? "2px solid red"
+                            : ""
+                        }`,
+                      }}
+                      value={appointmentForm.current_health_issue}
+                      onChange={handleChange}
+                      name="current_health_issue"
+                      id="concern"
+                      placeholder="Health Issues or Concerns"
+                    ></textarea>
+                  </div>
+                  <div className="text-area-wrapper">
+                    <label
+                      style={{
+                        color: `${
+                          emptyhistory_health_issue !== "" ? "red" : ""
+                        }`,
+                      }}
+                      htmlFor="history"
+                    >
+                      {emptyhistory_health_issue !== ""
+                        ? emptyhistory_health_issue
+                        : "Pet Health History"}{" "}
+                    </label>
+                    <textarea
+                      style={{
+                        border: `${
+                          emptyhistory_health_issue !== ""
+                            ? "2px solid red"
+                            : ""
+                        }`,
+                      }}
+                      value={appointmentForm.history_health_issue}
+                      onChange={handleChange}
+                      name="history_health_issue"
+                      id="history"
+                      placeholder="Health History"
+                    ></textarea>
+                  </div>
+                  <div className="button">
+                    <FaArrowRight onClick={handleNext} className="next-icon" />
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          )}
+            )}
+            {showDateTime === "2" && (
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                className="date-available"
+              >
+                <span className="note">
+                  Choose your appointment date and time.{" "}
+                </span>
+                <h6>Select Your Preferred Date</h6>
 
-          {showDateTime === "2" && (
-            <motion.div
-              initial={{ opacity: 0, x: 100 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7 }}
-              className="time-available"
-            >
-              <h6>Available Time Slots</h6>
+                <div className="dates-wrapper">
+                  <span
+                    style={{
+                      color: `${emptyappointment_date !== "" ? "red" : ""}`,
+                    }}
+                  >
+                    {emptyappointment_date !== "" ? emptyappointment_date : ""}
+                  </span>
 
-              <div className="times-wrapper">
-                {slots &&
-                  slots.map((item, index) => (
-                    <span
-                      key={index}
-                      className={`time ${
-                        selectedTimeSlot === item ? "selected" : ""
-                      }`}
-                      onClick={() => setSelectedTimeSlot(item)}
-                    >
-                      {item}
+                  <div
+                    style={{
+                      border: `${
+                        emptyappointment_date !== "" ? "red 2px solid" : ""
+                      }`,
+                    }}
+                    className="date-input"
+                  >
+                    <DatePicker
+                      name="appointment_date"
+                      selected={appointmentForm.appointment_date}
+                      onChange={handleDateChange}
+                      minDate={new Date()}
+                      maxDate={
+                        new Date(new Date().setDate(new Date().getDate() + 6))
+                      }
+                      filterDate={(date) => date.getDay() !== 0}
+                      placeholderText="Select your preferred date"
+                      dateFormat="yyyy-MM-dd"
+                    />
+
+                    <BsCalendar2Date className="icon" />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {showDateTime === "2" && (
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.7 }}
+                className="time-available"
+              >
+                <h6>Available Time Slots</h6>
+
+                {appointmentForm.appointment_date !== "" ? (
+                  <div className="times-wrapper">
+                    {slots.length > 0 ? (
+                      slots.map((item, index) => (
+                        <button
+                          disabled={appointmentForm.appointment_date === ""}
+                          key={index}
+                          className={`time ${
+                            selectedTimeSlot === item ? "selected" : ""
+                          }`}
+                          onClick={() => setSelectedTimeSlot(item)}
+                        >
+                          {item}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="no-avslot">
+                        <img src={cat} alt="cat_img" />
+                        <p>No Available Slot for your Choosen date</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="choose-date">
+                    <span>
+                      Available time slots will be shown after you choose your
+                      preferred date.
                     </span>
-                  ))}
-              </div>
+                  </div>
+                )}
 
-              <div className="set-appointment-wrapper">
-                <FaArrowLeft
-                  className="back-icon"
-                  onClick={() => setshowDateTime("1")}
-                />
-                <button
-                  className="btn-setappointment"
-                  onClick={handleSubmitAppointment}
-                >
-                  Set Appointment
-                </button>
-              </div>
-            </motion.div>
-          )}
+                <div className="set-appointment-wrapper">
+                  <FaArrowLeft
+                    className="back-icon"
+                    onClick={() => setshowDateTime("1")}
+                  />
+                  <button
+                    className="btn-setappointment"
+                    onClick={handleShowSummary}
+                  >
+                    View Summary
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+
+      {showSummaryForm && (
+        <div className="payment-summary">
+          <div className="container">
+            <div className="top">
+              <h4>Appointment Summary</h4>
+              <IoMdClose className="icon" />
+            </div>
+
+            <div className="content">
+              <span>
+                <BsCalendar2Date className="icon" /> Appointment Date :{" "}
+                {formattedDate_}
+              </span>
+              <span>
+                <LuCalendarClock className="icon" /> Appointment Time :{" "}
+                {selectedTimeSlot}
+              </span>
+              <span>
+                <MdOutlineMedicalServices className="icon" /> Treatment :{" "}
+                {appointmentForm.service.split(" - ")[0]}
+              </span>
+              <span>
+                <AiOutlineSnippets className="icon" /> Pet Name :{" "}
+                {appointmentForm.pet_name}
+              </span>
+              <span>
+                <AiOutlineSnippets className="icon" /> Pet Type :{" "}
+                {appointmentForm.pet_type}
+              </span>
+              <span>
+                <AiOutlineSnippets className="icon" /> Pet Breed :{" "}
+                {appointmentForm.breed}
+              </span>
+              <span>
+                <AiOutlineSnippets className="icon" /> Pet Weight :{" "}
+                {appointmentForm.breed}
+              </span>
+              <span>
+                Health Issue : <br /> {appointmentForm.current_health_issue}
+              </span>
+
+              <div className="hr"></div>
+
+              <span className="total_price">
+                Total Price : <h3> ₱ {price}</h3>{" "}
+              </span>
+            </div>
+
+            <div className="buttons">
+              <button
+                className="btn-cancel"
+                onClick={() => setShowSummaryForm(false)}
+              >
+                Cancel
+              </button>
+              <button className="btn-submit" onClick={handlePayment}>
+                {showLoader3 ? <Loader3 /> : " Procced to Payment"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

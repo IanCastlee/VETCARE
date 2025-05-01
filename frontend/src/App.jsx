@@ -21,12 +21,14 @@ import Appointment from "./pages/appointment/Appointment";
 import Signin from "./components/signinSignUp/Signin";
 import Signup from "./components/signinSignUp/Signup";
 import ConfirmationForm from "./components/signinSignUp/ConfirmationForm";
-import AdminSidebar from "./pages/ADMIN/components/adminSidebar/AdminSidebar";
-import AdminNav from "./pages/ADMIN/components/adminNavbar/AdminNav";
 
 //ADMIN path
 import AdminHome from "./pages/ADMIN/home/Home";
 import ActiveVeterinarian from "./pages/ADMIN/veterinarian/ActiveVeterinarian";
+import NotActiveVeterinarian from "./pages/ADMIN/veterinarian/NotActiveVeterinarian";
+import AdminSidebar from "./pages/ADMIN/components/adminSidebar/AdminSidebar";
+import AdminNav from "./pages/ADMIN/components/adminNavbar/AdminNav";
+import AdminAppointment from "./pages/ADMIN/appointment/Appointment";
 
 const Layout = () => {
   const location = useLocation();
@@ -83,6 +85,12 @@ const Admin = () => {
                 path="/active-veterinarian/"
                 element={<ActiveVeterinarian />}
               />
+              <Route
+                path="/not-active-veterinarian/"
+                element={<NotActiveVeterinarian />}
+              />
+
+              <Route path="/done-appointment/" element={<AdminAppointment />} />
             </Routes>
           </div>
         </div>

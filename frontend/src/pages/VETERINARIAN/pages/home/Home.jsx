@@ -1,7 +1,8 @@
 import "./Home.scss";
 
 //IMAGES
-import profile from "../../../../assets/imges/veterinarian1.png";
+import profile1 from "../../../../assets/imges/user5.jpg";
+import profile2 from "../../../../assets/imges/user3.jpg";
 
 //ICONS
 import { CiStethoscope } from "react-icons/ci";
@@ -73,14 +74,19 @@ const Home = () => {
 
                 <div className="card">
                   <div className="left-card">
-                    <img src="profile" alt="profile" className="profile-card" />
+                    <img
+                      src={profile1}
+                      alt="profile"
+                      className="profile-card"
+                    />
                   </div>
 
                   <div className="right-card">
                     <div className="top">
                       <div className="name-info">
                         <div className="name">Braka Kkaka</div>
-                        <p>04-11-25</p>
+                        <p>04-22-25</p>
+                        <p>2:00 PM - 2:35 PM</p>
                       </div>
                       <MdOutlineMoreHoriz
                         onClick={() => setShowModalMenu(!showModalMenu)}
@@ -123,14 +129,19 @@ const Home = () => {
 
                 <div className="card">
                   <div className="left-card">
-                    <img src={profile} alt="profile" className="profile-card" />
+                    <img
+                      src={profile2}
+                      alt="profile"
+                      className="profile-card"
+                    />
                   </div>
 
                   <div className="right-card">
                     <div className="top">
                       <div className="name-info">
                         <div className="name">Braka Kkaka</div>
-                        <p>04-11-25</p>
+                        <p>04-25-25</p>
+                        <p>7:00 AM - 7:35 AM</p>
                       </div>
                       <MdOutlineMoreHoriz
                         className="more-icon"

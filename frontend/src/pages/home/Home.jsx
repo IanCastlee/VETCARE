@@ -32,8 +32,8 @@ const Home = () => {
     const veterinarian = async () => {
       try {
         const res = await axiosIntance(
-          //"admin/veterinarian/GetVeterinarian.php"
-          "https://vetcare.kesug.com/backend/admin/veterinarian/GetVeterinarian.php"
+          "admin/veterinarian/GetVeterinarian.php"
+          // "https://vetcare.kesug.com/backend/admin/veterinarian/GetVeterinarian.php"
         );
         if (res.data.success) {
           setVeterinarian(res.data.data);
@@ -125,8 +125,8 @@ const Home = () => {
                   className="veterinarian-wrapper"
                 >
                   <img
-                    //src={`http://localhost/VETCARE/backend/uploads/${item?.profile}`}
-                    src={`https://vetcare.kesug.com/backend/uploads/${item?.profile}`}
+                    src={`http://localhost/VETCARE/backend/uploads/${item?.profile}`}
+                    //src={`https://vetcare.kesug.com/backend/uploads/${item?.profile}`}
                     alt="veterinarian-profile"
                     className="veterinarian-profile"
                   />

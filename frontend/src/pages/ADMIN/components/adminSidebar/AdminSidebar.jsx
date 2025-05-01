@@ -39,8 +39,10 @@ const AdminSidebar = () => {
         </li>
         {showAppointmentDropdown && (
           <div className="dropdown">
-            <button className="btn-li">Appointment</button>
-            <button className="btn-li">History</button>
+            <Link to="/admin/done-appointment/" className="btn-li">
+              Appointment
+            </Link>
+            <Link className="btn-li">History</Link>
           </div>
         )}
 
@@ -57,7 +59,9 @@ const AdminSidebar = () => {
             <Link className="btn-li" to="/admin/active-veterinarian/">
               Active
             </Link>
-            <Link className="btn-li">Not Active</Link>
+            <Link to="/admin/not-active-veterinarian/" className="btn-li">
+              Not Active
+            </Link>
           </div>
         )}
 
