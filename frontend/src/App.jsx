@@ -29,6 +29,7 @@ import NotActiveVeterinarian from "./pages/ADMIN/veterinarian/NotActiveVeterinar
 import AdminSidebar from "./pages/ADMIN/components/adminSidebar/AdminSidebar";
 import AdminNav from "./pages/ADMIN/components/adminNavbar/AdminNav";
 import AdminAppointment from "./pages/ADMIN/appointment/Appointment";
+import Medicine from "./pages/medicine/Medicine";
 
 const Layout = () => {
   const location = useLocation();
@@ -51,6 +52,7 @@ const Layout = () => {
         />
         <Route path="/set-appointment/:userId" element={<SetAppointment />} />
         <Route path="/myappointment/" element={<Appointment />} />
+        <Route path="/medicine/" element={<Medicine />} />
 
         <Route path="/signin/" element={<Signin />} />
         <Route path="/signup/" element={<Signup />} />

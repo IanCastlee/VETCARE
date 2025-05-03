@@ -161,6 +161,7 @@ const Signup = () => {
         // }, 8000);
       } else {
         setshowLoader(false);
+        console.log(res.data);
         setEmptyEmail(res.data.message);
       }
     } catch (error) {
@@ -329,9 +330,9 @@ const Signup = () => {
                       color: "#0C0950",
                     }}
                   />
-                  <buttn className="btn-signin" onClick={handleSubmit}>
+                  <button className="btn-signin" onClick={handleSubmit}>
                     SIGN UP
-                  </buttn>
+                  </button>
                 </div>
               </div>
             )}

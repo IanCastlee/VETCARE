@@ -8,7 +8,6 @@ import catdog from "../../assets/imges/signinimaeg.png";
 import logo from "../../assets/icons/logo.png";
 
 //ICONS
-import { AiOutlineClose } from "react-icons/ai";
 import axiosIntance from "../../../axios";
 import Loader from "../loader/Loader";
 
@@ -23,6 +22,10 @@ const ForgotPassword = () => {
     cpassword: "",
   });
 
+  const [emptyEmail, setEmptyEmail] = useState("");
+  const [emptyNPassword, setEmptyNPassword] = useState("");
+  const [emptyCPassword, setEmptyCPassword] = useState("");
+
   const handleChangeData = (e) => {
     const { name, value } = e.target;
 
@@ -36,6 +39,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setshowLoader(true);
+
     if (
       confirm.email === "" ||
       confirm.npassword === "" ||
@@ -45,13 +49,19 @@ const ForgotPassword = () => {
         setEmptyEmail("Email is required");
       }
       if (confirm.npassword === "") {
-        setEmptyPassword("Password is required");
+        setEmptyNPassword("New Password is required");
       }
       if (confirm.cpassword === "") {
-        setEmptyPassword("Comnfirm your Password");
+        setEmptyCPassword("Confirm your New Password");
       }
       setshowLoader(false);
 
+      return;
+    }
+
+    if (confirm.npassword !== confirm.cpassword) {
+      setEmptyCPassword("New Password and Confirmation Password do not match.");
+      setshowLoader(false);
       return;
     }
 
@@ -72,7 +82,7 @@ const ForgotPassword = () => {
         }, 2000);
       } else {
         setshowLoader(false);
-
+        setEmptyEmail(res.data.message);
         console.log("ERROR : ", res.data);
       }
     } catch (error) {
@@ -117,38 +127,62 @@ const ForgotPassword = () => {
           <div className="right">
             <div className="form">
               <div className="input-wrapper">
-                <label htmlFor="email">Email</label>
+                <label
+                  style={{ color: emptyEmail ? "red" : "" }}
+                  htmlFor="email"
+                >
+                  {emptyEmail || "Email"}
+                </label>
                 <input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   name="email"
                   value={confirm.email}
-                  onChange={handleChangeData}
+                  onChange={(e) => {
+                    handleChangeData(e);
+                    setEmptyEmail("");
+                  }}
                 />
               </div>
 
               <div className="input-wrapper">
-                <label htmlFor="password">New Password</label>
+                <label
+                  style={{ color: emptyNPassword ? "red" : "" }}
+                  htmlFor="npassword"
+                >
+                  {emptyNPassword || "New Password"}
+                </label>
                 <input
                   id="npassword"
                   type={showPassword ? "text" : "password"}
                   placeholder="New Password"
                   name="npassword"
                   value={confirm.npassword}
-                  onChange={handleChangeData}
+                  onChange={(e) => {
+                    handleChangeData(e);
+                    setEmptyNPassword("");
+                  }}
                 />
               </div>
 
               <div className="input-wrapper">
-                <label htmlFor="password">Confirm Password</label>
+                <label
+                  style={{ color: emptyCPassword ? "red" : "" }}
+                  htmlFor="cpassword"
+                >
+                  {emptyCPassword || "Confirm Password"}
+                </label>
                 <input
                   id="cpassword"
                   type={showPassword ? "text" : "password"}
-                  placeholder="New Password"
+                  placeholder="Confirm Password"
                   name="cpassword"
                   value={confirm.cpassword}
-                  onChange={handleChangeData}
+                  onChange={(e) => {
+                    handleChangeData(e);
+                    setEmptyCPassword("");
+                  }}
                 />
               </div>
 

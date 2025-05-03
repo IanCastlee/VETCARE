@@ -6,7 +6,6 @@ import { AuthContext } from "../../contexts/AuthContext";
 import waveImage from "../../assets/imges/wavebg3.png";
 import dogImage from "../../assets/imges/dog.png";
 import { Link } from "react-router-dom";
-import CustomButton from "../../components/customButton/CustomButton";
 import axiosIntance from "../../../axios";
 import { useContext, useEffect, useState } from "react";
 
@@ -15,108 +14,134 @@ import { CiSearch } from "react-icons/ci";
 import { LuView } from "react-icons/lu";
 import { CiStethoscope } from "react-icons/ci";
 
-//IMAGES (servives)
+//IMAGES (services)
 import vaccine from "../../assets/icons/animals.png";
 import deworm from "../../assets/icons/deworm (1).png";
 import dental from "../../assets/icons/veterinary.png";
 import Loader2 from "../../components/loader/Loader2";
+import { uploadUrl } from "../../../fileurl";
 
 const Home = () => {
   const { setFormToShow, currentUser } = useContext(AuthContext);
   const [showLoader2, setShowLoader2] = useState(false);
   const [veterinarian, setVeterinarian] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  //get veterinarian
+  // get veterinarian data
   useEffect(() => {
     setShowLoader2(true);
-    const veterinarian = async () => {
+    const getVeterinarian = async () => {
       try {
         const res = await axiosIntance(
           "admin/veterinarian/GetVeterinarian.php"
-          // "https://vetcare.kesug.com/backend/admin/veterinarian/GetVeterinarian.php"
         );
         if (res.data.success) {
           setVeterinarian(res.data.data);
           setShowLoader2(false);
         } else {
-          console.log("Error : ", res.data.data);
+          console.log("Error:", res.data.data);
         }
       } catch (error) {
         setShowLoader2(false);
-        console.log("Error : ", error);
+        console.log("Error:", error);
       }
     };
 
-    veterinarian();
+    getVeterinarian();
   }, []);
 
+  // helper function to highlight search matches
+  const highlightMatch = (text, query) => {
+    if (!query) return text;
+
+    const regex = new RegExp(`(${query})`, "gi");
+    const parts = text.split(regex);
+
+    return parts.map((part, i) =>
+      part.toLowerCase() === query.toLowerCase() ? (
+        <mark key={i}>{part}</mark>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
-    <>
-      <div className="client-home">
-        <div className="hero">
-          <div className="hero-left">
-            <img src={waveImage} alt="wave-bg" className="wave-bg" />
+    <div className="client-home">
+      <div className="hero">
+        <div className="hero-left">
+          <img src={waveImage} alt="wave-bg" className="wave-bg" />
 
-            <div className="hero-wrapper">
-              <motion.h1
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                One Paw Closer to Better Care. Book your next vet visit in
-                seconds with our smart clinic system.
-              </motion.h1>
-              <motion.h6
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                Trusted by pet parents. Loved by furry friends.
-              </motion.h6>
+          <div className="hero-wrapper">
+            <motion.h1
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              One Paw Closer to Better Care. Book your next vet visit in seconds
+              with our smart clinic system.
+            </motion.h1>
+            <motion.h6
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              Trusted by pet parents. Loved by furry friends.
+            </motion.h6>
 
-              <CustomButton _bgcolor="primary" _label="Book Now" />
-            </div>
-          </div>
-          <div className="hero-right">
-            <img src={dogImage} alt="Dog" className="dog-img" />
+            {/* <CustomButton _bgcolor="primary" _label="Book Now" /> */}
           </div>
         </div>
+        <div className="hero-right">
+          <img src={dogImage} alt="Dog" className="dog-img" />
+        </div>
+      </div>
 
-        <div className="services">
-          <h2>Our Services</h2>
-          <div className="servives-container">
-            <div className="services-card">
-              <img src={vaccine} alt="" />
-              <span>Vaccination</span>
-            </div>
+      <div className="services">
+        <h2>Our Services</h2>
+        <div className="servives-container">
+          <div className="services-card">
+            <img src={vaccine} alt="" />
+            <span>Vaccination</span>
+          </div>
 
-            <div className="services-card">
-              <img src={deworm} alt="" />
-              <span>Deworming</span>
-            </div>
+          <div className="services-card">
+            <img src={deworm} alt="" />
+            <span>Deworming</span>
+          </div>
 
-            <div className="services-card">
-              <img src={dental} alt="" />
-              <span>Dental</span>
-            </div>
+          <div className="services-card">
+            <img src={dental} alt="" />
+            <span>Dental</span>
           </div>
         </div>
+      </div>
 
-        <div className="search-container">
-          <div className="search-input-icon">
-            <input type="text" placeholder="Search Veterinarian" />
-
-            <CiSearch className="search-icon" />
-          </div>
+      <div className="search-container">
+        <div className="search-input-icon">
+          <input
+            type="text"
+            placeholder="Search Veterinarian name or specialization"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <CiSearch className="search-icon" />
         </div>
+      </div>
 
-        <div className="veterinarian-container">
-          <h2>Available Veterinarian</h2>
-          <div className="veterinarian">
-            {showLoader2 ? (
-              <Loader2 />
-            ) : veterinarian.length > 0 ? (
-              veterinarian.map((item, index) => (
+      <div className="veterinarian-container">
+        <h2>Available Veterinarian</h2>
+        <div className="veterinarian">
+          {showLoader2 ? (
+            <Loader2 />
+          ) : veterinarian.length > 0 ? (
+            veterinarian
+              .filter((item) =>
+                `${item.fullname} ${item.specialization}`
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase())
+              )
+              .map((item, index) => (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
@@ -125,8 +150,7 @@ const Home = () => {
                   className="veterinarian-wrapper"
                 >
                   <img
-                    src={`http://localhost/VETCARE/backend/uploads/${item?.profile}`}
-                    //src={`https://vetcare.kesug.com/backend/uploads/${item?.profile}`}
+                    src={`${uploadUrl.uploadurl}/${item?.profile}`}
                     alt="veterinarian-profile"
                     className="veterinarian-profile"
                   />
@@ -136,9 +160,11 @@ const Home = () => {
                       <div className="name-rule">
                         <span className="name">
                           <CiStethoscope className="icon" />
-                          {item.fullname}
+                          {highlightMatch(item.fullname, searchTerm)}
                         </span>
-                        <span className="rule">{item.specialization}</span>
+                        <span className="rule">
+                          {highlightMatch(item.specialization, searchTerm)}
+                        </span>
                       </div>
 
                       <Link to={`/view-veterinarian/${item.user_id}`}>
@@ -162,13 +188,12 @@ const Home = () => {
                   </div>
                 </motion.div>
               ))
-            ) : (
-              <p>No Data Record</p>
-            )}
-          </div>
+          ) : (
+            <p>No Data Record</p>
+          )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

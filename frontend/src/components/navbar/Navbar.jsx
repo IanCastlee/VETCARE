@@ -1,7 +1,7 @@
 import "./Navbar.scss";
 import MobileSidebar from "../mobileSidebar/MobileSidebar";
 import OverLay from "../overlay/OverLay";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 import axiosIntance from "../../../axios";
@@ -10,13 +10,14 @@ import axiosIntance from "../../../axios";
 import logo from "../../assets/icons/logo.png";
 
 //ICONS
-import { GoHomeFill } from "react-icons/go";
-import { FaCalendarCheck } from "react-icons/fa";
-import { FaBell } from "react-icons/fa6";
-import { FaUserAlt } from "react-icons/fa";
+import { RiHomeLine } from "react-icons/ri";
+import { LuCalendarCheck } from "react-icons/lu";
+import { AiOutlineBell } from "react-icons/ai";
+import { FaRegCircleUser } from "react-icons/fa6";
 import { RiMenu3Line } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdLogOut } from "react-icons/io";
+import { AiOutlineMedicineBox } from "react-icons/ai";
 
 const Navbar = ({ isHome }) => {
   const navigate = useNavigate();
@@ -24,6 +25,17 @@ const Navbar = ({ isHome }) => {
     useContext(AuthContext);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleLogout = async (e) => {
     e.preventDefault();
@@ -50,30 +62,42 @@ const Navbar = ({ isHome }) => {
 
   return (
     <>
-      <div className="navbar">
+      <div className={`navbar ${scrolled ? "scrolled" : ""}`}>
         <div className="nav-container">
           <img src={logo} alt="logo" className="logo" />
           <div className="nav-buttons">
             {currentUser !== null && (
               <div className="top">
-                <span>Welcome, {currentUser?.fullname}</span>
+                <span>Welcome, {currentUser?.fullname.split(" ")[0]}</span>
               </div>
             )}
             <div className="bot">
-              <Link to="/home/" className="list-icon">
-                <GoHomeFill className="nav-icon" />
+              <Link to="/home/" title="Home" className="list-icon">
+                <RiHomeLine className="nav-icon" />
               </Link>
-              <Link to="/myappointment/" className="list-icon">
-                <FaCalendarCheck className="nav-icon" />
+
+              <Link
+                to="/medicine/"
+                title="Available Medicine"
+                className="list-icon"
+              >
+                <AiOutlineMedicineBox className="nav-icon" />
               </Link>
-              <Link className="list-icon">
-                <FaBell className="nav-icon" />
+              <Link
+                to="/myappointment/"
+                title="Appointment"
+                className="list-icon"
+              >
+                <LuCalendarCheck className="nav-icon" />
+              </Link>
+              <Link title="Notification" className="list-icon">
+                <AiOutlineBell className="nav-icon" />
               </Link>
               <Link
                 onClick={() => setShowDropdown(!showDropdown)}
                 className="list-icon"
               >
-                <FaUserAlt className="nav-icon" />
+                <FaRegCircleUser className="nav-icon" />
               </Link>
 
               {currentUser === null && (

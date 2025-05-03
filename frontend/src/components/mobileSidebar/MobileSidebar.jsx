@@ -4,14 +4,15 @@ import Signin from "../signinSignUp/Signin";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import axiosIntance from "../../../axios";
+import Loader from "../loader/Loader";
 
 //ICONS
 import { RiHomeLine } from "react-icons/ri";
 import { HiMiniCalendarDateRange } from "react-icons/hi2";
 import { IoMdPower } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
-import axiosIntance from "../../../axios";
-import Loader from "../loader/Loader";
+import { PiShoppingBagBold } from "react-icons/pi";
 
 const MobileSidebar = ({ close }) => {
   const { setFormToShow, formToShow, currentUser, setCurrentUser } =
@@ -79,9 +80,16 @@ const MobileSidebar = ({ close }) => {
           <Link className="btn-link" to={"/home/"}>
             <RiHomeLine className="icon" /> Home
           </Link>
-          <Link className="btn-link" to="/myappointment/">
-            <HiMiniCalendarDateRange className="icon" /> Appointment
+          {currentUser !== null && (
+            <Link className="btn-link" to="/myappointment/">
+              <HiMiniCalendarDateRange className="icon" /> Appointment
+            </Link>
+          )}
+
+          <Link className="btn-link" to="/medicine/">
+            <PiShoppingBagBold className="icon" /> Vetcare Shop
           </Link>
+
           <Link className="btn-link">
             <HiMiniCalendarDateRange className="icon" /> Message
           </Link>

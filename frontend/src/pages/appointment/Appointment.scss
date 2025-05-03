@@ -67,11 +67,14 @@
             .top-card {
               display: flex;
               flex-direction: column;
+              width: 100%;
 
               .dr {
                 font-size: 1.25rem;
                 color: #0c0950;
                 font-weight: 500;
+                display: flex;
+                align-items: center;
               }
               .rule {
                 font-size: 0.875rem;
@@ -79,6 +82,7 @@
               }
 
               .date-time {
+                width: 100%;
                 display: flex;
                 flex-direction: column;
                 margin-top: 20px;
@@ -94,15 +98,35 @@
                     margin-right: 5px;
                   }
                 }
-                .time {
-                  font-size: 14px;
-                  font-weight: 500;
-                  color: #0c0950;
+
+                .time-price {
+                  width: 100%;
                   display: flex;
+                  justify-content: space-between;
                   align-items: center;
 
-                  .iconn {
-                    margin-right: 5px;
+                  .time {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+
+                    .iconn {
+                      margin-right: 5px;
+                    }
+                  }
+
+                  .price {
+                    font-size: 1rem;
+                    font-weight: 500;
+                    color: #0c0950;
+                    display: flex;
+                    align-items: center;
+                    margin-top: 8px;
+                    .iconn {
+                      margin-right: 5px;
+                    }
                   }
                 }
               }
@@ -114,6 +138,24 @@
                 color: green;
               }
             }
+          }
+        }
+
+        .empty-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          margin-top: 30px;
+
+          .icon {
+            font-size: 50px;
+            color: rgb(177, 174, 174);
+          }
+
+          p {
+            font-size: 1rem;
+            color: gray;
           }
         }
       }
@@ -327,6 +369,38 @@
 
                     .iconn {
                       margin-right: 5px;
+                    }
+                  }
+
+                  .time-price {
+                    width: 100%;
+                    display: flex;
+                    justify-content: start;
+                    align-items: start;
+                    flex-direction: column;
+
+                    .time {
+                      font-size: 14px;
+                      font-weight: 500;
+                      color: #0c0950;
+                      display: flex;
+                      align-items: center;
+
+                      .iconn {
+                        margin-right: 5px;
+                      }
+                    }
+
+                    .price {
+                      font-size: 1rem;
+                      font-weight: 500;
+                      color: #0c0950;
+                      display: flex;
+                      align-items: center;
+
+                      .iconn {
+                        margin-right: 5px;
+                      }
                     }
                   }
                 }

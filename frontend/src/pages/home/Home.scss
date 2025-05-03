@@ -155,7 +155,8 @@
         width: 48%;
         display: flex;
         gap: 10px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+          rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
         padding: 10px;
 
         .veterinarian-profile {
@@ -330,7 +331,8 @@
         background-color: #fff;
         border: 1px solid lightgray;
         align-items: center;
-
+        box-shadow: rgba(9, 30, 66, 0.25) 0px 4px 8px -2px,
+          rgba(9, 30, 66, 0.08) 0px 0px 0px 1px;
         input {
           width: 100%;
           border: none;
@@ -372,13 +374,14 @@
         .veterinarian-wrapper {
           width: 100%;
           display: flex;
+          height: 100px;
           gap: 10px;
 
           .veterinarian-profile {
-            height: 90px;
-            width: 90px;
+            height: 100%;
+            width: 100px;
             border-radius: 6px;
-            object-fit: contain;
+            object-fit: cover;
           }
 
           .veterinarian-info {

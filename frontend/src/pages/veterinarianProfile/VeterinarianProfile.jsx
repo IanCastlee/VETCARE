@@ -14,6 +14,7 @@ import { PiCertificateBold } from "react-icons/pi";
 import { LuBadgeCheck } from "react-icons/lu";
 import { MdOutlineMail } from "react-icons/md";
 import { PiPhone } from "react-icons/pi";
+import { uploadUrl } from "../../../fileurl";
 
 const VeterinarianProfile = () => {
   const userId = useParams();
@@ -56,12 +57,13 @@ const VeterinarianProfile = () => {
             <BiLeftArrowAlt className="back-icon" />
           </Link>
           <div className="profile-wrapper">
-            <img
-              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
-              alt="profile"
-              className="profile"
-            />
+            {
+              <img
+                src={`${uploadUrl.uploadurl}/${veterinarianInfo?.profile}`}
+                alt="profile"
+                className="profile"
+              />
+            }
           </div>
           <div className="name-rules">
             <h3>
@@ -74,8 +76,7 @@ const VeterinarianProfile = () => {
         <div className="veterinarian-bottom">
           <div className="profile-wrapper">
             <img
-              src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-              //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+              src={`${uploadUrl.uploadurl}/${veterinarianInfo?.profile}`}
               alt="profile"
               className="profile"
             />

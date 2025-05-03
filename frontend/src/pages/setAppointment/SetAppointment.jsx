@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { AuthContext } from "../../contexts/AuthContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import Loader2 from "../../components/loader/Loader2";
 
 //IMAGES
 import cat from "../../assets/icons/mouth.png";
@@ -19,7 +20,7 @@ import { IoMdClose } from "react-icons/io";
 import { LuCalendarClock } from "react-icons/lu";
 import { MdOutlineMedicalServices } from "react-icons/md";
 import { AiOutlineSnippets } from "react-icons/ai";
-import Loader3 from "../../components/loader/Loader3";
+import { uploadUrl } from "../../../fileurl";
 
 const SetAppointment = () => {
   const { currentUser } = useContext(AuthContext);
@@ -168,47 +169,6 @@ const SetAppointment = () => {
     handleTimeDateSlotToRemove();
   }, [appointmentForm.appointment_date]);
 
-  //handle submit
-  const handleSubmitAppointment = async (e) => {
-    e.preventDefault();
-
-    const formattedDate = new Date(
-      appointmentForm.appointment_date
-    ).toLocaleDateString("en-CA");
-
-    setformattedDate(formattedDate);
-
-    try {
-      const res = await axiosIntance.post(
-        "client/appointment/SetAppointment.php",
-        {
-          client_id: currentUser?.user_id,
-          dr_id: userId.userId,
-          service: appointmentForm.service,
-          pet_name: appointmentForm.pet_name,
-          pet_type: appointmentForm.pet_type,
-          breed: appointmentForm.breed,
-          age: appointmentForm.age,
-          weight: appointmentForm.weight,
-          gender: appointmentForm.gender,
-          current_health_issue: appointmentForm.current_health_issue,
-          history_health_issue: appointmentForm.history_health_issue,
-          appointment_date: formattedDate,
-          appointment_time: appointmentForm.appointment_time,
-          price: price,
-        }
-      );
-
-      if (res.data.success) {
-        console.log("RESPONSE : ", res.data.message);
-      } else {
-        console.log("ERROR : ", res.data);
-      }
-    } catch (error) {
-      console.log("Error : ", error);
-    }
-  };
-  console.log("formattedDate_ : ", formattedDate_);
   useEffect(() => {
     const getClickedVeterinarian = async () => {
       try {
@@ -325,6 +285,48 @@ const SetAppointment = () => {
     setShowSummaryForm(true);
   };
 
+  //handle submit
+  const handleSubmitAppointment = async () => {
+    const formattedDate = new Date(
+      appointmentForm.appointment_date
+    ).toLocaleDateString("en-CA");
+
+    setformattedDate(formattedDate);
+
+    try {
+      const res = await axiosIntance.post(
+        "client/appointment/SetAppointment.php",
+        {
+          client_id: currentUser?.user_id,
+          dr_id: userId.userId,
+          service: appointmentForm.service,
+          pet_name: appointmentForm.pet_name,
+          pet_type: appointmentForm.pet_type,
+          breed: appointmentForm.breed,
+          age: appointmentForm.age,
+          weight: appointmentForm.weight,
+          gender: appointmentForm.gender,
+          current_health_issue: appointmentForm.current_health_issue,
+          history_health_issue: appointmentForm.history_health_issue,
+          appointment_date: formattedDate,
+          appointment_time: selectedTimeSlot,
+          price: price,
+        }
+      );
+
+      if (res.data.success) {
+        console.log("RESPONSE : ", res.data.message);
+        return true;
+      } else {
+        console.log("ERROR : ", res.data);
+        return false;
+      }
+    } catch (error) {
+      console.log("Error : ", error);
+      return false;
+    }
+  };
+
   const handlePayment = async (e) => {
     e.preventDefault();
 
@@ -348,7 +350,6 @@ const SetAppointment = () => {
         setTimeout(() => {
           setShowLoader3(false);
         }, 2000);
-        handleSubmitAppointment();
         window.location.href = response.data.checkout_url;
       } else {
         setShowLoader3(false);
@@ -358,6 +359,23 @@ const SetAppointment = () => {
     } catch (error) {
       setShowLoader3(false);
       console.error("Error:", error);
+    }
+  };
+
+  const handleSendDataAndPayment = async (e) => {
+    e.preventDefault();
+
+    // First submit appointment data
+    const submitResult = await handleSubmitAppointment();
+
+    // If the appointment was submitted successfully, proceed to payment
+    if (submitResult === true) {
+      await handlePayment(e);
+      setTimeout(() => {
+        setShowSummaryForm(false);
+      }, 7000);
+    } else {
+      console.log("Appointment submission failed. Payment cancelled.");
     }
   };
 
@@ -373,8 +391,7 @@ const SetAppointment = () => {
           >
             <div className="profile-wrapper">
               <img
-                src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-                //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+                src={`${uploadUrl.uploadurl}/${veterinarianInfo?.profile}`}
                 alt="profile"
                 className="profile"
               />
@@ -390,8 +407,7 @@ const SetAppointment = () => {
           <div className="setappointment-bot">
             <div className="profile-wrapper">
               <img
-                src={`http://localhost/VETCARE/backend/uploads/${veterinarianInfo?.profile}`}
-                //src={`https://vetcare.kesug.com/backend/uploads/${veterinarianInfo?.profile}`}
+                src={`${uploadUrl.uploadurl}/${veterinarianInfo?.profile}`}
                 alt="profile"
                 className="profile"
               />
@@ -812,8 +828,8 @@ const SetAppointment = () => {
               >
                 Cancel
               </button>
-              <button className="btn-submit" onClick={handlePayment}>
-                {showLoader3 ? <Loader3 /> : " Procced to Payment"}
+              <button className="btn-submit" onClick={handleSendDataAndPayment}>
+                {showLoader3 ? <Loader2 /> : " Procced to Payment"}
               </button>
             </div>
           </div>

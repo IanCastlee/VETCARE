@@ -1,5 +1,5 @@
 import "./ConfirmationForm.scss";
-import { motion } from "framer-motion";
+import { color, motion } from "framer-motion";
 
 //IMAGE
 import catdog from "../../assets/imges/signinimaeg.png";
@@ -22,18 +22,18 @@ const ConfirmationForm = ({ _message, email }) => {
   const [messageFromVerification, setMessageFromVerification] = useState(null);
   const [showSigninButton, setShowSigninButton] = useState(false);
 
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const inputsRef = useRef([]);
 
   const handleChange = (e, index) => {
     const value = e.target.value.replace(/\D/, "");
-    if (!value) return;
-
+    setErrorMessage(null);
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
 
-    // Move focus to the next input if current is filled
-    if (index < inputsRef.current.length - 1) {
+    if (value && index < inputsRef.current.length - 1) {
       inputsRef.current[index + 1].focus();
     }
   };
@@ -63,6 +63,9 @@ const ConfirmationForm = ({ _message, email }) => {
         setToasterMessage(res.data.message);
         setTimeout(() => setToasterMessage(null), 8000);
         setShowSigninButton(true);
+      } else {
+        setShowLoader(false);
+        setErrorMessage(res.data.message);
       }
     } catch (error) {
       console.log("Error: ", error);
@@ -96,6 +99,12 @@ const ConfirmationForm = ({ _message, email }) => {
             <div className="message">
               <p>{_message || messageFromVerification}</p>
               {error && <p className="error-message">{error}</p>}
+
+              {errorMessage !== null && (
+                <p style={{ color: "red", marginTop: "10px" }}>
+                  {errorMessage}
+                </p>
+              )}
 
               {showSigninButton && (
                 <button onClick={() => setFormToShow("signin")}>Sign In</button>

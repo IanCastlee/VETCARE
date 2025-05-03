@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Veterinarian.scss";
 import { motion } from "framer-motion";
 import axiosIntance from "../../../../axios";
+import Loader2 from "../../../components/loader/Loader2";
 
 //ICONS
 import { FaTrashAlt } from "react-icons/fa";
@@ -9,11 +10,14 @@ import { FiSearch } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { MdAddBox } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 
 const ActiveVeterinarian = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModalServices, setShowModalShowModalServcies] = useState(false);
   const [veterinarian, setVeterinarian] = useState([]);
+  const [veterinarianServices, setVeterinarianServices] = useState([]);
+  const [showLoader, setShowLoader] = useState(false);
 
   const [veterinarianData, setVeterinarianData] = useState({
     fullname: "",
@@ -131,6 +135,8 @@ const ActiveVeterinarian = () => {
 
   const handleSubmitServices = async (e) => {
     e.preventDefault();
+
+    setShowLoader(true);
     try {
       const res = await axiosIntance.post(
         "admin/veterinarian/PostVetServices.php",
@@ -141,18 +147,38 @@ const ActiveVeterinarian = () => {
         }
       );
       if (res.data.success) {
-        console.log("RESPONSE : ", res.data.message);
         setServicesForm({
           service: "",
           price: "",
         });
+
+        setShowLoader(false);
       } else {
+        setShowLoader(false);
         console.log("ERROR : ", res.data);
       }
     } catch (error) {
+      setShowLoader(false);
       console.log("Error : ", error);
     }
   };
+  const getServices = async () => {
+    setShowLoader(true);
+    try {
+      const res = await axiosIntance.get("admin/veterinarian/GetServices.php");
+      if (res.data.data) {
+        setVeterinarianServices(res.data.data);
+        setShowLoader(false);
+      }
+    } catch (error) {
+      setShowLoader(false);
+      console.log("Error : ", error);
+    }
+  };
+  //get services
+  useEffect(() => {
+    getServices();
+  }, []);
 
   return (
     <>
@@ -187,6 +213,7 @@ const ActiveVeterinarian = () => {
                 <th>Address</th>
                 <th>Certification</th>
                 <th>Experience</th>
+                <th>Services</th>
                 <th className="action-header">Action</th>
               </tr>
             </thead>
@@ -212,6 +239,38 @@ const ActiveVeterinarian = () => {
                     <td>{item.address}</td>
                     <td>{item.certification}</td>
                     <td>{item.experience}</td>
+                    <td>
+                      <select
+                        style={{
+                          border: "1px solid lightgray",
+                          width: "150px",
+                          textAlign: "center",
+                        }}
+                        name=""
+                        id=""
+                      >
+                        <option style={{ backgroundColor: "lightgrey" }}>
+                          Services
+                        </option>
+
+                        {showLoader ? (
+                          <Loader2 />
+                        ) : (
+                          veterinarianServices
+                            .filter((vs) => vs.user_id == item.user_id)
+                            .map((vs) => (
+                              <>
+                                <option
+                                  key={vs.vservices_id}
+                                  value={vs.vservices}
+                                >
+                                  {vs.vservices}
+                                </option>
+                              </>
+                            ))
+                        )}
+                      </select>{" "}
+                    </td>
                     <td className="btns-wrapper">
                       <button
                         title="Add Services"
@@ -222,6 +281,9 @@ const ActiveVeterinarian = () => {
                       </button>
                       <button title="Delete" className="btn">
                         <FaTrashAlt className="icon" />
+                      </button>
+                      <button title="Delete" className="btn">
+                        <FaEdit style={{ color: "blue" }} className="icon" />
                       </button>
                     </td>
                   </tr>
@@ -469,7 +531,7 @@ const ActiveVeterinarian = () => {
 
               <div className="button-wrapper">
                 <button className="btn-submit" onClick={handleSubmit}>
-                  Submit
+                  {showLoader ? <Loader2 /> : " SUBMIT"}
                 </button>
               </div>
             </div>
@@ -526,7 +588,7 @@ const ActiveVeterinarian = () => {
                 className="btn-add-service"
                 onClick={handleSubmitServices}
               >
-                SUBMIT
+                {showLoader ? <Loader2 /> : "SUBMIT"}
               </button>
             </div>
           </motion.div>

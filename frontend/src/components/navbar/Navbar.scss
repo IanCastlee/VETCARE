@@ -8,8 +8,11 @@
   top: 0;
   left: 0;
   z-index: 999;
-  background-color: rgba(0, 0, 0, 0.12);
 
+  &.scrolled {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
   .nav-container {
     width: 100%;
     display: flex;
@@ -121,7 +124,10 @@
     left: 0;
     z-index: 999;
     background-color: transparent;
-
+    &.scrolled {
+      background-color: transparent;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
     .nav-container {
       width: 100%;
       display: flex;
