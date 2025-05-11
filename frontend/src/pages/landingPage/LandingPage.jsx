@@ -13,7 +13,6 @@ const LandingPage = () => {
     <div className="landing">
       <div className="landing-container">
         <img src={logo} alt="" />
-        erheuryu
       </div>
     </div>
   );

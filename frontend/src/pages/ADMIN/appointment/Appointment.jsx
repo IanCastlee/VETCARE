@@ -17,7 +17,7 @@ const Appointment = () => {
     const veterinarian = async () => {
       try {
         const res = await axiosIntance.get(
-          "admin/appointment/GetDoneAppointment.php"
+          "admin/appointment/GetPendingAppointment.php"
         );
         if (res.data.success) {
           setDoneAppointment(res.data.data);
@@ -69,7 +69,6 @@ const Appointment = () => {
                 <th>Dr Incharge</th>
                 <th>Payment</th>
                 <th>Status</th>
-                <th className="action-header">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -84,7 +83,7 @@ const Appointment = () => {
                           width: "40px",
                           objectFit: "cover",
                         }}
-                        src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
+                        src={`http://localhost/VETCARE/backend/uploads/${item.image}`}
                         alt="profile_pic"
                       />
                     </td>
@@ -96,19 +95,7 @@ const Appointment = () => {
                     <td>{item.current_health_issue}</td>
                     <td>Dr. {item.drFullname}</td>
                     <td>{item.paid_payment}</td>
-                    <td>{item.status}</td>
-                    <td className="btns-wrapper">
-                      <button
-                        title="Add Services"
-                        className="btn-add-services"
-                        onClick={() => handleClikedServices(item.user_id)}
-                      >
-                        <MdAddBox className="icon" />
-                      </button>
-                      <button title="Delete" className="btn">
-                        <FaTrashAlt className="icon" />
-                      </button>
-                    </td>
+                    <td>{item.status == 0 ? "Pending" : "Done"}</td>
                   </tr>
                 ))}
             </tbody>

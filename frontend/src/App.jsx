@@ -30,6 +30,8 @@ import AdminSidebar from "./pages/ADMIN/components/adminSidebar/AdminSidebar";
 import AdminNav from "./pages/ADMIN/components/adminNavbar/AdminNav";
 import AdminAppointment from "./pages/ADMIN/appointment/Appointment";
 import Medicine from "./pages/medicine/Medicine";
+import Shop from "./pages/ADMIN/shop/Shop";
+import DoneAppointment from "./pages/ADMIN/appointment/DoneAppointment";
 
 const Layout = () => {
   const location = useLocation();
@@ -92,7 +94,13 @@ const Admin = () => {
                 element={<NotActiveVeterinarian />}
               />
 
+              <Route
+                path="/pending-appointment/"
+                element={<DoneAppointment />}
+              />
+
               <Route path="/done-appointment/" element={<AdminAppointment />} />
+              <Route path="/shop/" element={<Shop />} />
             </Routes>
           </div>
         </div>

@@ -24,6 +24,7 @@ import { uploadUrl } from "../../../fileurl";
 
 const SetAppointment = () => {
   const { currentUser } = useContext(AuthContext);
+
   const userId = useParams();
   const [veterinarianInfo, setVeterinarianInfo] = useState([]);
   const [veterinarianServices, setVeterinarianServices] = useState([]);
@@ -45,6 +46,7 @@ const SetAppointment = () => {
     appointment_date: "",
     appointment_time: "",
     price: "",
+    image: null,
   });
 
   const [price, setPrice] = useState(null);
@@ -57,6 +59,7 @@ const SetAppointment = () => {
   const [emptypet_name, setEmptypet_name] = useState("");
   const [emptypet_type, setEmptypet_type] = useState("");
   const [emptybreed, setEmptybreed] = useState("");
+  const [emptyprofile, setEmptyprofile] = useState(null);
   const [emptyage, setEmptyage] = useState("");
   const [emptyweight, setEmptyweight] = useState("");
   const [emptygender, setEmptygender] = useState("");
@@ -103,6 +106,7 @@ const SetAppointment = () => {
       appointmentForm.age === "" ||
       appointmentForm.weight === "" ||
       appointmentForm.gender === "" ||
+      appointmentForm.image === null ||
       appointmentForm.current_health_issue === "" ||
       appointmentForm.history_health_issue === ""
     ) {
@@ -127,6 +131,9 @@ const SetAppointment = () => {
       if (appointmentForm.gender === "") {
         setEmptygender("Pet gender is required");
       }
+      if (appointmentForm.image === null) {
+        setEmptyprofile("Pet Profile is required");
+      }
       if (appointmentForm.current_health_issue === "") {
         setEmptycurrent_health_issue(
           "Please type your pet current health issue"
@@ -143,9 +150,14 @@ const SetAppointment = () => {
   };
   //timeslots to remove
   const handleTimeDateSlotToRemove = async () => {
-    const formattedDate = new Date(
-      appointmentForm.appointment_date
-    ).toLocaleDateString("en-CA");
+    const date = new Date(appointmentForm.appointment_date);
+    const formattedDate = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    console.log("FORMATED : ", formattedDate);
 
     try {
       const res = await axiosIntance.get(
@@ -164,10 +176,6 @@ const SetAppointment = () => {
       console.log("Error : ", error);
     }
   };
-
-  useEffect(() => {
-    handleTimeDateSlotToRemove();
-  }, [appointmentForm.appointment_date]);
 
   useEffect(() => {
     const getClickedVeterinarian = async () => {
@@ -287,35 +295,58 @@ const SetAppointment = () => {
 
   //handle submit
   const handleSubmitAppointment = async () => {
+    if (!appointmentForm.appointment_date) {
+      console.warn("Appointment date is required.");
+      return false;
+    }
+
     const formattedDate = new Date(
       appointmentForm.appointment_date
     ).toLocaleDateString("en-CA");
 
     setformattedDate(formattedDate);
 
+    const formData = new FormData();
+    formData.append("client_id", currentUser?.user_id);
+    formData.append("dr_id", userId.userId);
+    formData.append("service", appointmentForm.service);
+    formData.append("pet_name", appointmentForm.pet_name);
+    formData.append("pet_type", appointmentForm.pet_type);
+    formData.append("breed", appointmentForm.breed);
+    formData.append("age", appointmentForm.age);
+    formData.append("weight", appointmentForm.weight);
+    formData.append("gender", appointmentForm.gender);
+    formData.append(
+      "current_health_issue",
+      appointmentForm.current_health_issue
+    );
+    formData.append(
+      "history_health_issue",
+      appointmentForm.history_health_issue
+    );
+    formData.append("appointment_date", formattedDate);
+    formData.append("appointment_time", selectedTimeSlot);
+    formData.append("price", price);
+
+    // Only append image if a file is selected
+    if (appointmentForm.image) {
+      formData.append("image", appointmentForm.image);
+    }
+
     try {
       const res = await axiosIntance.post(
         "client/appointment/SetAppointment.php",
+        formData,
         {
-          client_id: currentUser?.user_id,
-          dr_id: userId.userId,
-          service: appointmentForm.service,
-          pet_name: appointmentForm.pet_name,
-          pet_type: appointmentForm.pet_type,
-          breed: appointmentForm.breed,
-          age: appointmentForm.age,
-          weight: appointmentForm.weight,
-          gender: appointmentForm.gender,
-          current_health_issue: appointmentForm.current_health_issue,
-          history_health_issue: appointmentForm.history_health_issue,
-          appointment_date: formattedDate,
-          appointment_time: selectedTimeSlot,
-          price: price,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
       );
 
       if (res.data.success) {
         console.log("RESPONSE : ", res.data.message);
+        handleTimeDateSlotToRemove();
         return true;
       } else {
         console.log("ERROR : ", res.data);
@@ -379,6 +410,11 @@ const SetAppointment = () => {
     }
   };
 
+  //handleTimeDateSlotToRemove();
+  useEffect(() => {
+    handleTimeDateSlotToRemove();
+  }, [appointmentForm.appointment_date]);
+
   return (
     <>
       <div className="setappointment">
@@ -412,12 +448,19 @@ const SetAppointment = () => {
                 className="profile"
               />
             </div>
+            <span className="dr-name2">
+              <CiStethoscope className="icon" /> {veterinarianInfo?.fullname}
+            </span>
+            <small className="dr-name2">
+              {veterinarianInfo?.specialization}
+            </small>
+
             {showDateTime === "1" && (
               <div className="petinfo-form">
-                <span className="note">
-                  Hey {currentUser?.fullname}, please fill out the form for your
-                  pet's information.
-                </span>
+                {/* <span className="note">
+                  Hey {currentUser?.fullname.split(" ")[0]}, please fill out the
+                  form for your pet's information.
+                </span> */}
                 <div className="form">
                   <div className="service-petname">
                     <div className="input-wrapper-select-services">
@@ -500,18 +543,30 @@ const SetAppointment = () => {
                       </label>
                       <select
                         style={{
-                          border: `${
-                            emptypet_type !== "" ? "2px solid red" : ""
-                          }`,
+                          border: emptypet_type !== "" ? "2px solid red" : "",
                         }}
-                        value={appointmentForm.pet_type}
+                        value={
+                          (appointmentForm.pet_type =
+                            veterinarianInfo?.specialization
+                              ? veterinarianInfo.specialization.split(" ")[0]
+                              : "")
+                        }
                         onChange={handleChange}
                         name="pet_type"
-                        id="type"
+                        id="pet_type"
                       >
-                        <option value=""></option>
-                        <option value="Dog">Dog</option>
-                        <option value="Cat">Cat</option>
+                        <option
+                          id="pet_type"
+                          value={
+                            veterinarianInfo?.specialization
+                              ? veterinarianInfo.specialization.split(" ")[0]
+                              : ""
+                          }
+                        >
+                          {veterinarianInfo?.specialization
+                            ? veterinarianInfo.specialization.split(" ")[0]
+                            : ""}
+                        </option>
                       </select>
                     </div>
                     <div className="input-wrapper">
@@ -539,7 +594,6 @@ const SetAppointment = () => {
                         style={{ color: `${emptyage !== "" ? "red" : ""}` }}
                         htmlFor="age"
                       >
-                        {" "}
                         {emptyage !== "" ? emptyage : "Pet Age"}
                       </label>
                       <input
@@ -577,31 +631,53 @@ const SetAppointment = () => {
                   </div>
 
                   <div className="radio-wrapper">
-                    <label
-                      style={{ color: `${emptygender !== "" ? "red" : ""}` }}
-                      htmlFor="gender"
-                    >
-                      {emptygender !== "" ? emptygender : "Gender"}
-                    </label>
-                    <div className="male-female">
-                      <div className="gender-wrapper">
-                        <input
-                          value="Male"
-                          onChange={handleChange}
-                          type="radio"
-                          name="gender"
-                        />
-                        <label htmlFor="male">Male</label>
+                    <div className="input-wrapper">
+                      <label
+                        style={{ color: `${emptygender !== "" ? "red" : ""}` }}
+                        htmlFor="gender"
+                      >
+                        {emptygender !== "" ? emptygender : "Gender"}
+                      </label>
+                      <div className="male-female">
+                        <div className="gender-wrapper">
+                          <input
+                            value="Male"
+                            onChange={handleChange}
+                            type="radio"
+                            name="gender"
+                          />
+                          <label htmlFor="male">Male</label>
+                        </div>
+                        <div className="gender-wrapper">
+                          <input
+                            value="Female"
+                            onChange={handleChange}
+                            type="radio"
+                            name="gender"
+                          />
+                          <label htmlFor="female">Female</label>
+                        </div>
                       </div>
-                      <div className="gender-wrapper">
-                        <input
-                          value="Female"
-                          onChange={handleChange}
-                          type="radio"
-                          name="gender"
-                        />
-                        <label htmlFor="female">Female</label>
-                      </div>
+                    </div>
+
+                    <div className="input-wrapper">
+                      <label
+                        style={{
+                          color: `${emptyprofile !== null ? "red" : ""}`,
+                        }}
+                        htmlFor="type"
+                      >
+                        {emptyprofile !== null ? emptyprofile : "Pet Profile"}
+                      </label>
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          setAppointment({
+                            ...appointmentForm,
+                            image: e.target.files[0],
+                          })
+                        }
+                      />
                     </div>
                   </div>
                   <div className="text-area-wrapper">
@@ -613,10 +689,9 @@ const SetAppointment = () => {
                       }}
                       htmlFor="concern"
                     >
-                      {" "}
                       {emptycurrent_health_issue !== ""
                         ? emptycurrent_health_issue
-                        : "Health Issues or Concerns"}{" "}
+                        : "Current Pet Health Concerns or Conditions"}{" "}
                     </label>
                     <textarea
                       style={{
@@ -630,7 +705,7 @@ const SetAppointment = () => {
                       onChange={handleChange}
                       name="current_health_issue"
                       id="concern"
-                      placeholder="Health Issues or Concerns"
+                      placeholder="Current Pet Health Concerns or Conditions"
                     ></textarea>
                   </div>
                   <div className="text-area-wrapper">
@@ -644,7 +719,7 @@ const SetAppointment = () => {
                     >
                       {emptyhistory_health_issue !== ""
                         ? emptyhistory_health_issue
-                        : "Pet Health History"}{" "}
+                        : "Pet's vaccination history, allergies, medical history, and past treatments."}{" "}
                     </label>
                     <textarea
                       style={{
@@ -658,7 +733,7 @@ const SetAppointment = () => {
                       onChange={handleChange}
                       name="history_health_issue"
                       id="history"
-                      placeholder="Health History"
+                      placeholder="Pet's vaccination history, allergies, medical history, and past treatments."
                     ></textarea>
                   </div>
                   <div className="button">

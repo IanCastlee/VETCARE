@@ -115,7 +115,7 @@
 @media (max-width: 786px) {
   .navbar {
     width: 100%;
-    height: 80px;
+    height: 60px;
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -125,7 +125,7 @@
     z-index: 999;
     background-color: transparent;
     &.scrolled {
-      background-color: transparent;
+      background-color: rgba(0, 0, 0, 0.5);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
     .nav-container {

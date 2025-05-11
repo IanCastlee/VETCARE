@@ -35,9 +35,11 @@ if (isset($input['email'], $input['password'])) {
                 unset($row['password']);
 
                 if ($row['acc_type'] == 0) {
-                    echo json_encode(['success' => true, 'message' => 'Login Succesful', 'uid' => $_SESSION['userid'], 'isClient' => true, 'data' => $row]);
+                    echo json_encode(['success' => true, 'message' => 'Login Succesful', 'uid' => $_SESSION['userid'], 'userType' => "client", 'data' => $row]);
+                } else if ($row['acc_type'] == 1) {
+                    echo json_encode(['success' => true, 'message' => 'Login Succesful', 'uid' => $_SESSION['userid'], 'userType' => "veterinarian", 'data' => $row]);
                 } else {
-                    echo json_encode(['success' => true, 'message' => 'WELCOME VETERINARIAN', 'uid' => $_SESSION['userid'], 'isClient' => false, 'data' => $row]);
+                    echo json_encode(['success' => true, 'message' => 'WELCOME ADMIN', 'uid' => $_SESSION['userid'], 'userType' => 'admin', 'data' => $row]);
                 }
             }
         } else {

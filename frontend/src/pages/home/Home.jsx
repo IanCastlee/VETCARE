@@ -18,7 +18,7 @@ import { CiStethoscope } from "react-icons/ci";
 import vaccine from "../../assets/icons/animals.png";
 import deworm from "../../assets/icons/deworm (1).png";
 import dental from "../../assets/icons/veterinary.png";
-import Loader2 from "../../components/loader/Loader2";
+import Loader3 from "../../components/loader/Loader3";
 import { uploadUrl } from "../../../fileurl";
 
 const Home = () => {
@@ -133,7 +133,7 @@ const Home = () => {
         <h2>Available Veterinarian</h2>
         <div className="veterinarian">
           {showLoader2 ? (
-            <Loader2 />
+            <Loader3 />
           ) : veterinarian.length > 0 ? (
             veterinarian
               .filter((item) =>

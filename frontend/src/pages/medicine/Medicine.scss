@@ -40,35 +40,9 @@
     .content {
       width: 100%;
 
-      .med-navbar {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 100px;
-        margin-top: 20px;
-        .capsule-label {
-          display: inline-block;
-          padding: 8px 16px;
-          border-radius: 999px;
-          background: linear-gradient(to right, teal 50%, #fff 50%);
-          color: #000;
-          font-weight: bold;
-          border: 2px solid teal;
-          text-align: center;
-          cursor: pointer;
-          transition: all 0.3s ease;
-          margin-bottom: 50px;
-
-          &:hover {
-            background: linear-gradient(to right, #fff 50%, teal 50%);
-          }
-        }
-      }
-
       .search-container {
         width: 100%;
-        margin-top: 0;
+        margin-top: 10px;
         display: flex;
         justify-content: end;
 
@@ -102,6 +76,86 @@
         }
       }
 
+      .category {
+        display: flex;
+        flex-direction: column;
+
+        .top-med {
+          display: flex;
+          justify-content: start;
+          .title-med {
+            color: #0c0950;
+            font-weight: 500;
+            margin-bottom: 30px;
+            font-size: 1rem;
+          }
+        }
+
+        .med-navbar {
+          width: 100%;
+          display: flex;
+          justify-content: start;
+          align-items: center;
+          gap: 20px;
+          margin-top: 20px;
+
+          .category-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+            border-radius: 5px;
+            width: 130px;
+            height: fit-content;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease,
+              background-color 0.3s ease;
+            cursor: pointer;
+
+            // Default background
+            background-color: #fff;
+
+            img {
+              height: 60px;
+              width: 60px;
+              transition: transform 0.3s ease;
+            }
+
+            .capsule-label {
+              font-size: 0.875rem;
+              color: #0c0950;
+              transition: color 0.3s ease;
+            }
+
+            &:hover {
+              box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+            }
+
+            &:hover img {
+              transform: scale(1.1);
+            }
+
+            &:hover .capsule-label {
+              color: #f0a500;
+            }
+
+            // Active state style
+            &.active {
+              box-shadow: rgba(17, 17, 26, 0.1) 0px 8px 24px,
+                rgba(17, 17, 26, 0.1) 0px 16px 56px,
+                rgba(17, 17, 26, 0.1) 0px 24px 80px;
+              .capsule-label {
+                color: #f0a500;
+              }
+              img {
+                transform: scale(1.1);
+              }
+            }
+          }
+        }
+      }
+
       .medicine-content {
         width: 100%;
         display: flex;
@@ -123,8 +177,9 @@
         .card-container {
           width: 100%;
           display: flex;
-          justify-content: space-between;
+          justify-content: start;
           flex-wrap: wrap;
+          gap: 5px;
 
           .card {
             box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
@@ -150,7 +205,7 @@
               flex-direction: column;
               border-radius: 10px;
               padding: 10px;
-              background-color: lightgrey;
+              background-color: rgb(240, 235, 235);
 
               .item-card {
                 display: flex;
@@ -179,6 +234,13 @@
                     display: flex;
                     flex-direction: column;
 
+                    .med-name {
+                      height: 24px;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                    }
+
                     span {
                       font-size: 0.875rem;
                       color: #0c0950;
@@ -191,6 +253,8 @@
                     color: #000;
                     font-size: 14px;
                     cursor: pointer;
+                    align-self: end;
+                    color: blue;
                   }
                 }
               }
@@ -216,20 +280,53 @@
 
   .modal-viewmore {
     width: 500px;
-    padding: 10px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
     background-color: #fff;
+    overflow-y: scroll;
+    height: 95%;
 
     .top {
       width: 100%;
       display: flex;
       justify-content: space-between;
+      margin-bottom: 20px;
+
+      .left {
+        width: 70%;
+        h5 {
+          font-size: 16px;
+        }
+      }
+      .close-icon {
+        font-size: 20px;
+        cursor: pointer;
+      }
     }
 
     .content {
       display: flex;
       flex-direction: column;
+      gap: 7px;
+      .image-wraper {
+        width: 100%;
+        height: auto;
+
+        img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+
+      span {
+        display: flex;
+        font-size: 1rem;
+
+        strong {
+          margin-right: 6px;
+        }
+      }
     }
   }
 }
@@ -290,35 +387,6 @@
         margin-top: -10px;
         background-color: #fff;
 
-        .med-navbar {
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 10px;
-          margin-top: 20px;
-          padding: 0 10px;
-
-          .capsule-label {
-            display: inline-block;
-            padding: 5px 14px;
-            border-radius: 999px;
-            background: linear-gradient(to right, teal 50%, #fff 50%);
-            color: #000;
-            font-weight: bold;
-            border: 1px solid teal;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 50px;
-            font-size: 12px;
-
-            &:hover {
-              background: linear-gradient(to right, #fff 50%, teal 50%);
-            }
-          }
-        }
-
         .search-container {
           width: 100%;
           margin-top: 0;
@@ -355,6 +423,56 @@
           }
         }
 
+        .category {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          margin-top: 20px;
+
+          .top-med {
+            display: flex;
+            justify-content: start;
+            margin-bottom: 10px;
+            .title-med {
+              color: #0c0950;
+              font-weight: 500;
+              margin-bottom: 10px;
+              font-size: 1rem;
+            }
+          }
+
+          .med-navbar {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 0;
+
+            .category-card {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+              border-radius: 5px;
+              width: 100px;
+              height: fit-content;
+              padding: 10px;
+
+              img {
+                height: 50px;
+                width: 50px;
+              }
+
+              .capsule-label {
+                font-size: 0.875rem;
+                color: #0c0950;
+              }
+            }
+          }
+        }
+
         .medicine-content {
           width: 100%;
           display: flex;
@@ -376,7 +494,7 @@
           .card-container {
             width: 100%;
             display: flex;
-            justify-content: center;
+            justify-content: start;
             flex-wrap: wrap;
             gap: 5px;
 
@@ -417,10 +535,12 @@
 
                   .left {
                     width: 100%;
+                    height: 120px;
 
                     img {
                       width: 100%;
                       height: 100%;
+                      object-fit: cover;
                     }
                   }
 
@@ -473,22 +593,49 @@
     align-items: center;
 
     .modal-viewmore {
-      width: 98%;
-      padding: 10px;
+      width: 500px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
       background-color: #fff;
-      border-radius: 5px;
+      overflow-y: scroll;
+      height: 100%;
 
       .top {
         width: 100%;
         display: flex;
         justify-content: space-between;
+        margin-bottom: 20px;
+
+        .left {
+          h5 {
+            font-size: 1.25rem;
+          }
+        }
       }
 
       .content {
         display: flex;
         flex-direction: column;
+        gap: 7px;
+        .image-wraper {
+          width: 100%;
+          height: auto;
+
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+
+        span {
+          display: flex;
+          font-size: 1rem;
+
+          strong {
+            margin-right: 6px;
+          }
+        }
       }
     }
   }

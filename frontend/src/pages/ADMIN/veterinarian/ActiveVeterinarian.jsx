@@ -11,15 +11,21 @@ import { IoIosAdd } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { MdAddBox } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import Emptydata from "../../../components/emptydata/Emptydata";
 
 const ActiveVeterinarian = () => {
-  const [showModal, setShowModal] = useState(false);
   const [showModalServices, setShowModalShowModalServcies] = useState(false);
   const [veterinarian, setVeterinarian] = useState([]);
   const [veterinarianServices, setVeterinarianServices] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
+  const [servicesData, setServicesData] = useState([]);
+
+  const [activeFormModal, setActiveFormModal] = useState("");
+  const [showDelForm, setShowDelForm] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [veterinarianData, setVeterinarianData] = useState({
+    user_id: "",
     fullname: "",
     specialization: "",
     age: "",
@@ -132,7 +138,6 @@ const ActiveVeterinarian = () => {
       setShowModalShowModalServcies(true);
     }
   };
-
   const handleSubmitServices = async (e) => {
     e.preventDefault();
 
@@ -180,6 +185,137 @@ const ActiveVeterinarian = () => {
     getServices();
   }, []);
 
+  const setShowEditModal = (item) => {
+    setVeterinarianData({
+      user_id: item.user_id || "",
+      fullname: item.fullname || "",
+      specialization: item.specialization || "",
+      age: item.age || "",
+      gender: item.gender || "",
+      time: item.time || "",
+      duration: item.duration || "",
+      experience: item.experience || "",
+      certificate: item.certification || "",
+      address: item.address || "",
+      phone: item.phone || "",
+      about: item.about || "",
+      profile: item.profile || "",
+      email: item.email || "",
+      password: "",
+      cpassword: "",
+    });
+
+    setServicesData(item.services);
+    setActiveFormModal("update");
+  };
+
+  //closeFormModal
+  const closeFormModal = () => {
+    setVeterinarianData({
+      fullname: "",
+      specialization: "",
+      age: "",
+      gender: "",
+      time: "",
+      duration: "",
+      experience: "",
+      certificate: "",
+      address: "",
+      phone: "",
+      about: "",
+      profile: "",
+      email: "",
+      password: "",
+      cpassword: "",
+    });
+
+    setActiveFormModal("");
+  };
+
+  //handleUpdate Veterinarian Information
+  const handleUpdateVeterinarianInof = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("user_id", veterinarianData.user_id);
+    formData.append("fullname", veterinarianData.fullname);
+    formData.append("specialization", veterinarianData.specialization);
+    formData.append("age", veterinarianData.age);
+    formData.append("gender", veterinarianData.gender);
+    formData.append("time", veterinarianData.time);
+    formData.append("duration", veterinarianData.duration);
+    formData.append("experience", veterinarianData.experience);
+    formData.append("certificate", veterinarianData.certificate);
+    formData.append("address", veterinarianData.address);
+    formData.append("phone", veterinarianData.phone);
+    formData.append("about", veterinarianData.about);
+    formData.append("profile", veterinarianData.profile);
+    formData.append("email", veterinarianData.email);
+    formData.append("password", veterinarianData.cpassword);
+
+    try {
+      const res = await axiosIntance.post(
+        "admin/veterinarian/UpdateVeterinarian.php",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (res.data.success) {
+        console.log("Response : ", res.data.message);
+
+        setVeterinarian((prevData) =>
+          prevData.map((vet) =>
+            Number(vet.user_id) === Number(veterinarianData.user_id)
+              ? { ...vet, ...veterinarianData }
+              : vet
+          )
+        );
+
+        closeFormModal();
+      } else {
+        console.log("Error : ", res.data);
+      }
+    } catch (error) {
+      console.log("Error : ", error);
+    }
+  };
+
+  //handle Delete
+  // Assuming `setVeterinarian` is your state setter and `veterinarian` is your array
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axiosIntance.post(
+        `admin/veterinarian/SetAsNotActiveVeterinarian.php?user_id=${showDelForm}`
+      );
+
+      if (res.data.success) {
+        console.log("RES : ", res.data.message);
+
+        setVeterinarian((prevData) =>
+          prevData.filter((vet) => vet.user_id !== showDelForm)
+        );
+
+        setShowDelForm(null);
+      } else {
+        console.log("Delete failed:", res.data);
+      }
+    } catch (error) {
+      console.log("ERROR:", error);
+    }
+  };
+
+  //filteredVeterinarians
+  const filteredVeterinarians = veterinarian.filter(
+    (item) =>
+      item.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.address.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <>
       <div className="admin-veterinarian">
@@ -189,14 +325,19 @@ const ActiveVeterinarian = () => {
           </div>
           <div className="right">
             <div className="search-input">
-              <input type="text" placeholder="Search" />{" "}
+              <input
+                type="text"
+                placeholder="Search Name, Specialization, Address"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               <FiSearch className="icon" />
             </div>
 
             <button
               title="Add New Record"
               className="btn-addnew"
-              onClick={() => setShowModal(!showModal)}
+              onClick={() => setActiveFormModal("add")}
             >
               <IoIosAdd className="icon" />
             </button>
@@ -213,13 +354,12 @@ const ActiveVeterinarian = () => {
                 <th>Address</th>
                 <th>Certification</th>
                 <th>Experience</th>
-                <th>Services</th>
                 <th className="action-header">Action</th>
               </tr>
             </thead>
             <tbody>
-              {veterinarian &&
-                veterinarian.map((item) => (
+              {filteredVeterinarians.length > 0 ? (
+                filteredVeterinarians.map((item) => (
                   <tr key={item.user_id}>
                     <td style={{ fontWeight: "700" }}>{item.user_id}</td>
                     <td>
@@ -233,44 +373,11 @@ const ActiveVeterinarian = () => {
                         alt="profile_pic"
                       />
                     </td>
-
                     <td>{item.fullname}</td>
                     <td>{item.specialization}</td>
                     <td>{item.address}</td>
                     <td>{item.certification}</td>
                     <td>{item.experience}</td>
-                    <td>
-                      <select
-                        style={{
-                          border: "1px solid lightgray",
-                          width: "150px",
-                          textAlign: "center",
-                        }}
-                        name=""
-                        id=""
-                      >
-                        <option style={{ backgroundColor: "lightgrey" }}>
-                          Services
-                        </option>
-
-                        {showLoader ? (
-                          <Loader2 />
-                        ) : (
-                          veterinarianServices
-                            .filter((vs) => vs.user_id == item.user_id)
-                            .map((vs) => (
-                              <>
-                                <option
-                                  key={vs.vservices_id}
-                                  value={vs.vservices}
-                                >
-                                  {vs.vservices}
-                                </option>
-                              </>
-                            ))
-                        )}
-                      </select>{" "}
-                    </td>
                     <td className="btns-wrapper">
                       <button
                         title="Add Services"
@@ -280,38 +387,56 @@ const ActiveVeterinarian = () => {
                         <MdAddBox className="icon" />
                       </button>
                       <button title="Delete" className="btn">
-                        <FaTrashAlt className="icon" />
+                        <FaTrashAlt
+                          className="icon"
+                          onClick={() => setShowDelForm(item.user_id)}
+                        />
                       </button>
-                      <button title="Delete" className="btn">
+                      <button
+                        title="Edit"
+                        className="btn"
+                        onClick={() => setShowEditModal(item)}
+                      >
                         <FaEdit style={{ color: "blue" }} className="icon" />
                       </button>
                     </td>
                   </tr>
-                ))}
+                ))
+              ) : (
+                <Emptydata />
+              )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {showModal && (
+      {activeFormModal !== "" && (
         <div className="overlay">
           <motion.div
             initial={{ opacity: 0, y: -200 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="modal"
+            className="modaladdvet"
           >
             <div className="container">
               <div className="top">
-                <h3 className="title">ADD NEW VETERINARIAN</h3>
-                <IoMdClose
-                  className="icon"
-                  onClick={() => setShowModal(false)}
-                />
+                <h3 className="title">
+                  {activeFormModal === "update"
+                    ? "UPDATE VETERINARIAN INFO"
+                    : activeFormModal === "add"
+                    ? "ADD NEW VETERINARIAN"
+                    : ""}
+                </h3>
+                <IoMdClose className="icon" onClick={closeFormModal} />
               </div>
 
               <div className="form">
                 <div className="form-wrapper">
+                  <input
+                    type="hidden"
+                    name="user_id"
+                    value={veterinarianData.user_id}
+                  />
                   <div className="input-label-wrapper">
                     <label htmlFor="fullname">Doctor's Fullname</label>
                     <input
@@ -366,6 +491,7 @@ const ActiveVeterinarian = () => {
                           name="gender"
                           type="radio"
                           value="male"
+                          checked={veterinarianData.gender === "male"}
                           onChange={handleChange}
                         />
                         <label htmlFor="">Male</label>
@@ -376,6 +502,7 @@ const ActiveVeterinarian = () => {
                           name="gender"
                           type="radio"
                           value="female"
+                          checked={veterinarianData.gender === "female"}
                           onChange={handleChange}
                         />
                         <label htmlFor="">Female</label>
@@ -487,51 +614,94 @@ const ActiveVeterinarian = () => {
                   />
                 </div>
 
+                {/* SERVICES */}
+                {activeFormModal === "update" && (
+                  <div className="services-container">
+                    <div className="divider">
+                      <span className="title">SERVICES</span>
+                    </div>
+                    <div className="services-wrapper">
+                      {servicesData.length > 0 ? (
+                        servicesData.map((item, index) => (
+                          <div className="services-list">
+                            <span key={index}>{item.vservices}</span>
+                            <div className="actions">
+                              <FaTrashAlt className="icon-del" />
+                              <FaEdit className="icon-update" />
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No Services yet</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* CREDENTIALS */}
-                <div className="credentials">
-                  <div className="divider">
-                    <span className="title">CREDENTIALS</span>
-                  </div>
-                  <div className="form-wrapper">
-                    <label htmlFor="about">Email</label>
-                    <input
-                      className="input"
-                      type="email"
-                      name="email"
-                      value={veterinarianData.email}
-                      onChange={handleChange}
-                    />
-                  </div>
+                {activeFormModal === "add" && (
+                  <div className="credentials">
+                    <div className="divider">
+                      <span className="title">CREDENTIALS</span>
+                    </div>
+                    <div className="form-wrapper">
+                      <label htmlFor="about">Email</label>
+                      <input
+                        className="input"
+                        type="email"
+                        name="email"
+                        value={veterinarianData.email}
+                        onChange={handleChange}
+                      />
+                    </div>
 
-                  <div className="form-wrapper">
-                    <label htmlFor="password">Password</label>
-                    <input
-                      className="input"
-                      type="password"
-                      placeholder="Password"
-                      name="password"
-                      value={veterinarianData.password}
-                      onChange={handleChange}
-                    />
-                  </div>
+                    <div className="form-wrapper">
+                      <label htmlFor="password">Password</label>
+                      <input
+                        className="input"
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        value={veterinarianData.password}
+                        onChange={handleChange}
+                      />
+                    </div>
 
-                  <div className="form-wrapper">
-                    <label htmlFor="cPassword">Confirm Password</label>
-                    <input
-                      className="input"
-                      type="cPassword"
-                      placeholder="Cofirm password"
-                      name="cpassword"
-                      value={veterinarianData.cpassword}
-                      onChange={handleChange}
-                    />
+                    <div className="form-wrapper">
+                      <label htmlFor="cPassword">Confirm Password</label>
+                      <input
+                        className="input"
+                        type="cPassword"
+                        placeholder="Cofirm password"
+                        name="cpassword"
+                        value={veterinarianData.cpassword}
+                        onChange={handleChange}
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <div className="button-wrapper">
-                <button className="btn-submit" onClick={handleSubmit}>
-                  {showLoader ? <Loader2 /> : " SUBMIT"}
+                <button
+                  className="btn-submit"
+                  onClick={
+                    activeFormModal === "add"
+                      ? handleSubmit
+                      : activeFormModal === "update"
+                      ? handleUpdateVeterinarianInof
+                      : ""
+                  }
+                >
+                  {showLoader ? (
+                    <Loader2 />
+                  ) : activeFormModal === "add" ? (
+                    " SUBMIT"
+                  ) : activeFormModal === "update" ? (
+                    "UPDATE"
+                  ) : (
+                    ""
+                  )}
                 </button>
               </div>
             </div>
@@ -589,6 +759,32 @@ const ActiveVeterinarian = () => {
                 onClick={handleSubmitServices}
               >
                 {showLoader ? <Loader2 /> : "SUBMIT"}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {showDelForm !== null && (
+        <div className="delete-overlay">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="delete"
+          >
+            <div className="top">
+              <h6>Confirmation</h6>
+            </div>
+
+            <p>Are you sure this veterinarian is not active?</p>
+
+            <div className="bot">
+              <button className="btn-yes" onClick={handleDelete}>
+                Yes
+              </button>
+              <button className="btn-no" onClick={() => setShowDelForm(null)}>
+                Cancel
               </button>
             </div>
           </motion.div>

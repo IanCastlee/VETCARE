@@ -70,10 +70,12 @@ const Signin = () => {
         setTimeout(() => {
           setshowLoader(false);
 
-          if (res.data.isClient) {
+          if (res.data.userType === "client") {
             setFormToShow(null);
-          } else {
+          } else if (res.data.userType === "veterinarian") {
             window.location.href = `/veterinarian/home/${res.data.uid}`;
+          } else {
+            window.location.href = `/admin/home/`;
           }
         }, 3000);
       } else {

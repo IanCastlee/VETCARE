@@ -76,11 +76,7 @@ const Navbar = ({ isHome }) => {
                 <RiHomeLine className="nav-icon" />
               </Link>
 
-              <Link
-                to="/medicine/"
-                title="Available Medicine"
-                className="list-icon"
-              >
+              <Link to="/medicine/" title="Vetcare Shop" className="list-icon">
                 <AiOutlineMedicineBox className="nav-icon" />
               </Link>
               <Link

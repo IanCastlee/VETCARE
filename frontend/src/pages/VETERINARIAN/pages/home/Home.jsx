@@ -1,11 +1,12 @@
 import "./Home.scss";
+import { motion } from "framer-motion";
 
 //IMAGES
-import profile1 from "../../../../assets/imges/user5.jpg";
-import profile2 from "../../../../assets/imges/user3.jpg";
 
 //ICONS
 import { CiStethoscope } from "react-icons/ci";
+import { IoMdClose } from "react-icons/io";
+
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { FaRegCircleCheck } from "react-icons/fa6";
 import { TbCancel } from "react-icons/tb";
@@ -13,12 +14,16 @@ import { useEffect, useState } from "react";
 import { VscClose } from "react-icons/vsc";
 import { useParams } from "react-router-dom";
 import axiosIntance from "../../../../../axios";
+import Loader3 from "../../../../components/loader/Loader2";
+import Emptydata from "../../../../components/emptydata/Emptydata";
+import { uploadUrl } from "../../../../../fileurl";
 
 const Home = () => {
   const vetId = useParams();
 
+  const [loader, setLoader] = useState(false);
   const [veterinarianInfo, setVeterinarianInfo] = useState([]);
-  const [veterinarianServices, setVeterinarianServices] = useState([]);
+  const [appointment, setAppointment] = useState([]);
 
   useEffect(() => {
     const getClickedVeterinarian = async () => {
@@ -30,7 +35,6 @@ const Home = () => {
         if (res.data.success) {
           setVeterinarianInfo(res.data.data.veterinarianInfo);
           console.log(res.data.data.veterinarianInfo);
-          setVeterinarianServices(res.data.data.services);
 
           console.log(res.data.data.veterinarianInfo);
         } else {
@@ -43,7 +47,66 @@ const Home = () => {
     getClickedVeterinarian();
   }, [vetId]);
 
+  //get Appointment
+  useEffect(() => {
+    const activeAppointment = async () => {
+      setLoader(true);
+      try {
+        const res = await axiosIntance.post(
+          "veterinarian/GetAppointmentForSpecificVet.php",
+          {
+            currentVet_id: vetId.vetId,
+          }
+        );
+        if (res.data.success) {
+          setAppointment(res.data.data);
+          console.log("DATA : ", res.data.data);
+          setLoader(false);
+        } else {
+          setLoader(false);
+
+          console.log("Error_ : ", res.data);
+        }
+      } catch (error) {
+        setLoader(false);
+
+        console.log("Error : ", error);
+      }
+    };
+
+    activeAppointment();
+  }, []);
+
   const [showModalMenu, setShowModalMenu] = useState(false);
+
+  //get current date
+  const today = new Date();
+  const formattedDate = today.toISOString().split("T")[0];
+
+  const [clickedID, setClickedID] = useState(null);
+  //clickedMenu
+  const clickedMenu = (id) => {
+    setClickedID(id);
+  };
+
+  const [moreInfo, setMorenInfo] = useState(null);
+
+  const clickedMoreInfo = (item) => {
+    setMorenInfo(item);
+    console.log(item);
+  };
+
+  const followUpData = [
+    {
+      id: 1,
+      desc: "Lorem Ipsum Amit HAHjsdhjhs",
+    },
+    {
+      id: 2,
+      desc: "Lorem Ipsum Amit AHAAHHA",
+    },
+  ];
+
   return (
     <>
       <div className="veterinarian-home">
@@ -72,116 +135,309 @@ const Home = () => {
               <div className="today-appointment">
                 <h4>Today's Appointment</h4>
 
-                <div className="card">
-                  <div className="left-card">
-                    <img
-                      src={profile1}
-                      alt="profile"
-                      className="profile-card"
-                    />
-                  </div>
-
-                  <div className="right-card">
-                    <div className="top">
-                      <div className="name-info">
-                        <div className="name">Braka Kkaka</div>
-                        <p>04-22-25</p>
-                        <p>2:00 PM - 2:35 PM</p>
-                      </div>
-                      <MdOutlineMoreHoriz
-                        onClick={() => setShowModalMenu(!showModalMenu)}
-                        className="more-icon"
-                      />
-                    </div>
-
-                    <div className="bot">
-                      <div className="pet">
-                        <span className="type">Pet : Dog</span>
-                      </div>
-                    </div>
-
-                    {showModalMenu && (
-                      <div className="modal-menu">
-                        <div className="top">
-                          <VscClose
-                            className="back-icon"
-                            onClick={() => setShowModalMenu(false)}
+                {loader ? (
+                  <Loader3 />
+                ) : appointment.length > 0 ? (
+                  appointment
+                    .filter((item) => item.appointment_date === formattedDate)
+                    .map((item) => (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="card"
+                        key={item.appointment_id}
+                      >
+                        <div className="left-card">
+                          <img
+                            src={`${uploadUrl.uploadurl}/${item?.image}`}
+                            alt="profile"
+                            className="profile-card"
                           />
                         </div>
-                        <div className="menu">
-                          <button className="btn">
-                            <FaRegCircleCheck className="icon" />
-                            Done
-                          </button>
-                          <button className="btn">
-                            <TbCancel className="icon" />
-                            Cancel
-                          </button>
+
+                        <div className="right-card">
+                          <div className="top">
+                            <div className="name-info">
+                              <div className="name">{item.pet_name}</div>
+                              <p>{item.appointment_date}</p>
+                              <p>{item.appointment_time}</p>
+
+                              <button onClick={() => clickedMoreInfo(item)}>
+                                Read More
+                              </button>
+                            </div>
+                            <MdOutlineMoreHoriz
+                              onClick={() => clickedMenu(item.appointment_id)}
+                              className="more-icon"
+                            />
+                          </div>
+
+                          <div className="bot">
+                            <div className="pet">
+                              <span className="type">
+                                Pet : {item.pet_type}
+                              </span>
+                            </div>
+                          </div>
+
+                          {clickedID === item.appointment_id && (
+                            <div className="modal-menu">
+                              <div className="top">
+                                <VscClose
+                                  className="back-icon"
+                                  onClick={() => setClickedID(null)}
+                                />
+                              </div>
+                              <div className="menu">
+                                {" "}
+                                <button className="btn">
+                                  <FaRegCircleCheck className="icon" />
+                                  Follow Up
+                                </button>
+                                <button className="btn">
+                                  <FaRegCircleCheck className="icon" />
+                                  Done
+                                </button>
+                                <button className="btn">
+                                  <TbCancel className="icon" />
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                      </motion.div>
+                    ))
+                ) : (
+                  <Emptydata />
+                )}
               </div>
 
               <div className="pending-appointment">
                 <h4>Pending Appointment</h4>
 
-                <div className="card">
-                  <div className="left-card">
-                    <img
-                      src={profile2}
-                      alt="profile"
-                      className="profile-card"
-                    />
-                  </div>
-
-                  <div className="right-card">
-                    <div className="top">
-                      <div className="name-info">
-                        <div className="name">Braka Kkaka</div>
-                        <p>04-25-25</p>
-                        <p>7:00 AM - 7:35 AM</p>
-                      </div>
-                      <MdOutlineMoreHoriz
-                        className="more-icon"
-                        onClick={() => setShowModalMenu(!showModalMenu)}
-                      />
-                    </div>
-
-                    {showModalMenu && (
-                      <div className="modal-menu">
-                        <div className="top">
-                          <VscClose
-                            className="back-icon"
-                            onClick={() => setShowModalMenu(false)}
+                {loader ? (
+                  <Loader3 />
+                ) : appointment.length > 0 ? (
+                  appointment
+                    .filter((item) => item.appointment_date !== formattedDate)
+                    .map((item) => (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.7 }}
+                        className="card"
+                        key={item.appointment_id}
+                      >
+                        <div className="left-card">
+                          <img
+                            src={`${uploadUrl.uploadurl}/${item?.image}`}
+                            alt="profile"
+                            className="profile-card"
                           />
                         </div>
-                        <div className="menu">
-                          <button className="btn">
-                            <FaRegCircleCheck className="icon" />
-                            Done
-                          </button>
-                          <button className="btn">
-                            <TbCancel className="icon" />
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    )}
 
-                    <div className="bot">
-                      <div className="pet">
-                        <span className="type">Pet : Dog</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                        <div className="right-card">
+                          <div className="top">
+                            <div className="name-info">
+                              <div className="name">{item.pet_name}</div>
+                              <p>{item.appointment_date}</p>
+                              <p>{item.appointment_time}</p>
+                            </div>
+                            <MdOutlineMoreHoriz
+                              onClick={() => clickedMenu(item.appointment_id)}
+                              className="more-icon"
+                            />
+                          </div>
+
+                          <div className="bot">
+                            <div className="pet">
+                              <span className="type">
+                                Pet : {item.pet_type}
+                              </span>
+                            </div>
+                          </div>
+
+                          {clickedID === item.appointment_id && (
+                            <div className="modal-menu">
+                              <div className="top">
+                                <VscClose
+                                  className="back-icon"
+                                  onClick={() => setClickedID(null)}
+                                />
+                              </div>
+                              <div className="menu">
+                                {" "}
+                                <button className="btn">
+                                  <FaRegCircleCheck className="icon" />
+                                  Follow Up
+                                </button>
+                                <button className="btn">
+                                  <FaRegCircleCheck className="icon" />
+                                  Done
+                                </button>
+                                <button className="btn">
+                                  <TbCancel className="icon" />
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </motion.div>
+                    ))
+                ) : (
+                  <Emptydata />
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* modal  */}
+      {moreInfo !== null && (
+        <div className="modal-readmore-overlay">
+          <motion.div
+            initial={{ opacity: 0, y: -200 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="modal-viewmore"
+          >
+            <div className="top">
+              <div className="left">
+                <h6>Appointment Details</h6>
+              </div>
+
+              <IoMdClose
+                onClick={() => setMorenInfo(null)}
+                className="close-icon"
+              />
+            </div>
+
+            <div className="content">
+              <div className="title">
+                <span>Pet Information</span>
+              </div>
+              <div className="top-content">
+                <div className="image-wraper">
+                  <img
+                    src={`${uploadUrl.uploadurl}/${moreInfo?.image}`}
+                    alt="Pet profile"
+                  />
+                </div>
+
+                <div className="info">
+                  <span>
+                    <strong>Name:</strong> {moreInfo.pet_name}
+                  </span>
+
+                  <span>
+                    <strong>Type:</strong> {moreInfo.pet_type}
+                  </span>
+                  <span>
+                    <strong>Breed:</strong> {moreInfo.breed}
+                  </span>
+                  <span>
+                    <strong>Gender:</strong> {moreInfo.gender}
+                  </span>
+
+                  <span>
+                    <strong>Weight:</strong> {moreInfo.weight}
+                  </span>
+                </div>
+              </div>
+
+              <div className="pet-owner-content">
+                <div className="title">
+                  <span>Pet Owner</span>
+                </div>
+
+                <span>
+                  <strong>Fullname :</strong> {moreInfo.petOwner}
+                </span>
+                <span>
+                  <strong>Address :</strong> {moreInfo.clientAddres}
+                </span>
+                <span>
+                  <strong>Phone :</strong> {moreInfo.phone}
+                </span>
+              </div>
+
+              <div className="appointment-content">
+                <div className="title">
+                  <span>Details</span>
+                </div>
+
+                <span>
+                  <strong>Service :</strong> {moreInfo.service}
+                </span>
+                <span>
+                  <strong>Health Issues :</strong>{" "}
+                  {moreInfo.current_health_issue}
+                </span>
+                <span>
+                  <strong>Medical History :</strong>{" "}
+                  {moreInfo.history_health_issue}
+                </span>
+              </div>
+
+              <div className="appointment-content">
+                <div className="title">
+                  <span>Schedule</span>
+                </div>
+
+                <span>
+                  <strong>Date :</strong> {moreInfo.appointment_date}
+                </span>
+                <span>
+                  <strong>Time :</strong> {moreInfo.appointment_time}
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      {/* modal */}
+
+      {/* modal follow up */}
+      <div className="modal-followup-overlay">
+        <div className="followup">
+          <div className="top">
+            <div className="left">Lorem ipsum dolor sit amet.</div>
+
+            <IoMdClose />
+          </div>
+          <div className="form">
+            <div className="card-checklist">
+              {followUpData &&
+                followUpData.map((item) => (
+                  <div key={item.id} className="check-item">
+                    <input value={item.desc} type="checkbox" />
+                    <span>{item.desc}</span>
+                  </div>
+                ))}
+            </div>
+
+            <div className="input-wrapper">
+              <label htmlFor="inpt-other-concern">
+                Other Follow Up Message
+              </label>
+              <input
+                id="inpt-other-concern"
+                className="inpt-other-concern"
+                type="text"
+              />
+            </div>
+            <button className="btn-submit">
+              {/* Send Follow Up Consultation */}
+              <Loader3 />{" "}
+            </button>
+          </div>
+        </div>
+      </div>
+      {/* modal follow up end  */}
     </>
   );
 };

@@ -13,3 +13,16 @@
   width: 100%;
   margin-left: 220px;
 }
+
+@media (max-width: 786px) {
+  .admin-container {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .admin-left {
+    width: 100%;
+    margin-left: 0;
+  }
+}
