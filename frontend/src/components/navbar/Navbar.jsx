@@ -18,6 +18,8 @@ import { RiMenu3Line } from "react-icons/ri";
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoMdLogOut } from "react-icons/io";
 import { AiOutlineMedicineBox } from "react-icons/ai";
+import Notification from "../notification/Notification";
+import { AiFillBell } from "react-icons/ai";
 
 const Navbar = ({ isHome }) => {
   const navigate = useNavigate();
@@ -25,8 +27,8 @@ const Navbar = ({ isHome }) => {
     useContext(AuthContext);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
-
   const [scrolled, setScrolled] = useState(false);
+  const [showNotifModal, setShowNotifModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -86,8 +88,16 @@ const Navbar = ({ isHome }) => {
               >
                 <LuCalendarCheck className="nav-icon" />
               </Link>
-              <Link title="Notification" className="list-icon">
+              <Link
+                title="Notification"
+                className="list-icon-notif"
+                onClick={() => setShowNotifModal(!showNotifModal)}
+              >
                 <AiOutlineBell className="nav-icon" />
+
+                <div className="dot-wrapper">
+                  <span>9</span>
+                </div>
               </Link>
               <Link
                 onClick={() => setShowDropdown(!showDropdown)}
@@ -106,10 +116,22 @@ const Navbar = ({ isHome }) => {
               )}
             </div>
           </div>
-          <RiMenu3Line
-            className={`menu-icon ${isHome ? "home_" : ""}`}
-            onClick={() => setShowMobileSidebar(true)}
-          />
+
+          <div className="menu-notif-wrapper">
+            <div
+              className="notification-icon"
+              onClick={() => setShowNotifModal(true)}
+            >
+              <AiFillBell className="bell-icon" />
+              <div className="count">
+                <span>8</span>
+              </div>
+            </div>
+            <RiMenu3Line
+              className={`menu-icon ${isHome ? "home_" : ""}`}
+              onClick={() => setShowMobileSidebar(true)}
+            />
+          </div>
         </div>
 
         {showDropdown && (
@@ -131,6 +153,10 @@ const Navbar = ({ isHome }) => {
       )}
       {showMobileSidebar && (
         <OverLay closeMobileSidebar={() => setShowMobileSidebar(false)} />
+      )}
+
+      {showNotifModal && (
+        <Notification close={() => setShowNotifModal(false)} />
       )}
     </>
   );

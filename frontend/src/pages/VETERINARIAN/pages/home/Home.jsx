@@ -105,8 +105,59 @@ const Home = () => {
       id: 2,
       desc: "Lorem Ipsum Amit AHAAHHA",
     },
+    {
+      id: 3,
+      desc: "Lorem Ipsum Amit XAXAXAXX",
+    },
   ];
 
+  //follow up checkup
+  const [clickedToFollowUp, setClickedToFollowUp] = useState({
+    appointment_id: "",
+    client_id: "",
+  });
+  const [selectedFollowUpMessage, setSelectedFollowUpMessage] = useState(null);
+  const [manualMessage, setManualMessage] = useState("");
+
+  console.log("selectedFollowUpMessage : ", selectedFollowUpMessage);
+
+  const clickedToFollowUpItem = (appointment_id, client_id) => {
+    setClickedToFollowUp({
+      appointment_id: appointment_id,
+      client_id: client_id,
+    });
+  };
+
+  //handle submit followup appointment
+  const handleSubmitFollowUpAppoinment = async (e) => {
+    e.preventDefault();
+    setLoader(true);
+
+    try {
+      const res = await axiosIntance.post(
+        "veterinarian/PostFollowUpAppointment.php",
+        {
+          appointment_id: clickedToFollowUp.appointment_id,
+          client_id: clickedToFollowUp.client_id,
+          title: "Follow Up Appointment",
+          desc:
+            selectedFollowUpMessage !== null
+              ? selectedFollowUpMessage
+              : manualMessage,
+        }
+      );
+      if (res.data.success) {
+        console.log(res.data.message);
+        setLoader(false);
+      } else {
+        console.log(res.data);
+        setLoader(false);
+      }
+    } catch (error) {
+      setLoader(false);
+      console.log("Error : ", error);
+    }
+  };
   return (
     <>
       <div className="veterinarian-home">
@@ -190,8 +241,15 @@ const Home = () => {
                                 />
                               </div>
                               <div className="menu">
-                                {" "}
-                                <button className="btn">
+                                <button
+                                  className="btn"
+                                  onClick={() =>
+                                    clickedToFollowUpItem(
+                                      item.appointment_id,
+                                      item.clientId
+                                    )
+                                  }
+                                >
                                   <FaRegCircleCheck className="icon" />
                                   Follow Up
                                 </button>
@@ -402,41 +460,61 @@ const Home = () => {
       {/* modal */}
 
       {/* modal follow up */}
-      <div className="modal-followup-overlay">
-        <div className="followup">
-          <div className="top">
-            <div className="left">Lorem ipsum dolor sit amet.</div>
+      {clickedToFollowUp.appointment_id !== "" &&
+        clickedToFollowUp.client_id !== "" && (
+          <div className="modal-followup-overlay">
+            <div className="followup">
+              <div className="top">
+                <div className="left">Lorem ipsum dolor sit amet.</div>
 
-            <IoMdClose />
-          </div>
-          <div className="form">
-            <div className="card-checklist">
-              {followUpData &&
-                followUpData.map((item) => (
-                  <div key={item.id} className="check-item">
-                    <input value={item.desc} type="checkbox" />
-                    <span>{item.desc}</span>
-                  </div>
-                ))}
-            </div>
+                <IoMdClose />
+              </div>
+              <div className="form">
+                <div className="card-checklist">
+                  {followUpData &&
+                    followUpData.map((item) => (
+                      <div key={item.id} className="check-item">
+                        <input
+                          type="radio"
+                          name="follow-up"
+                          value={item.desc}
+                          checked={selectedFollowUpMessage === item.desc}
+                          onChange={() => {
+                            setSelectedFollowUpMessage(item.desc);
+                            setManualMessage("");
+                          }}
+                        />
+                        <span>{item.desc}</span>
+                      </div>
+                    ))}
+                </div>
 
-            <div className="input-wrapper">
-              <label htmlFor="inpt-other-concern">
-                Other Follow Up Message
-              </label>
-              <input
-                id="inpt-other-concern"
-                className="inpt-other-concern"
-                type="text"
-              />
+                <div className="input-wrapper">
+                  <label htmlFor="inpt-other-concern">
+                    Other Follow Up Message
+                  </label>
+                  <input
+                    id="inpt-other-concern"
+                    className="inpt-other-concern"
+                    type="text"
+                    value={manualMessage}
+                    onChange={(e) => {
+                      setManualMessage(e.target.value);
+                      setSelectedFollowUpMessage(null);
+                    }}
+                  />
+                </div>
+
+                <button
+                  onClick={handleSubmitFollowUpAppoinment}
+                  className="btn-submit"
+                >
+                  {loader ? <Loader3 /> : "Send Follow Up Notif"}
+                </button>
+              </div>
             </div>
-            <button className="btn-submit">
-              {/* Send Follow Up Consultation */}
-              <Loader3 />{" "}
-            </button>
           </div>
-        </div>
-      </div>
+        )}
       {/* modal follow up end  */}
     </>
   );

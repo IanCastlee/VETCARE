@@ -57,6 +57,37 @@
           }
         }
 
+        .list-icon-notif {
+          position: relative;
+          list-style: none;
+          text-decoration: none;
+
+          .nav-icon {
+            cursor: pointer;
+            color: #0a4b5e;
+            font-size: 1.25rem;
+          }
+
+          .dot-wrapper {
+            position: absolute;
+            top: 0;
+            left: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background-color: red;
+            height: 13px;
+            width: 12px;
+
+            span {
+              color: #fff;
+              font-size: 10px;
+              font-weight: 400;
+            }
+          }
+        }
+
         .btn-signin {
           background-color: #161179;
           border: none;
@@ -75,7 +106,7 @@
       }
     }
 
-    .menu-icon {
+    .menu-notif-wrapper {
       display: none;
     }
   }
@@ -173,14 +204,49 @@
         }
       }
 
-      .menu-icon {
+      .menu-notif-wrapper {
         display: flex;
-        font-size: 30px;
-        cursor: pointer;
-        color: #fff;
+        align-items: center;
+        gap: 12px;
 
-        &.home_ {
-          color: #0a4b5e;
+        .notification-icon {
+          position: relative;
+
+          .bell-icon {
+            font-size: 25px;
+            color: #0c0950;
+            cursor: pointer;
+          }
+
+          .count {
+            position: absolute;
+            top: 0;
+            right: -2px;
+            background-color: red;
+            border-radius: 50%;
+            height: 12px;
+            width: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span {
+              font-size: 10px;
+              color: #fff;
+              font-weight: 300;
+            }
+          }
+        }
+
+        .menu-icon {
+          display: flex;
+          font-size: 1.5625rem;
+          cursor: pointer;
+          color: #fff;
+
+          &.home_ {
+            color: #0a4b5e;
+          }
         }
       }
     }
