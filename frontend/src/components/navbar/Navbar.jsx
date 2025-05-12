@@ -11,7 +11,9 @@ import logo from "../../assets/icons/logo.png";
 
 //ICONS
 import { RiHomeLine } from "react-icons/ri";
-import { LuCalendarCheck } from "react-icons/lu";
+import { RiCalendarScheduleLine } from "react-icons/ri";
+import { LuCalendarSync } from "react-icons/lu";
+
 import { AiOutlineBell } from "react-icons/ai";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { RiMenu3Line } from "react-icons/ri";
@@ -86,7 +88,14 @@ const Navbar = ({ isHome }) => {
                 title="Appointment"
                 className="list-icon"
               >
-                <LuCalendarCheck className="nav-icon" />
+                <RiCalendarScheduleLine className="nav-icon" />
+              </Link>
+              <Link
+                to="/myappointment/"
+                title="Follow-up Appointment"
+                className="list-icon"
+              >
+                <LuCalendarSync className="nav-icon" />
               </Link>
               <Link
                 title="Notification"

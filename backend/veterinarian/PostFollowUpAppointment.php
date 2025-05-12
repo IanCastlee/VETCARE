@@ -20,11 +20,18 @@ if (
 
     if ($insert->execute()) {
 
-        $insertNotif = $conn->prepare("INSERT INTO notifications ( reciever_iid, title, description, sentDate) VALUES (?, ?, ?, ?)");
-        $insertNotif->bind_param("isss", $client_id, $title, $description, $sentDate);
-        $insertNotif->execute();
+        $appointmentStatus = 1;
+        $updateAppoinmentStatus = $conn->prepare("UPDATE appointments SET status = ? WHERE appointment_id = ?");
+        $updateAppoinmentStatus->bind_param("ii", $appointmentStatus, $appointment_id);
+        if ($updateAppoinmentStatus->execute()) {
+            $insertNotif = $conn->prepare("INSERT INTO notifications ( reciever_id, title, description, sentDate) VALUES (?, ?, ?, ?)");
+            $insertNotif->bind_param("isss", $client_id, $title, $description, $sentDate);
+            $insertNotif->execute();
 
-        echo json_encode(['success' => true, 'message' => "Follow-up appointment and notification added successfully"]);
+            echo json_encode(['success' => true, 'message' => "Follow-up appointment and notification added successfully"]);
+        } else {
+            echo json_encode(['success' => false, 'message' => "Database error: " . $conn->error]);
+        }
     } else {
         echo json_encode(['success' => false, 'message' => "Database error: " . $conn->error]);
     }

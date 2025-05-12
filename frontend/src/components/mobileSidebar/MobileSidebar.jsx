@@ -13,6 +13,8 @@ import { HiMiniCalendarDateRange } from "react-icons/hi2";
 import { IoMdPower } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { PiShoppingBagBold } from "react-icons/pi";
+import { LuCalendarSync } from "react-icons/lu";
+import { HiOutlineChatBubbleOvalLeft } from "react-icons/hi2";
 
 const MobileSidebar = ({ close }) => {
   const { setFormToShow, formToShow, currentUser, setCurrentUser } =
@@ -82,16 +84,21 @@ const MobileSidebar = ({ close }) => {
           </Link>
           {currentUser !== null && (
             <Link className="btn-link" to="/myappointment/">
+              <LuCalendarSync className="icon" />
+              Follow-up Check-up
+            </Link>
+          )}
+          {currentUser !== null && (
+            <Link className="btn-link" to="/myappointment/">
               <HiMiniCalendarDateRange className="icon" /> Appointment
             </Link>
           )}
-
           <Link className="btn-link" to="/medicine/">
             <PiShoppingBagBold className="icon" /> Vetcare Shop
           </Link>
 
           <Link className="btn-link">
-            <HiMiniCalendarDateRange className="icon" /> Message
+            <HiOutlineChatBubbleOvalLeft className="icon" /> Message
           </Link>
           {currentUser !== null && (
             <Link className="btn-link" onClick={handleLogout}>

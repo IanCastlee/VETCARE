@@ -17,6 +17,7 @@ import axiosIntance from "../../../../../axios";
 import Loader3 from "../../../../components/loader/Loader2";
 import Emptydata from "../../../../components/emptydata/Emptydata";
 import { uploadUrl } from "../../../../../fileurl";
+import Toaster from "../../../../components/toaster/Toaster";
 
 const Home = () => {
   const vetId = useParams();
@@ -24,6 +25,7 @@ const Home = () => {
   const [loader, setLoader] = useState(false);
   const [veterinarianInfo, setVeterinarianInfo] = useState([]);
   const [appointment, setAppointment] = useState([]);
+  const [toasterMsg, settoasterMsg] = useState(null);
 
   useEffect(() => {
     const getClickedVeterinarian = async () => {
@@ -77,8 +79,6 @@ const Home = () => {
     activeAppointment();
   }, []);
 
-  const [showModalMenu, setShowModalMenu] = useState(false);
-
   //get current date
   const today = new Date();
   const formattedDate = today.toISOString().split("T")[0];
@@ -99,15 +99,11 @@ const Home = () => {
   const followUpData = [
     {
       id: 1,
-      desc: "Lorem Ipsum Amit HAHjsdhjhs",
+      desc: "Follow-up checkup scheduled for next week.",
     },
     {
       id: 2,
-      desc: "Lorem Ipsum Amit AHAAHHA",
-    },
-    {
-      id: 3,
-      desc: "Lorem Ipsum Amit XAXAXAXX",
+      desc: "Next week’s follow-up to monitor your pet’s recovery.",
     },
   ];
 
@@ -115,16 +111,16 @@ const Home = () => {
   const [clickedToFollowUp, setClickedToFollowUp] = useState({
     appointment_id: "",
     client_id: "",
+    dr_fullname: "",
   });
   const [selectedFollowUpMessage, setSelectedFollowUpMessage] = useState(null);
   const [manualMessage, setManualMessage] = useState("");
 
-  console.log("selectedFollowUpMessage : ", selectedFollowUpMessage);
-
-  const clickedToFollowUpItem = (appointment_id, client_id) => {
+  const clickedToFollowUpItem = (appointment_id, client_id, dr_fullname) => {
     setClickedToFollowUp({
       appointment_id: appointment_id,
       client_id: client_id,
+      dr_fullname: dr_fullname,
     });
   };
 
@@ -139,7 +135,8 @@ const Home = () => {
         {
           appointment_id: clickedToFollowUp.appointment_id,
           client_id: clickedToFollowUp.client_id,
-          title: "Follow Up Appointment",
+          title:
+            "Follow-Up Appointment for Dr. " + clickedToFollowUp.dr_fullname,
           desc:
             selectedFollowUpMessage !== null
               ? selectedFollowUpMessage
@@ -148,6 +145,15 @@ const Home = () => {
       );
       if (res.data.success) {
         console.log(res.data.message);
+        settoasterMsg(res.data.message);
+        setTimeout(() => {
+          settoasterMsg(null);
+        }, 4000);
+        setClickedToFollowUp({
+          appointment_id: "",
+          client_id: "",
+          dr_fullname: "",
+        });
         setLoader(false);
       } else {
         console.log(res.data);
@@ -158,6 +164,7 @@ const Home = () => {
       console.log("Error : ", error);
     }
   };
+
   return (
     <>
       <div className="veterinarian-home">
@@ -246,7 +253,8 @@ const Home = () => {
                                   onClick={() =>
                                     clickedToFollowUpItem(
                                       item.appointment_id,
-                                      item.clientId
+                                      item.clientId,
+                                      item.drFullname
                                     )
                                   }
                                 >
@@ -465,9 +473,17 @@ const Home = () => {
           <div className="modal-followup-overlay">
             <div className="followup">
               <div className="top">
-                <div className="left">Lorem ipsum dolor sit amet.</div>
+                <div className="left">Schedule Follow-Up</div>
 
-                <IoMdClose />
+                <IoMdClose
+                  onClick={() =>
+                    setClickedToFollowUp({
+                      appointment_id: "",
+                      client_id: "",
+                      dr_fullname: "",
+                    })
+                  }
+                />
               </div>
               <div className="form">
                 <div className="card-checklist">
@@ -516,6 +532,10 @@ const Home = () => {
           </div>
         )}
       {/* modal follow up end  */}
+
+      {toasterMsg !== null && (
+        <Toaster _click={() => settoasterMsg(null)} message={toasterMsg} />
+      )}
     </>
   );
 };
