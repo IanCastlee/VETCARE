@@ -4,7 +4,9 @@ import Signup from "../components/signinSignUp/Signup";
 import ConfirmationForm from "../components/signinSignUp/ConfirmationForm";
 import ForgotPassword from "../components/signinSignUp/ForgotPassword";
 import FollowupAppointment from "../pages/followupAppointment/FollowupAppointment";
+
 export const AuthContext = createContext();
+
 export const AuthContextProvider = ({ children }) => {
   const [formToShow, setFormToShow] = useState(null);
   const [messageFromMail, setMessageFromMail] = useState({
@@ -14,12 +16,23 @@ export const AuthContextProvider = ({ children }) => {
 
   const [modalToShow, setModlToShow] = useState("");
 
-  const [currentUser, setCurrentUser] = useState(
-    JSON.parse(localStorage.getItem("data" || null))
-  );
+  const [currentUser, setCurrentUser] = useState(() => {
+    const storedData = localStorage.getItem("data");
+    return storedData ? JSON.parse(storedData) : null;
+  });
+
+  const [currUserType, setCurrUserType] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("data", JSON.stringify(currentUser));
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      setCurrUserType(currentUser.acc_type);
+    } else {
+      setCurrUserType(null);
+    }
   }, [currentUser]);
 
   return (
@@ -31,12 +44,12 @@ export const AuthContextProvider = ({ children }) => {
         currentUser,
         setCurrentUser,
         setModlToShow,
+        currUserType,
       }}
     >
       {children}
 
       {modalToShow === "follow-up" && <FollowupAppointment />}
-
       {formToShow === "signin" && <Signin />}
       {formToShow === "signup" && <Signup />}
       {formToShow === "forgot" && <ForgotPassword />}

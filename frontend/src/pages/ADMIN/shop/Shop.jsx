@@ -4,22 +4,22 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import axiosIntance from "../../../../axios";
 import Loader2 from "../../../components/loader/Loader2";
+import Swal from "sweetalert2";
 
 //ICONS
 import { FaTrashAlt } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
-import { MdAddBox } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
 import Emptydata from "../../../components/emptydata/Emptydata";
+import { uploadUrl } from "../../../../fileurl";
 
 const Shop = () => {
   const [showModalServices, setShowModalShowModalServcies] = useState(false);
-  const [veterinarian, setVeterinarian] = useState([]);
+  const [data, setData] = useState([]);
   const [veterinarianServices, setVeterinarianServices] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
-  const [servicesData, setServicesData] = useState([]);
 
   const [activeFormModal, setActiveFormModal] = useState("");
   const [showDelForm, setShowDelForm] = useState(null);
@@ -72,6 +72,10 @@ const Shop = () => {
       );
       if (res.data.success) {
         console.log("Response : ", res.data.message);
+        setActiveFormModal("");
+
+        fetchedData();
+        showSuccessAlert_add_prod();
       } else {
         console.log("Error : ", res.data);
       }
@@ -80,154 +84,73 @@ const Shop = () => {
     }
   };
 
-  //get veterinarian
-  useEffect(() => {
-    const veterinarian = async () => {
-      try {
-        const res = await axiosIntance.get(
-          "admin/veterinarian/GetVeterinarian.php"
-        );
-        if (res.data.success) {
-          setVeterinarian(res.data.data);
-          console.log("DATA : ", res.data.data);
-        } else {
-          console.log("Error : ", res.data.data);
-        }
-      } catch (error) {
-        console.log("Error : ", error);
-      }
-    };
-
-    veterinarian();
-  }, []);
-
-  //handleClikedServices
-  const [clickedUserId, setClickedUserId] = useState(null);
-  const handleClikedServices = (user_id) => {
-    setClickedUserId(user_id);
-    if (user_id) {
-      setShowModalShowModalServcies(true);
-    }
-  };
-
-  const handleSubmitServices = async (e) => {
-    e.preventDefault();
-
-    setShowLoader(true);
+  //get data
+  const fetchedData = async () => {
     try {
-      const res = await axiosIntance.post(
-        "admin/veterinarian/PostVetServices.php",
-        {
-          user_id: clickedUserId,
-          service: servicesForm.service,
-          price: servicesForm.price,
-        }
-      );
+      const res = await axiosIntance.get("admin/shop/GetShop.php");
       if (res.data.success) {
-        setServicesForm({
-          service: "",
-          price: "",
-        });
-
-        setShowLoader(false);
+        setData(res.data.data);
+        console.log("PROD : ", res.data.data);
       } else {
-        setShowLoader(false);
-        console.log("ERROR : ", res.data);
+        console.log("Error : ", res.data.data);
       }
     } catch (error) {
-      setShowLoader(false);
       console.log("Error : ", error);
     }
   };
-  const getServices = async () => {
-    setShowLoader(true);
-    try {
-      const res = await axiosIntance.get("admin/veterinarian/GetServices.php");
-      if (res.data.data) {
-        setVeterinarianServices(res.data.data);
-        setShowLoader(false);
-      }
-    } catch (error) {
-      setShowLoader(false);
-      console.log("Error : ", error);
-    }
-  };
-  //get services
   useEffect(() => {
-    getServices();
+    fetchedData();
   }, []);
 
   const setShowEditModal = (item) => {
-    setVeterinarianData({
-      user_id: item.user_id || "",
-      fullname: item.fullname || "",
+    setFormData({
+      medicine_id: item.medicine_id || "",
       specialization: item.specialization || "",
-      age: item.age || "",
-      gender: item.gender || "",
-      time: item.time || "",
-      duration: item.duration || "",
-      experience: item.experience || "",
-      certificate: item.certification || "",
-      address: item.address || "",
-      phone: item.phone || "",
-      about: item.about || "",
-      profile: item.profile || "",
-      email: item.email || "",
-      password: "",
-      cpassword: "",
+      category: item.category || "",
+      med_name: item.med_name || "",
+      stock: item.stock || "",
+      price: item.price || "",
+      dosage: item.dosage || "",
+      description: item.description || "",
     });
 
-    setServicesData(item.services);
     setActiveFormModal("update");
   };
 
   //closeFormModal
   const closeFormModal = () => {
-    setVeterinarianData({
-      fullname: "",
+    setFormData({
+      medicine_id: "",
       specialization: "",
-      age: "",
-      gender: "",
-      time: "",
-      duration: "",
-      experience: "",
-      certificate: "",
-      address: "",
-      phone: "",
-      about: "",
-      profile: "",
-      email: "",
-      password: "",
-      cpassword: "",
+      category: "",
+      med_name: "",
+      stock: "",
+      price: "",
+      dosage: "",
+      description: "",
+      image: "",
     });
-
     setActiveFormModal("");
   };
 
   //handleUpdate Veterinarian Information
-  const handleUpdateVeterinarianInof = async (e) => {
+  const handleUpdateProduct = async (e) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("user_id", veterinarianData.user_id);
-    formData.append("fullname", veterinarianData.fullname);
-    formData.append("specialization", veterinarianData.specialization);
-    formData.append("age", veterinarianData.age);
-    formData.append("gender", veterinarianData.gender);
-    formData.append("time", veterinarianData.time);
-    formData.append("duration", veterinarianData.duration);
-    formData.append("experience", veterinarianData.experience);
-    formData.append("certificate", veterinarianData.certificate);
-    formData.append("address", veterinarianData.address);
-    formData.append("phone", veterinarianData.phone);
-    formData.append("about", veterinarianData.about);
-    formData.append("profile", veterinarianData.profile);
-    formData.append("email", veterinarianData.email);
-    formData.append("password", veterinarianData.cpassword);
+    const formDataAppend = new FormData();
+    formDataAppend.append("medicine_id", formData.medicine_id);
+    formDataAppend.append("specialization", formData.specialization);
+    formDataAppend.append("category", formData.category);
+    formDataAppend.append("med_name", formData.med_name);
+    formDataAppend.append("stock", formData.stock);
+    formDataAppend.append("price", formData.price);
+    formDataAppend.append("dosage", formData.dosage);
+    formDataAppend.append("description", formData.description);
+    formDataAppend.append("image", formData.image);
 
     try {
       const res = await axiosIntance.post(
-        "admin/veterinarian/UpdateVeterinarian.php",
+        "admin/shop/UpdateMedicine.php",
         formData,
         {
           headers: {
@@ -238,13 +161,13 @@ const Shop = () => {
       if (res.data.success) {
         console.log("Response : ", res.data.message);
 
-        setVeterinarian((prevData) =>
-          prevData.map((vet) =>
-            Number(vet.user_id) === Number(veterinarianData.user_id)
-              ? { ...vet, ...veterinarianData }
-              : vet
-          )
-        );
+        // setVeterinarian((prevData) =>
+        //   prevData.map((vet) =>
+        //     Number(vet.user_id) === Number(veterinarianData.user_id)
+        //       ? { ...vet, ...veterinarianData }
+        //       : vet
+        //   )
+        // );
 
         closeFormModal();
       } else {
@@ -280,14 +203,46 @@ const Shop = () => {
     }
   };
 
-  //filteredVeterinarians
-  const filteredVeterinarians = veterinarian.filter(
+  const showSuccessAlert_add_prod = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "New Product Added",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+
+  //filteredData
+  const filteredData = data.filter(
     (item) =>
-      item.fullname.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.med_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.address.toLowerCase().includes(searchQuery.toLowerCase())
+      item.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [vetsPerPage, setVetsPerPage] = useState(7);
+
+  // Pagination logic
+  const indexOfLastData = currentPage * vetsPerPage;
+  const indexOfFirstVet = indexOfLastData - vetsPerPage;
+  const currentData = filteredData.slice(indexOfFirstVet, indexOfLastData);
+  const totalPages = Math.ceil(filteredData.length / vetsPerPage);
+
+  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  // Handle change in rows per page
+  const handleVetsPerPageChange = (e) => {
+    setVetsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
   return (
     <>
       <div className="admin-shop">
@@ -316,69 +271,108 @@ const Shop = () => {
           </div>
         </div>
         <div className="table">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Profile</th>
-                <th>Fullname</th>
-                <th>Specialization</th>
-                <th>Address</th>
-                <th>Certification</th>
-                <th>Experience</th>
-                <th className="action-header">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredVeterinarians.length > 0 ? (
-                filteredVeterinarians.map((item) => (
-                  <tr key={item.user_id}>
-                    <td style={{ fontWeight: "700" }}>{item.user_id}</td>
-                    <td>
-                      <img
-                        style={{
-                          height: "40px",
-                          width: "40px",
-                          objectFit: "cover",
-                        }}
-                        src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
-                        alt="profile_pic"
-                      />
-                    </td>
-                    <td>{item.fullname}</td>
-                    <td>{item.specialization}</td>
-                    <td>{item.address}</td>
-                    <td>{item.certification}</td>
-                    <td>{item.experience}</td>
-                    <td className="btns-wrapper">
-                      <button
-                        title="Add Services"
-                        className="btn-add-services"
-                        onClick={() => handleClikedServices(item.user_id)}
-                      >
-                        <MdAddBox className="icon" />
-                      </button>
-                      <button title="Delete" className="btn">
-                        <FaTrashAlt
-                          className="icon"
-                          onClick={() => setShowDelForm(item.user_id)}
+          {/* Rows per page control */}
+          <div className="row-per-page">
+            <label>
+              Rows per page:{" "}
+              <select
+                className="selector"
+                value={vetsPerPage}
+                onChange={handleVetsPerPageChange}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Table */}
+          <div className="table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Image</th>
+                  <th>Med Name</th>
+                  <th>Specialization</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th className="action-header">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentData.length > 0 ? (
+                  currentData.map((item) => (
+                    <tr key={item.user_id}>
+                      <td style={{ fontWeight: "700" }}>{item.medicine_id}</td>
+                      <td>
+                        <img
+                          style={{
+                            height: "40px",
+                            width: "40px",
+                            objectFit: "cover",
+                          }}
+                          src={`${uploadUrl.uploadurl}/${item.med_image}`}
+                          alt="profile_pic"
                         />
-                      </button>
-                      <button
-                        title="Edit"
-                        className="btn"
-                        onClick={() => setShowEditModal(item)}
-                      >
-                        <FaEdit style={{ color: "blue" }} className="icon" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <Emptydata />
-              )}
-            </tbody>
-          </table>
+                      </td>
+                      <td>{item.med_name}</td>
+                      <td>{item.specialization}</td>
+                      <td>{item.category}</td>
+                      <td>{item.price}</td>
+                      <td>{item.stock}</td>
+                      <td className="btns-wrapper">
+                        <button title="Delete" className="btn">
+                          <FaTrashAlt
+                            className="icon"
+                            onClick={() => setShowDelForm(item.medicine_id)}
+                          />
+                        </button>
+                        <button
+                          title="Edit"
+                          className="btn"
+                          onClick={() => setShowEditModal(item)}
+                        >
+                          <FaEdit style={{ color: "blue" }} className="icon" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <Emptydata />
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div
+            className="pagination"
+            style={{ marginTop: "1rem", textAlign: "center" }}
+          >
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i + 1)}
+                style={{
+                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                  margin: "0 5px",
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button onClick={nextPage} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
         </div>
       </div>
 
@@ -394,21 +388,25 @@ const Shop = () => {
               <div className="top">
                 <h3 className="title">
                   {activeFormModal === "update"
-                    ? "UPDATE VETERINARIAN INFO"
+                    ? "UPDATE PRODUCT"
                     : activeFormModal === "add"
-                    ? "ADD NEW VETERINARIAN"
+                    ? "ADD NEW PRODUCT"
                     : ""}
                 </h3>
                 <IoMdClose className="icon" onClick={closeFormModal} />
               </div>
 
-              <div className="form">
+              <form
+                onSubmit={
+                  activeFormModal === "add"
+                    ? handleSubmit
+                    : activeFormModal === "update"
+                    ? handleUpdateProduct
+                    : (e) => e.preventDefault()
+                }
+                className="form"
+              >
                 <div className="form-wrapper">
-                  {/* <input
-                    type="hidden"
-                    name="user_id"
-                    value={veterinarianData.user_id}
-                  /> */}
                   <div className="input-label-wrapper">
                     <label htmlFor="specialization">
                       Animal Specialization
@@ -418,8 +416,9 @@ const Shop = () => {
                       onChange={handleChange}
                       name="specialization"
                       id="specialization"
+                      required
                     >
-                      <option value="">Animal Specialization</option>{" "}
+                      <option value="">Animal Specialization</option>
                       <option value="Dog Medicine">Dog Medicine</option>
                       <option value="Cat Medicine">Cat Medicine</option>
                       <option value="Bird Medicine">Bird Medicine</option>
@@ -433,8 +432,9 @@ const Shop = () => {
                       onChange={handleChange}
                       name="category"
                       id="category"
+                      required
                     >
-                      <option value="">Category</option>{" "}
+                      <option value="">Category</option>
                       <option value="Flea & Tick Prevention">
                         Flea & Tick Prevention
                       </option>
@@ -454,6 +454,7 @@ const Shop = () => {
                       placeholder="Medicine Name"
                       value={formData.med_name}
                       onChange={handleChange}
+                      required
                     />
                   </div>
 
@@ -467,9 +468,11 @@ const Shop = () => {
                       placeholder="Stock"
                       value={formData.stock}
                       onChange={handleChange}
+                      required
                     />
                   </div>
                 </div>
+
                 <div className="form-wrapper">
                   <div className="input-label-wrapper">
                     <label htmlFor="price">Price</label>
@@ -481,6 +484,7 @@ const Shop = () => {
                       placeholder="Price"
                       value={formData.price}
                       onChange={handleChange}
+                      required
                     />
                   </div>
 
@@ -492,8 +496,9 @@ const Shop = () => {
                       id="dosage"
                       name="dosage"
                       placeholder="Dosage"
-                      value={formData.certificate}
+                      value={formData.dosage}
                       onChange={handleChange}
+                      required
                     />
                   </div>
                 </div>
@@ -507,6 +512,7 @@ const Shop = () => {
                       name="description"
                       placeholder="Description"
                       id="description"
+                      required
                     ></textarea>
                   </div>
                 </div>
@@ -523,32 +529,24 @@ const Shop = () => {
                         image: e.target.files[0],
                       }))
                     }
+                    required={activeFormModal === "add"}
                   />
                 </div>
-              </div>
 
-              <div className="button-wrapper">
-                <button
-                  className="btn-submit"
-                  onClick={
-                    activeFormModal === "add"
-                      ? handleSubmit
-                      : activeFormModal === "update"
-                      ? handleUpdateVeterinarianInof
-                      : ""
-                  }
-                >
-                  {showLoader ? (
-                    <Loader2 />
-                  ) : activeFormModal === "add" ? (
-                    " SUBMIT"
-                  ) : activeFormModal === "update" ? (
-                    "UPDATE"
-                  ) : (
-                    ""
-                  )}
-                </button>
-              </div>
+                <div className="button-wrapper">
+                  <button type="submit" className="btn-submit">
+                    {showLoader ? (
+                      <Loader2 />
+                    ) : activeFormModal === "add" ? (
+                      "SUBMIT"
+                    ) : activeFormModal === "update" ? (
+                      "UPDATE"
+                    ) : (
+                      ""
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
           </motion.div>
         </div>

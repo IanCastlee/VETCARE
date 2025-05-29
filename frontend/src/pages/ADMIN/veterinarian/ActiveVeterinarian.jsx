@@ -3,6 +3,7 @@ import "./Veterinarian.scss";
 import { motion } from "framer-motion";
 import axiosIntance from "../../../../axios";
 import Loader2 from "../../../components/loader/Loader2";
+import Swal from "sweetalert2";
 
 //ICONS
 import { FaTrashAlt } from "react-icons/fa";
@@ -101,6 +102,8 @@ const ActiveVeterinarian = () => {
       );
       if (res.data.success) {
         console.log("Response : ", res.data.message);
+        closeFormModal();
+        showSuccessAlert_add();
       } else {
         console.log("Error : ", res.data);
       }
@@ -158,6 +161,8 @@ const ActiveVeterinarian = () => {
         });
 
         setShowLoader(false);
+        setShowModalShowModalServcies(false);
+        showSuccessAlert_add_services();
       } else {
         setShowLoader(false);
         console.log("ERROR : ", res.data);
@@ -180,6 +185,7 @@ const ActiveVeterinarian = () => {
       console.log("Error : ", error);
     }
   };
+
   //get services
   useEffect(() => {
     getServices();
@@ -275,6 +281,7 @@ const ActiveVeterinarian = () => {
         );
 
         closeFormModal();
+        showSuccessAlert_update();
       } else {
         console.log("Error : ", res.data);
       }
@@ -284,7 +291,6 @@ const ActiveVeterinarian = () => {
   };
 
   //handle Delete
-  // Assuming `setVeterinarian` is your state setter and `veterinarian` is your array
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
@@ -298,7 +304,7 @@ const ActiveVeterinarian = () => {
         setVeterinarian((prevData) =>
           prevData.filter((vet) => vet.user_id !== showDelForm)
         );
-
+        showSuccessAlert_del_vet();
         setShowDelForm(null);
       } else {
         console.log("Delete failed:", res.data);
@@ -315,6 +321,78 @@ const ActiveVeterinarian = () => {
       item.specialization.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const showSuccessAlert_update = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "Updated Succesfully",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+  const showSuccessAlert_add = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "New Veterinarian Added",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+  const showSuccessAlert_del_vet = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "Veterinarian Removed",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+  const showSuccessAlert_add_services = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "New Service Added",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [vetsPerPage, setVetsPerPage] = useState(7);
+
+  // Pagination logic
+  const indexOfLastVet = currentPage * vetsPerPage;
+  const indexOfFirstVet = indexOfLastVet - vetsPerPage;
+  const currentVets = filteredVeterinarians.slice(
+    indexOfFirstVet,
+    indexOfLastVet
+  );
+  const totalPages = Math.ceil(filteredVeterinarians.length / vetsPerPage);
+
+  const goToPage = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+  // Handle change in rows per page
+  const handleVetsPerPageChange = (e) => {
+    setVetsPerPage(Number(e.target.value));
+    setCurrentPage(1);
+  };
 
   return (
     <>
@@ -344,69 +422,115 @@ const ActiveVeterinarian = () => {
           </div>
         </div>
         <div className="table">
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Profile</th>
-                <th>Fullname</th>
-                <th>Specialization</th>
-                <th>Address</th>
-                <th>Certification</th>
-                <th>Experience</th>
-                <th className="action-header">Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredVeterinarians.length > 0 ? (
-                filteredVeterinarians.map((item) => (
-                  <tr key={item.user_id}>
-                    <td style={{ fontWeight: "700" }}>{item.user_id}</td>
-                    <td>
-                      <img
-                        style={{
-                          height: "40px",
-                          width: "40px",
-                          objectFit: "cover",
-                        }}
-                        src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
-                        alt="profile_pic"
-                      />
-                    </td>
-                    <td>{item.fullname}</td>
-                    <td>{item.specialization}</td>
-                    <td>{item.address}</td>
-                    <td>{item.certification}</td>
-                    <td>{item.experience}</td>
-                    <td className="btns-wrapper">
-                      <button
-                        title="Add Services"
-                        className="btn-add-services"
-                        onClick={() => handleClikedServices(item.user_id)}
-                      >
-                        <MdAddBox className="icon" />
-                      </button>
-                      <button title="Delete" className="btn">
-                        <FaTrashAlt
-                          className="icon"
-                          onClick={() => setShowDelForm(item.user_id)}
+          {/* Rows per page control */}
+          <div className="row-per-page">
+            <label>
+              Rows per page:{" "}
+              <select
+                className="selector"
+                value={vetsPerPage}
+                onChange={handleVetsPerPageChange}
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+              </select>
+            </label>
+          </div>
+
+          {/* Table */}
+          <div className="table">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Profile</th>
+                  <th>Fullname</th>
+                  <th>Specialization</th>
+                  <th>Address</th>
+                  <th>Certification</th>
+                  <th>Experience</th>
+                  <th className="action-header">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentVets.length > 0 ? (
+                  currentVets.map((item) => (
+                    <tr key={item.user_id}>
+                      <td style={{ fontWeight: "700" }}>{item.user_id}</td>
+                      <td>
+                        <img
+                          style={{
+                            height: "40px",
+                            width: "40px",
+                            objectFit: "cover",
+                          }}
+                          src={`http://localhost/VETCARE/backend/uploads/${item.profile}`}
+                          alt="profile_pic"
                         />
-                      </button>
-                      <button
-                        title="Edit"
-                        className="btn"
-                        onClick={() => setShowEditModal(item)}
-                      >
-                        <FaEdit style={{ color: "blue" }} className="icon" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <Emptydata />
-              )}
-            </tbody>
-          </table>
+                      </td>
+                      <td>{item.fullname}</td>
+                      <td>{item.specialization}</td>
+                      <td>{item.address}</td>
+                      <td>{item.certification}</td>
+                      <td>{item.experience}</td>
+                      <td className="btns-wrapper">
+                        <button
+                          title="Add Services"
+                          className="btn-add-services"
+                          onClick={() => handleClikedServices(item.user_id)}
+                        >
+                          <MdAddBox className="icon" />
+                        </button>
+                        <button title="Delete" className="btn">
+                          <FaTrashAlt
+                            className="icon"
+                            onClick={() => setShowDelForm(item.user_id)}
+                          />
+                        </button>
+                        <button
+                          title="Edit"
+                          className="btn"
+                          onClick={() => setShowEditModal(item)}
+                        >
+                          <FaEdit style={{ color: "blue" }} className="icon" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <Emptydata />
+                )}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Pagination Controls */}
+          <div
+            className="pagination"
+            style={{ marginTop: "1rem", textAlign: "center" }}
+          >
+            <button onClick={prevPage} disabled={currentPage === 1}>
+              Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i + 1)}
+                style={{
+                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                  margin: "0 5px",
+                }}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button onClick={nextPage} disabled={currentPage === totalPages}>
+              Next
+            </button>
+          </div>
         </div>
       </div>
 

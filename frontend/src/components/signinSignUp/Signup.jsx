@@ -192,7 +192,7 @@ const Signup = () => {
                     setFormToShow("signin");
                   }}
                 >
-                  Sign In
+                  SIGN IN
                 </span>
               </div>
             </div>

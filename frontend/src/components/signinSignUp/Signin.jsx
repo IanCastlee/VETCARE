@@ -113,7 +113,7 @@ const Signin = () => {
                     nav;
                   }}
                 >
-                  Sign Up
+                  SIGN UP
                 </span>
               </div>
             </div>

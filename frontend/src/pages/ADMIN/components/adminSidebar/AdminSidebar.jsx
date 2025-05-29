@@ -40,7 +40,9 @@ const AdminSidebar = () => {
         className="admin-sidebar"
       >
         <div className="top">
-          <img src={logo} alt="" />
+          <div className="top-container">
+            <img src={logo} alt="" />
+          </div>
         </div>
 
         <ul>

@@ -5,7 +5,6 @@ import {
   BrowserRouter as Router,
   Routes,
   useLocation,
-  useNavigate,
 } from "react-router-dom";
 
 import Navbar from "./components/navbar/Navbar";
@@ -32,6 +31,8 @@ import AdminAppointment from "./pages/ADMIN/appointment/Appointment";
 import Medicine from "./pages/medicine/Medicine";
 import Shop from "./pages/ADMIN/shop/Shop";
 import DoneAppointment from "./pages/ADMIN/appointment/DoneAppointment";
+
+import RedirectByRole from "./components/RedirectByRole";
 
 const Layout = () => {
   const location = useLocation();
@@ -76,12 +77,15 @@ const Veterinarian = () => {
 };
 
 const Admin = () => {
+  const location = useLocation();
+  const isAdminHome = location.pathname === "/admin/home";
+
   return (
     <>
       <div className="admin-container">
         <AdminSidebar />
         <div className="admin-left">
-          <AdminNav />
+          {!isAdminHome && <AdminNav />}
           <div className="admin-content">
             <Routes>
               <Route path="/home/" element={<AdminHome />} />
@@ -112,6 +116,7 @@ const Admin = () => {
 const App = () => {
   return (
     <Router>
+      <RedirectByRole />
       <Routes>
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/veterinarian/*" element={<Veterinarian />} />

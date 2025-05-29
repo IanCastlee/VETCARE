@@ -250,6 +250,8 @@ const Appointment = () => {
       confirmButtonText: "OK",
       background: "rgba(0, 0, 0, 0.9)",
       color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
     });
   };
 
