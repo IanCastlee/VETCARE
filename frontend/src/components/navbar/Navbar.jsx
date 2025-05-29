@@ -22,15 +22,16 @@ import { IoMdLogOut } from "react-icons/io";
 import { AiOutlineMedicineBox } from "react-icons/ai";
 import Notification from "../notification/Notification";
 import { AiFillBell } from "react-icons/ai";
+import FollowupAppointment from "../../pages/followupAppointment/FollowupAppointment";
 
 const Navbar = ({ isHome }) => {
   const navigate = useNavigate();
-  const { setFormToShow, setCurrentUser, currentUser } =
+  const { setFormToShow, setCurrentUser, currentUser, setModlToShow } =
     useContext(AuthContext);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [showNotifModal, setShowNotifModal] = useState(false);
+  const [showActiveModal, setShowActiveModal] = useState("");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,16 +92,16 @@ const Navbar = ({ isHome }) => {
                 <RiCalendarScheduleLine className="nav-icon" />
               </Link>
               <Link
-                to="/myappointment/"
                 title="Follow-up Appointment"
                 className="list-icon"
+                onClick={() => setModlToShow("follow-up")}
               >
                 <LuCalendarSync className="nav-icon" />
               </Link>
               <Link
                 title="Notification"
                 className="list-icon-notif"
-                onClick={() => setShowNotifModal(!showNotifModal)}
+                onClick={() => setShowActiveModal("notif")}
               >
                 <AiOutlineBell className="nav-icon" />
 
@@ -164,8 +165,8 @@ const Navbar = ({ isHome }) => {
         <OverLay closeMobileSidebar={() => setShowMobileSidebar(false)} />
       )}
 
-      {showNotifModal && (
-        <Notification close={() => setShowNotifModal(false)} />
+      {showActiveModal === "notif" && (
+        <Notification close={() => setShowActiveModal("")} />
       )}
     </>
   );

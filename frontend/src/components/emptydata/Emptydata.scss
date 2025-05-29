@@ -4,4 +4,13 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+
+  .icon {
+    font-size: 25px;
+    color: gray;
+  }
+
+  p {
+    color: rgb(136, 132, 132);
+  }
 }

@@ -17,8 +17,13 @@ import { LuCalendarSync } from "react-icons/lu";
 import { HiOutlineChatBubbleOvalLeft } from "react-icons/hi2";
 
 const MobileSidebar = ({ close }) => {
-  const { setFormToShow, formToShow, currentUser, setCurrentUser } =
-    useContext(AuthContext);
+  const {
+    setFormToShow,
+    formToShow,
+    currentUser,
+    setCurrentUser,
+    setModlToShow,
+  } = useContext(AuthContext);
 
   const [showLoader, setshowLoader] = useState(false);
 
@@ -83,7 +88,10 @@ const MobileSidebar = ({ close }) => {
             <RiHomeLine className="icon" /> Home
           </Link>
           {currentUser !== null && (
-            <Link className="btn-link" to="/myappointment/">
+            <Link
+              className="btn-link"
+              onClick={() => setModlToShow("follow-up")}
+            >
               <LuCalendarSync className="icon" />
               Follow-up Check-up
             </Link>

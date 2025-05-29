@@ -3,6 +3,7 @@ import Signin from "../components/signinSignUp/Signin";
 import Signup from "../components/signinSignUp/Signup";
 import ConfirmationForm from "../components/signinSignUp/ConfirmationForm";
 import ForgotPassword from "../components/signinSignUp/ForgotPassword";
+import FollowupAppointment from "../pages/followupAppointment/FollowupAppointment";
 export const AuthContext = createContext();
 export const AuthContextProvider = ({ children }) => {
   const [formToShow, setFormToShow] = useState(null);
@@ -10,6 +11,8 @@ export const AuthContextProvider = ({ children }) => {
     message: null,
     email: null,
   });
+
+  const [modalToShow, setModlToShow] = useState("");
 
   const [currentUser, setCurrentUser] = useState(
     JSON.parse(localStorage.getItem("data" || null))
@@ -19,7 +22,6 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("data", JSON.stringify(currentUser));
   }, [currentUser]);
 
-  console.log("FORM ", formToShow);
   return (
     <AuthContext.Provider
       value={{
@@ -28,9 +30,12 @@ export const AuthContextProvider = ({ children }) => {
         setMessageFromMail,
         currentUser,
         setCurrentUser,
+        setModlToShow,
       }}
     >
       {children}
+
+      {modalToShow === "follow-up" && <FollowupAppointment />}
 
       {formToShow === "signin" && <Signin />}
       {formToShow === "signup" && <Signup />}

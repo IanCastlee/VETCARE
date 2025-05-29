@@ -67,133 +67,135 @@ const Home = () => {
   };
 
   return (
-    <div className="client-home">
-      <div className="hero">
-        <div className="hero-left">
-          <img src={waveImage} alt="wave-bg" className="wave-bg" />
+    <>
+      <div className="client-home">
+        <div className="hero">
+          <div className="hero-left">
+            <img src={waveImage} alt="wave-bg" className="wave-bg" />
 
-          <div className="hero-wrapper">
-            <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              One Paw Closer to Better Care. Book your next vet visit in seconds
-              with our smart clinic system.
-            </motion.h1>
-            <motion.h6
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              Trusted by pet parents. Loved by furry friends.
-            </motion.h6>
+            <div className="hero-wrapper">
+              <motion.h1
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                One Paw Closer to Better Care. Book your next vet visit in
+                seconds with our smart clinic system.
+              </motion.h1>
+              <motion.h6
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Trusted by pet parents. Loved by furry friends.
+              </motion.h6>
 
-            {/* <CustomButton _bgcolor="primary" _label="Book Now" /> */}
+              {/* <CustomButton _bgcolor="primary" _label="Book Now" /> */}
+            </div>
+          </div>
+          <div className="hero-right">
+            <img src={dogImage} alt="Dog" className="dog-img" />
           </div>
         </div>
-        <div className="hero-right">
-          <img src={dogImage} alt="Dog" className="dog-img" />
-        </div>
-      </div>
 
-      <div className="services">
-        <h2>Our Services</h2>
-        <div className="servives-container">
-          <div className="services-card">
-            <img src={vaccine} alt="" />
-            <span>Vaccination</span>
-          </div>
+        <div className="services">
+          <h2>Our Services</h2>
+          <div className="servives-container">
+            <div className="services-card">
+              <img src={vaccine} alt="" />
+              <span>Vaccination</span>
+            </div>
 
-          <div className="services-card">
-            <img src={deworm} alt="" />
-            <span>Deworming</span>
-          </div>
+            <div className="services-card">
+              <img src={deworm} alt="" />
+              <span>Deworming</span>
+            </div>
 
-          <div className="services-card">
-            <img src={dental} alt="" />
-            <span>Dental</span>
+            <div className="services-card">
+              <img src={dental} alt="" />
+              <span>Dental</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="search-container">
-        <div className="search-input-icon">
-          <input
-            type="text"
-            placeholder="Search Veterinarian name or specialization"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <CiSearch className="search-icon" />
+        <div className="search-container">
+          <div className="search-input-icon">
+            <input
+              type="text"
+              placeholder="Search Veterinarian name or specialization"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <CiSearch className="search-icon" />
+          </div>
         </div>
-      </div>
 
-      <div className="veterinarian-container">
-        <h2>Available Veterinarian</h2>
-        <div className="veterinarian">
-          {showLoader2 ? (
-            <Loader3 />
-          ) : veterinarian.length > 0 ? (
-            veterinarian
-              .filter((item) =>
-                `${item.fullname} ${item.specialization}`
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-              )
-              .map((item, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7 }}
-                  className="veterinarian-wrapper"
-                >
-                  <img
-                    src={`${uploadUrl.uploadurl}/${item?.profile}`}
-                    alt="veterinarian-profile"
-                    className="veterinarian-profile"
-                  />
+        <div className="veterinarian-container">
+          <h2>Available Veterinarian</h2>
+          <div className="veterinarian">
+            {showLoader2 ? (
+              <Loader3 />
+            ) : veterinarian.length > 0 ? (
+              veterinarian
+                .filter((item) =>
+                  `${item.fullname} ${item.specialization}`
+                    .toLowerCase()
+                    .includes(searchTerm.toLowerCase())
+                )
+                .map((item, index) => (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.7 }}
+                    className="veterinarian-wrapper"
+                  >
+                    <img
+                      src={`${uploadUrl.uploadurl}/${item?.profile}`}
+                      alt="veterinarian-profile"
+                      className="veterinarian-profile"
+                    />
 
-                  <div className="veterinarian-info">
-                    <div className="veterinarian-name-button-wrapper">
-                      <div className="name-rule">
-                        <span className="name">
-                          <CiStethoscope className="icon" />
-                          {highlightMatch(item.fullname, searchTerm)}
-                        </span>
-                        <span className="rule">
-                          {highlightMatch(item.specialization, searchTerm)}
-                        </span>
+                    <div className="veterinarian-info">
+                      <div className="veterinarian-name-button-wrapper">
+                        <div className="name-rule">
+                          <span className="name">
+                            <CiStethoscope className="icon" />
+                            {highlightMatch(item.fullname, searchTerm)}
+                          </span>
+                          <span className="rule">
+                            {highlightMatch(item.specialization, searchTerm)}
+                          </span>
+                        </div>
+
+                        <Link to={`/view-veterinarian/${item.user_id}`}>
+                          <button>
+                            <LuView />
+                          </button>
+                        </Link>
                       </div>
 
-                      <Link to={`/view-veterinarian/${item.user_id}`}>
-                        <button>
-                          <LuView />
-                        </button>
-                      </Link>
+                      <button className="btn-set-appointment">
+                        {currentUser === null ? (
+                          <Link onClick={() => setFormToShow("signin")}>
+                            Set Appointment
+                          </Link>
+                        ) : (
+                          <Link to={`/set-appointment/${item.user_id}`}>
+                            Set Appointment
+                          </Link>
+                        )}
+                      </button>
                     </div>
-
-                    <button className="btn-set-appointment">
-                      {currentUser === null ? (
-                        <Link onClick={() => setFormToShow("signin")}>
-                          Set Appointment
-                        </Link>
-                      ) : (
-                        <Link to={`/set-appointment/${item.user_id}`}>
-                          Set Appointment
-                        </Link>
-                      )}
-                    </button>
-                  </div>
-                </motion.div>
-              ))
-          ) : (
-            <p>No Data Record</p>
-          )}
+                  </motion.div>
+                ))
+            ) : (
+              <p>No Data Record</p>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

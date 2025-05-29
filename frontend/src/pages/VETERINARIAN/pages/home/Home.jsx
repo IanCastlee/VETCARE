@@ -1,5 +1,6 @@
 import "./Home.scss";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
 
 //IMAGES
 
@@ -25,7 +26,7 @@ const Home = () => {
   const [loader, setLoader] = useState(false);
   const [veterinarianInfo, setVeterinarianInfo] = useState([]);
   const [appointment, setAppointment] = useState([]);
-  const [toasterMsg, settoasterMsg] = useState(null);
+  const [price, setPrice] = useState(null);
 
   useEffect(() => {
     const getClickedVeterinarian = async () => {
@@ -112,15 +113,22 @@ const Home = () => {
     appointment_id: "",
     client_id: "",
     dr_fullname: "",
+    dr_id: "",
   });
   const [selectedFollowUpMessage, setSelectedFollowUpMessage] = useState(null);
   const [manualMessage, setManualMessage] = useState("");
 
-  const clickedToFollowUpItem = (appointment_id, client_id, dr_fullname) => {
+  const clickedToFollowUpItem = (
+    appointment_id,
+    client_id,
+    dr_fullname,
+    dr_id
+  ) => {
     setClickedToFollowUp({
       appointment_id: appointment_id,
       client_id: client_id,
       dr_fullname: dr_fullname,
+      dr_id: dr_id,
     });
   };
 
@@ -141,14 +149,13 @@ const Home = () => {
             selectedFollowUpMessage !== null
               ? selectedFollowUpMessage
               : manualMessage,
+          dr_id: clickedToFollowUp.dr_id,
+          price: price,
         }
       );
       if (res.data.success) {
         console.log(res.data.message);
-        settoasterMsg(res.data.message);
-        setTimeout(() => {
-          settoasterMsg(null);
-        }, 4000);
+        showSuccessAlert();
         setClickedToFollowUp({
           appointment_id: "",
           client_id: "",
@@ -163,6 +170,17 @@ const Home = () => {
       setLoader(false);
       console.log("Error : ", error);
     }
+  };
+
+  const showSuccessAlert = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "Follow-up appointment sent succesfully",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+    });
   };
 
   return (
@@ -195,88 +213,95 @@ const Home = () => {
 
                 {loader ? (
                   <Loader3 />
-                ) : appointment.length > 0 ? (
-                  appointment
-                    .filter((item) => item.appointment_date === formattedDate)
-                    .map((item) => (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.7 }}
-                        className="card"
-                        key={item.appointment_id}
-                      >
-                        <div className="left-card">
-                          <img
-                            src={`${uploadUrl.uploadurl}/${item?.image}`}
-                            alt="profile"
-                            className="profile-card"
-                          />
-                        </div>
+                ) : (
+                  (() => {
+                    const todayAppointments = appointment.filter(
+                      (item) => item.appointment_date === formattedDate
+                    );
 
-                        <div className="right-card">
-                          <div className="top">
-                            <div className="name-info">
-                              <div className="name">{item.pet_name}</div>
-                              <p>{item.appointment_date}</p>
-                              <p>{item.appointment_time}</p>
-
-                              <button onClick={() => clickedMoreInfo(item)}>
-                                Read More
-                              </button>
-                            </div>
-                            <MdOutlineMoreHoriz
-                              onClick={() => clickedMenu(item.appointment_id)}
-                              className="more-icon"
+                    return todayAppointments.length > 0 ? (
+                      todayAppointments.map((item) => (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.7 }}
+                          className="card"
+                          key={item.appointment_id}
+                        >
+                          <div className="left-card">
+                            <img
+                              src={`${uploadUrl.uploadurl}/${item?.image}`}
+                              alt="profile"
+                              className="profile-card"
                             />
                           </div>
 
-                          <div className="bot">
-                            <div className="pet">
-                              <span className="type">
-                                Pet : {item.pet_type}
-                              </span>
-                            </div>
-                          </div>
+                          <div className="right-card">
+                            <div className="top">
+                              <div className="name-info">
+                                <div className="name">{item.pet_name}</div>
+                                <p>{item.appointment_date}</p>
+                                <p>{item.appointment_time}</p>
 
-                          {clickedID === item.appointment_id && (
-                            <div className="modal-menu">
-                              <div className="top">
-                                <VscClose
-                                  className="back-icon"
-                                  onClick={() => setClickedID(null)}
-                                />
+                                <button onClick={() => clickedMoreInfo(item)}>
+                                  Read More
+                                </button>
                               </div>
-                              <div className="menu">
-                                <button
-                                  className="btn"
-                                  onClick={() =>
-                                    clickedToFollowUpItem(
-                                      item.appointment_id,
-                                      item.clientId,
-                                      item.drFullname
-                                    )
-                                  }
-                                >
-                                  <FaRegCircleCheck className="icon" />
-                                  Follow Up
-                                </button>
-                                <button className="btn">
-                                  <FaRegCircleCheck className="icon" />
-                                  Done
-                                </button>
-                                <button className="btn">
-                                  <TbCancel className="icon" />
-                                  Cancel
-                                </button>
+                              <MdOutlineMoreHoriz
+                                onClick={() => clickedMenu(item.appointment_id)}
+                                className="more-icon"
+                              />
+                            </div>
+
+                            <div className="bot">
+                              <div className="pet">
+                                <span className="type">
+                                  Pet : {item.pet_type}
+                                </span>
                               </div>
                             </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    ))
-                ) : (
-                  <Emptydata />
+
+                            {clickedID === item.appointment_id && (
+                              <div className="modal-menu">
+                                <div className="top">
+                                  <VscClose
+                                    className="back-icon"
+                                    onClick={() => setClickedID(null)}
+                                  />
+                                </div>
+                                <div className="menu">
+                                  <button
+                                    className="btn"
+                                    onClick={() =>
+                                      clickedToFollowUpItem(
+                                        item.appointment_id,
+                                        item.clientId,
+                                        item.drFullname,
+                                        item.dr_id
+                                      )
+                                    }
+                                  >
+                                    <FaRegCircleCheck className="icon" />
+                                    Follow Up
+                                  </button>
+                                  <button className="btn">
+                                    <FaRegCircleCheck className="icon" />
+                                    Done
+                                  </button>
+                                  <button className="btn">
+                                    <TbCancel className="icon" />
+                                    Cancel
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      ))
+                    ) : (
+                      <Emptydata />
+                    );
+                  })()
                 )}
               </div>
 
@@ -520,22 +545,39 @@ const Home = () => {
                     }}
                   />
                 </div>
+                <div
+                  style={{
+                    marginTop: "20px",
+                    borderTop: "1px solid lightgrey",
+                    paddingTop: "20px",
+                  }}
+                  className="input-wrapper"
+                >
+                  <label htmlFor="inpt-other-concern">Payment</label>
 
+                  <div className="payment-wrapper">
+                    <h1>₱</h1>{" "}
+                    <input
+                      id="inpt-other-concern"
+                      className="inpt-other-concern"
+                      type="number"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                    />
+                  </div>
+                </div>
                 <button
+                  disabled={!price || !selectedFollowUpMessage || loader}
                   onClick={handleSubmitFollowUpAppoinment}
                   className="btn-submit"
                 >
-                  {loader ? <Loader3 /> : "Send Follow Up Notif"}
+                  {loader ? <Loader3 /> : "Send Follow Up"}
                 </button>
               </div>
             </div>
           </div>
         )}
       {/* modal follow up end  */}
-
-      {toasterMsg !== null && (
-        <Toaster _click={() => settoasterMsg(null)} message={toasterMsg} />
-      )}
     </>
   );
 };

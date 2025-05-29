@@ -1,30 +1,65 @@
-import "./Appointment.scss";
-import Swal from "sweetalert2";
+import "./FollowupAppointment.scss";
 
 import { motion } from "framer-motion";
 import { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
 import axiosIntance from "../../../axios";
-import Loader3 from "../../components/loader/Loader3";
+import { AuthContext } from "../../contexts/AuthContext";
+import Loader2 from "../../components/loader/Loader3";
+import Emptydata from "../../components/emptydata/Emptydata";
+import { uploadUrl } from "../../../fileurl";
+
+import Loader3 from "../../components/loader/Loader2";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-//IMAGES
-import appointmentImage from "../../assets/icons/medical-appointment.png";
-import cat from "../../assets/icons/mouth.png";
 
 //ICONS
+import { IoCloseOutline } from "react-icons/io5";
 import { BsCalendar2Date } from "react-icons/bs";
-import { CiStethoscope } from "react-icons/ci";
-import { CiClock2 } from "react-icons/ci";
-import { CiCalendarDate } from "react-icons/ci";
-import { PiPawPrintLight } from "react-icons/pi";
-import { ImFilesEmpty } from "react-icons/im";
-import { IoPricetagsOutline } from "react-icons/io5";
-import { FaRegEdit } from "react-icons/fa";
 import { FaArrowLeft } from "react-icons/fa6";
 
-const Appointment = () => {
-  const { currentUser } = useContext(AuthContext);
+//IMAGES
+import cat from "../../assets/icons/mouth.png";
+
+const FollowupAppointment = () => {
+  const { currentUser, setModlToShow } = useContext(AuthContext);
+  const [loader, setLoader] = useState(false);
+  const [appointmentData, setAppointmentData] = useState([]);
+  const [visibleData, setVisibleData] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+  const MAX_VISIBLE = 5;
+
+  const [drTime, setDrTime] = useState(null);
+  const [drDuration, setDrDuration] = useState(null);
+  const [appointmentID, setAppointmentID] = useState(null);
+  const [fa_id, set_fa_id] = useState(null);
+  const [payment, setPayment] = useState(null);
+
+  //get AppointmentData
+  useEffect(() => {
+    const getNotification = async () => {
+      setLoader(true);
+      const res = await axiosIntance.get(
+        `client/appointment/GetFollowupAppintment.php?currentUser_id=${currentUser.user_id}`
+      );
+      if (res.data.success) {
+        console.log("NOTIFICATIOgvfgfgfN : ", res.data.data);
+        setAppointmentData(res.data.data);
+        setVisibleData(res.data.data.slice(0, MAX_VISIBLE));
+      } else {
+        console.log("Error : ", res.data);
+      }
+      setLoader(false);
+    };
+
+    getNotification();
+  }, []);
+
+  const handleViewMore = () => {
+    setShowAll(true);
+    setVisibleNotif(notif);
+  };
+
+  //set appointment
 
   const [activeAppointment, setActiveAppointment] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
@@ -64,11 +99,11 @@ const Appointment = () => {
     activeAppointment();
   }, []);
 
-  const handleClickedAppointment = (time, duration, id) => {
-    handleTimeDateSlotToRemove();
-    setClickedAppointment({ time, duration, id });
-    handleTimeDateSlotToRemove();
-  };
+  // const handleClickedAppointment = (time, duration, id) => {
+  //   handleTimeDateSlotToRemove();
+  //   setClickedAppointment({ time, duration, id });
+  //   handleTimeDateSlotToRemove();
+  // };
 
   /////////////////////////////////////////
 
@@ -94,8 +129,6 @@ const Appointment = () => {
       appointment_date: date,
     }));
   };
-
-  console.log(appointmentForm.appointment_date);
 
   //timeslots to remove
   const handleTimeDateSlotToRemove = async () => {
@@ -132,7 +165,7 @@ const Appointment = () => {
 
   //get time slot
   useEffect(() => {
-    if (!clickedAppointment?.time || !clickedAppointment?.duration) return;
+    if (!drDuration || !drTime) return;
     if (!notAvailableTimeSlot) return;
 
     const generateTimeSlots = (timeRange, duration) => {
@@ -190,10 +223,7 @@ const Appointment = () => {
       return `${hours}:${minutes.toString().padStart(2, "0")}${ampm}`;
     };
 
-    const allSlots = generateTimeSlots(
-      clickedAppointment.time,
-      clickedAppointment.duration
-    );
+    const allSlots = generateTimeSlots(drTime, drDuration);
 
     const unavailable = notAvailableTimeSlot.map(
       (item) => item.appointment_time
@@ -207,9 +237,7 @@ const Appointment = () => {
   }, [clickedAppointment, notAvailableTimeSlot]);
 
   // submit updated appointment
-  const handleSubmitUpdatedAppointment = async (e) => {
-    e.preventDefault();
-
+  const handleSubmitUpdatedAppointment = async () => {
     setShowLoader3(true);
 
     const formattedDate = new Date(
@@ -218,163 +246,182 @@ const Appointment = () => {
 
     try {
       const res = await axiosIntance.post(
-        "client/appointment/UpdateAppointment.php",
+        "client/appointment/PostFollowUpAppointment.php",
         {
-          appointment_id: clickedAppointment.id,
+          appointment_id: appointmentID,
           date: formattedDate,
           time_slot: selectedTimeSlot,
+          fa_id: fa_id,
+          payment: payment,
         }
       );
 
-      if (res.data.success) {
-        setShowLoader3(false);
+      setShowLoader3(false);
 
+      if (res.data.success) {
         console.log("SUCCESS : ", res.data.message);
-        setClickedAppointment({});
-        showSuccessAlert();
+        setTimeout(() => {
+          setAppointmentID(null);
+        }, 7000);
+        return true;
       } else {
         console.log("ERROR : ", res.data);
-        setShowLoader3(false);
+        return false;
       }
     } catch (error) {
       console.log("Error : ", error);
       setShowLoader3(false);
+      return false;
     }
   };
 
-  const showSuccessAlert = () => {
-    Swal.fire({
-      title: "Success!",
-      text: "Appointment Updated",
-      icon: "success",
-      confirmButtonText: "OK",
-      background: "rgba(0, 0, 0, 0.9)",
-      color: "lightgrey",
-    });
+  const handlePayment = async (e) => {
+    e.preventDefault();
+
+    setShowLoader3(true);
+
+    try {
+      const data = {
+        description: `Payment for Follow-up appointment`,
+        remarks: "Remarks",
+        amount: payment * 100,
+      };
+
+      const response = await axiosIntance.post("paymongo.php", data, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.data.checkout_url) {
+        setTimeout(() => {
+          setShowLoader3(false);
+        }, 2000);
+        window.location.href = response.data.checkout_url;
+      } else {
+        setShowLoader3(false);
+        console.log("Error: Unable to fetch the checkout URL.");
+        console.log("Err :", response.data);
+      }
+    } catch (error) {
+      setShowLoader3(false);
+      console.error("Error:", error);
+    }
+  };
+
+  const handleSendDataAndPayment = async (e) => {
+    e.preventDefault();
+
+    // First submit appointment data
+    const submitResult = await handleSubmitUpdatedAppointment();
+
+    // ✅ This now works correctly
+    if (submitResult === true) {
+      await handlePayment(e);
+      setTimeout(() => {
+        // setShowSummaryForm(false);
+      }, 7000);
+    } else {
+      console.log("Appointment submission failed. Payment cancelled.");
+    }
+  };
+
+  const handleClickedTOFollowUp = (item) => {
+    setAppointmentID(item.appointment_id);
+    setDrTime(item.time);
+    setDrDuration(item.duration);
+    set_fa_id(item.fa_id);
+    setPayment(item.payment);
+  };
+
+  // Get the date of next week's Monday
+  const getNextWeekMonday = () => {
+    const today = new Date();
+    const day = today.getDay();
+    const diff = (8 - day) % 7;
+    const nextMonday = new Date(today);
+    nextMonday.setDate(today.getDate() + diff);
+    return nextMonday;
+  };
+
+  // Get the date of next week's Saturday
+  const getNextWeekSaturday = () => {
+    const monday = getNextWeekMonday();
+    const saturday = new Date(monday);
+    saturday.setDate(monday.getDate() + 5);
+    return saturday;
   };
 
   return (
     <>
-      <div className="appointment">
-        <div className="container">
+      <div className="notification-overlay">
+        <motion.div
+          initial={{ opacity: 0, x: 200 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+          className="notification"
+        >
           <div className="top">
-            <h2 className="title">Appointment</h2>
+            <h6>Follow-up Appointment</h6>{" "}
+            <IoCloseOutline
+              className="icon"
+              onClick={() => setModlToShow("")}
+            />
           </div>
-          <div className="myappointment">
-            <div className="current-appointment">
-              {!showLoader && (
-                <div className="title">
-                  <BsCalendar2Date className="icon" /> Appointment
-                </div>
-              )}
-              {showLoader ? (
-                <Loader3 />
-              ) : activeAppointment.length > 0 ? (
-                activeAppointment.map((item) => (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.7 }}
-                    className="card"
-                    key={item.appointment_id}
-                  >
-                    <img src={appointmentImage} alt="" className="profile" />
-                    <div className="right-card">
-                      <div className="top-card">
-                        <h3 className="dr">
-                          <PiPawPrintLight className="iconn" />
-                          {item.pet_name}
-                        </h3>
-                        <span className="rule">{item.pet_type}</span>
-                        <div className="date-time">
-                          <span className="date">
-                            <CiStethoscope className="iconn" />
-                            {item.drFullname}
-                          </span>
-                          <span className="date">
-                            <CiCalendarDate className="iconn" />
-                            {item.appointment_date}
-                          </span>
-
-                          <div className="time-price">
-                            <span className="time">
-                              <CiClock2 className="iconn" />
-                              {item.appointment_time}
-                            </span>
-
-                            <span className="price">
-                              <IoPricetagsOutline className="iconn" />₱
-                              {item.paid_payment}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <FaRegEdit
-                        title="Change Schedule"
-                        className="icon"
-                        onClick={() =>
-                          handleClickedAppointment(
-                            item.time,
-                            item.duration,
-                            item.appointment_id
-                          )
-                        }
+          <div className="notification-content">
+            {loader ? (
+              <Loader2 />
+            ) : visibleData.length > 0 ? (
+              <>
+                {visibleData.map((item) => (
+                  <div key={item.fa_id} className="card">
+                    <div className="left">
+                      <img
+                        src={`${uploadUrl.uploadurl}/${item?.image}`}
+                        alt="Pet Profile"
                       />
                     </div>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="empty-container">
-                  <ImFilesEmpty className="icon" />
-                  <p>You don't have an appointment yet.</p>
-                </div>
-              )}
-            </div>
+                    <div className="right">
+                      <div className="top">
+                        <span className="title">{item.title}</span>
+                        <p>{item.description}</p>
+                      </div>
+                      <div className="bot">
+                        <span className="time-sent">{item.sentDate}</span>
 
-            {/* <div className="previous-appointment">
-              <div className="title">
-                <LuClockArrowDown className="icon" /> Appointment History
-              </div>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7 }}
-                className="card"
-              >
-                <img src={profile} alt="" className="profile" />
-                <div className="right-card">
-                  <div className="top-card">
-                    <h3 className="dr">
-                      <CiStethoscope /> Dr. Eyhan Castillo
-                    </h3>
-                    <span className="rule">
-                      <CiCalendarDate />
-                      Dog Veterinarian
-                    </span>
-                    <div className="date-time">
-                      <span className="date">
-                        <CiCalendarDate className="iconn" />
-                        January 1, 2026
-                      </span>
-                      <span className="time">
-                        <CiClock2 className="iconn" />
-                        10:00 AM
-                      </span>
+                        <div className="buttons">
+                          <button
+                            disabled={item.status == 1}
+                            className={`btn-approved ${
+                              item.status == 1 ? "set" : ""
+                            }`}
+                            onClick={() => handleClickedTOFollowUp(item)}
+                          >
+                            {item.status == 1
+                              ? "Appointment Set"
+                              : " Follow Up"}
+                          </button>
+                          <button className="btn-cancel">Ignore</button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-
-                  <div className="icon-wrapper">
-                    <RiChatHistoryFill className="icon" />
-                  </div>
-                </div>
-              </motion.div>
-            </div> */}
+                ))}
+                {!showAll && appointmentData.length > MAX_VISIBLE && (
+                  <button className="view-more-btn" onClick={handleViewMore}>
+                    View More
+                  </button>
+                )}
+              </>
+            ) : (
+              <Emptydata />
+            )}
           </div>
-        </div>
+        </motion.div>
       </div>
 
-      {clickedAppointment?.id && (
+      {appointmentID !== null && (
         <div className="modal-edit-sched-overlay">
           <div className="modal-edit-sched">
             <motion.div
@@ -384,7 +431,7 @@ const Appointment = () => {
               className="date-available"
             >
               <span className="note">
-                Choose your appointment date and time.{" "}
+                Choose your appointment date and time.
               </span>
               <h6>Select Your Preferred Date</h6>
 
@@ -403,17 +450,17 @@ const Appointment = () => {
                       emptyappointment_date !== "" ? "red 2px solid" : ""
                     }`,
                   }}
-                  className="date-input"
+                  className="date-input2"
                 >
                   <DatePicker
                     name="appointment_date"
                     selected={appointmentForm.appointment_date}
                     onChange={handleDateChange}
-                    minDate={new Date()}
-                    maxDate={
-                      new Date(new Date().setDate(new Date().getDate() + 6))
+                    minDate={getNextWeekMonday()}
+                    maxDate={getNextWeekSaturday()}
+                    filterDate={(date) =>
+                      date.getDay() !== 0 && date.getDay() !== 7
                     }
-                    filterDate={(date) => date.getDay() !== 0}
                     placeholderText="Select your preferred date"
                     dateFormat="yyyy-MM-dd"
                   />
@@ -438,7 +485,7 @@ const Appointment = () => {
                       <button
                         disabled={appointmentForm.appointment_date === ""}
                         key={index}
-                        className={`time ${
+                        className={`time2 ${
                           selectedTimeSlot === item ? "selected" : ""
                         }`}
                         onClick={() => setSelectedTimeSlot(item)}
@@ -465,7 +512,7 @@ const Appointment = () => {
               <div className="set-appointment-wrapper">
                 <FaArrowLeft
                   className="back-icon"
-                  onClick={() => setClickedAppointment({})}
+                  onClick={() => setAppointmentID(null)}
                 />
                 <button
                   disabled={
@@ -474,9 +521,9 @@ const Appointment = () => {
                     showLoader3
                   }
                   className="btn-setappointment"
-                  onClick={handleSubmitUpdatedAppointment}
+                  onClick={handleSendDataAndPayment}
                 >
-                  {showLoader3 ? <Loader3 /> : " UPDATE SCHEDULE"}
+                  {showLoader3 ? <Loader3 /> : "SUBMIT"}
                 </button>
               </div>
             </motion.div>
@@ -487,4 +534,4 @@ const Appointment = () => {
   );
 };
 
-export default Appointment;
+export default FollowupAppointment;

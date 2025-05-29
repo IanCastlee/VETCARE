@@ -546,6 +546,12 @@
         }
       }
 
+      .payment-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+
       .input-wrapper {
         display: flex;
         width: 100%;
@@ -560,7 +566,6 @@
         .inpt-other-concern {
           width: 100%;
           height: 45px;
-          border: 1px solid #0c0950;
           border-radius: 5px;
           font-size: 14px;
           padding: 0 10px;
@@ -577,6 +582,11 @@
         border-radius: 5px;
         border: none;
         padding: 5px 10px;
+
+        &:disabled {
+          background-color: gray;
+          cursor: not-allowed;
+        }
       }
     }
   }
