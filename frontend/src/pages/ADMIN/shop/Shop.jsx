@@ -16,9 +16,7 @@ import Emptydata from "../../../components/emptydata/Emptydata";
 import { uploadUrl } from "../../../../fileurl";
 
 const Shop = () => {
-  const [showModalServices, setShowModalShowModalServcies] = useState(false);
   const [data, setData] = useState([]);
-  const [veterinarianServices, setVeterinarianServices] = useState([]);
   const [showLoader, setShowLoader] = useState(false);
 
   const [activeFormModal, setActiveFormModal] = useState("");
@@ -26,6 +24,7 @@ const Shop = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [formData, setFormData] = useState({
+    medicine_id: "",
     specialization: "",
     category: "",
     med_name: "",
@@ -159,17 +158,23 @@ const Shop = () => {
         }
       );
       if (res.data.success) {
-        console.log("Response : ", res.data.message);
+        console.log("Response: ", res.data.message);
+        console.log("Updated data: ", data);
+        console.log("formData.medicine_id:", formData.medicine_id);
 
-        // setVeterinarian((prevData) =>
-        //   prevData.map((vet) =>
-        //     Number(vet.user_id) === Number(veterinarianData.user_id)
-        //       ? { ...vet, ...veterinarianData }
-        //       : vet
-        //   )
-        // );
+        setData((prevData) =>
+          prevData.map((d) => {
+            console.log("Checking row with ID:", d.medicine_id);
+            if (Number(d.medicine_id) === Number(formData.medicine_id)) {
+              console.log("Updating row:", d);
+              return { ...d, ...formData };
+            }
+            return d;
+          })
+        );
 
         closeFormModal();
+        showSuccessAlert_update_prod();
       } else {
         console.log("Error : ", res.data);
       }
@@ -179,19 +184,18 @@ const Shop = () => {
   };
 
   //handle Delete
-  // Assuming `setVeterinarian` is your state setter and `veterinarian` is your array
   const handleDelete = async (e) => {
     e.preventDefault();
     try {
       const res = await axiosIntance.post(
-        `admin/veterinarian/SetAsNotActiveVeterinarian.php?user_id=${showDelForm}`
+        `admin/shop/RemoveMedicine.php?medicine_id=${showDelForm}`
       );
 
       if (res.data.success) {
         console.log("RES : ", res.data.message);
 
-        setVeterinarian((prevData) =>
-          prevData.filter((vet) => vet.user_id !== showDelForm)
+        setData((prevData) =>
+          prevData.filter((d) => d.medicine_id !== showDelForm)
         );
 
         setShowDelForm(null);
@@ -201,6 +205,20 @@ const Shop = () => {
     } catch (error) {
       console.log("ERROR:", error);
     }
+  };
+
+  //SWEET ALTERT
+  const showSuccessAlert_update_prod = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "Medicine Updated",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
   };
 
   const showSuccessAlert_add_prod = () => {
@@ -243,6 +261,7 @@ const Shop = () => {
     setVetsPerPage(Number(e.target.value));
     setCurrentPage(1);
   };
+
   return (
     <>
       <div className="admin-shop">
@@ -341,38 +360,51 @@ const Shop = () => {
                     </tr>
                   ))
                 ) : (
-                  <Emptydata />
+                  <tr>
+                    <td
+                      colSpan={10}
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        color: "#888",
+                      }}
+                    >
+                      No data available
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
           </div>
 
           {/* Pagination Controls */}
-          <div
-            className="pagination"
-            style={{ marginTop: "1rem", textAlign: "center" }}
-          >
-            <button onClick={prevPage} disabled={currentPage === 1}>
-              Prev
-            </button>
-
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => goToPage(i + 1)}
-                style={{
-                  fontWeight: currentPage === i + 1 ? "bold" : "normal",
-                  margin: "0 5px",
-                }}
-              >
-                {i + 1}
+          {currentData?.length > 0 && (
+            <div
+              className="pagination"
+              style={{ marginTop: "1rem", textAlign: "center" }}
+            >
+              <button onClick={prevPage} disabled={currentPage === 1}>
+                Prev
               </button>
-            ))}
 
-            <button onClick={nextPage} disabled={currentPage === totalPages}>
-              Next
-            </button>
-          </div>
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goToPage(i + 1)}
+                  style={{
+                    fontWeight: currentPage === i + 1 ? "bold" : "normal",
+                    margin: "0 5px",
+                  }}
+                >
+                  {i + 1}
+                </button>
+              ))}
+
+              <button onClick={nextPage} disabled={currentPage === totalPages}>
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
@@ -564,7 +596,7 @@ const Shop = () => {
               <h6>Confirmation</h6>
             </div>
 
-            <p>Are you sure this veterinarian is not active?</p>
+            <p>Are you sure you want to remove this product from the shop?</p>
 
             <div className="bot">
               <button className="btn-yes" onClick={handleDelete}>

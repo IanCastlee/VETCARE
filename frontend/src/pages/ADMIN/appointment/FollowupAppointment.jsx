@@ -6,7 +6,7 @@ import axiosIntance from "../../../../axios";
 import { FiSearch } from "react-icons/fi";
 import { IoIosAdd } from "react-icons/io";
 
-const Appointment = () => {
+const FollowupAppointment = () => {
   const [doneAppointment, setDoneAppointment] = useState([]);
 
   //get veterinarian
@@ -14,7 +14,7 @@ const Appointment = () => {
     const veterinarian = async () => {
       try {
         const res = await axiosIntance.get(
-          "admin/appointment/GetCompletedAppointment.php"
+          "admin/appointment/GetFollowUpAppointment.php"
         );
         if (res.data.success) {
           setDoneAppointment(res.data.data);
@@ -70,7 +70,7 @@ const Appointment = () => {
       <div className="admin-appointment">
         <div className="top">
           <div className="left">
-            <h3>COMPLETED APPOINTMENT</h3>
+            <h3>PENDING FOLLOW-UP APPOINTMENT</h3>
           </div>
           <div className="right">
             <div className="search-input">
@@ -118,8 +118,8 @@ const Appointment = () => {
                 <th>Service</th>
                 <th>Pet Health Issue</th>
                 <th>Dr Incharge</th>
-                <th>Appointment Date</th>
-                <th>Appointment Time</th>
+                <th>Date Sched</th>
+                <th>Time Sched</th>
                 <th>Payment</th>
                 <th>Status</th>
               </tr>
@@ -147,9 +147,11 @@ const Appointment = () => {
                     <td>{item.current_health_issue}</td>
                     <td>Dr. {item.drFullname}</td>
                     <td>{item.appointment_date}</td>
-                    <td>{item.appointment_time}</td>
-                    <td>{item.paid_payment}</td>
-                    <td>{item.status == 0 ? "Pending" : "Done"}</td>
+                    <td>{item.appointment_time}</td>{" "}
+                    <td>₱ {item.paid_payment}</td>
+                    <td style={{ color: item.status == 0 ? "red" : "blue" }}>
+                      {item.status == 0 ? "Pending" : "Done"}
+                    </td>
                   </tr>
                 ))
               ) : (
@@ -203,4 +205,4 @@ const Appointment = () => {
   );
 };
 
-export default Appointment;
+export default FollowupAppointment;

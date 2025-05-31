@@ -139,7 +139,18 @@ const NotActiveVeterinarian = () => {
                   </tr>
                 ))
               ) : (
-                <Emptydata />
+                <tr>
+                  <td
+                    colSpan={10}
+                    style={{
+                      padding: "10px",
+                      textAlign: "center",
+                      color: "#888",
+                    }}
+                  >
+                    No data available
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>

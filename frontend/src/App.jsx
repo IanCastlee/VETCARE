@@ -32,7 +32,8 @@ import Medicine from "./pages/medicine/Medicine";
 import Shop from "./pages/ADMIN/shop/Shop";
 import DoneAppointment from "./pages/ADMIN/appointment/DoneAppointment";
 
-import RedirectByRole from "./components/RedirectByRole";
+import FollowupAppointment from "./pages/ADMIN/appointment/FollowupAppointment";
+import CompletedFollowUpAppointment from "./pages/ADMIN/appointment/CompletedFollowUpAppointment";
 
 const Layout = () => {
   const location = useLocation();
@@ -102,8 +103,16 @@ const Admin = () => {
                 path="/pending-appointment/"
                 element={<DoneAppointment />}
               />
-
               <Route path="/done-appointment/" element={<AdminAppointment />} />
+              <Route
+                path="/followup-appointment/"
+                element={<FollowupAppointment />}
+              />
+              <Route
+                path="/completed-followup-appointment/"
+                element={<CompletedFollowUpAppointment />}
+              />
+
               <Route path="/shop/" element={<Shop />} />
             </Routes>
           </div>
@@ -116,7 +125,6 @@ const Admin = () => {
 const App = () => {
   return (
     <Router>
-      <RedirectByRole />
       <Routes>
         <Route path="/admin/*" element={<Admin />} />
         <Route path="/veterinarian/*" element={<Veterinarian />} />

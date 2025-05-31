@@ -455,30 +455,63 @@
             flex-direction: column;
             gap: 8px;
 
-            .services-list {
+            table {
               width: 100%;
-              display: flex;
-              justify-content: space-between;
+              border-collapse: collapse;
 
-              span {
-                font-size: 14px;
-                color: #000;
+              th,
+              td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: left;
               }
 
-              .actions {
-                display: flex;
-                align-items: center;
-                gap: 8px;
+              // Make the last column (Actions) auto width and padded
+              th:last-child,
+              td:last-child {
+                width: 1%;
+                white-space: nowrap;
+                padding: 10px;
+                text-align: center;
+              }
 
-                .icon-del {
-                  font-size: 16px;
-                  color: red;
-                  cursor: pointer;
+              thead {
+                background-color: #f1f1f1;
+
+                th {
+                  font-weight: bold;
                 }
-                .icon-update {
-                  font-size: 18px;
-                  color: blue;
-                  cursor: pointer;
+              }
+
+              tbody {
+                .service-row {
+                  &:hover {
+                    background-color: #f9f9f9;
+                  }
+
+                  .icon-del,
+                  .icon-update {
+                    cursor: pointer;
+                    font-size: 18px;
+                    margin: 0 5px;
+                    transition: color 0.3s ease;
+                  }
+
+                  .icon-del {
+                    color: #e74c3c;
+
+                    &:hover {
+                      color: #c0392b;
+                    }
+                  }
+
+                  .icon-update {
+                    color: #3498db;
+
+                    &:hover {
+                      color: #2c80b4;
+                    }
+                  }
                 }
               }
             }

@@ -11,7 +11,7 @@ $appointment_date = $data['date'];
 $appointment_time = $data['time_slot'];
 $fa_id = $data['fa_id'];
 $payment = $data['payment'];
-$status = 1;
+$status = 0;
 
 if (!$appointment_id || !$appointment_date || !$appointment_time || !$fa_id) {
     echo json_encode([

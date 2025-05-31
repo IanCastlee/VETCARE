@@ -12,7 +12,6 @@ import { IoIosAdd } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { MdAddBox } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import Emptydata from "../../../components/emptydata/Emptydata";
 
 const ActiveVeterinarian = () => {
   const [showModalServices, setShowModalShowModalServcies] = useState(false);
@@ -55,6 +54,7 @@ const ActiveVeterinarian = () => {
 
   //services
   const [servicesForm, setServicesForm] = useState({
+    service_id: "",
     service: "",
     price: "",
   });
@@ -139,6 +139,7 @@ const ActiveVeterinarian = () => {
     setClickedUserId(user_id);
     if (user_id) {
       setShowModalShowModalServcies(true);
+      setActiveFormModal("add-service");
     }
   };
   const handleSubmitServices = async (e) => {
@@ -371,6 +372,19 @@ const ActiveVeterinarian = () => {
     });
   };
 
+  const showSuccessAlert_update_services = () => {
+    Swal.fire({
+      title: "Success!",
+      text: "Service Updated",
+      icon: "success",
+      confirmButtonText: "OK",
+      background: "rgba(0, 0, 0, 0.9)",
+      color: "lightgrey",
+      timer: 1200,
+      showConfirmButton: false,
+    });
+  };
+
   const [currentPage, setCurrentPage] = useState(1);
   const [vetsPerPage, setVetsPerPage] = useState(7);
 
@@ -392,6 +406,62 @@ const ActiveVeterinarian = () => {
   const handleVetsPerPageChange = (e) => {
     setVetsPerPage(Number(e.target.value));
     setCurrentPage(1);
+  };
+
+  //selectedServiceRow
+  const selectedServiceRow = (vservices_id, vservices, price) => {
+    setServicesForm({
+      service_id: vservices_id || "",
+      service: vservices || "",
+      price: price || "",
+    });
+    setActiveFormModal("update-service");
+    setShowModalShowModalServcies(true);
+  };
+
+  //handleUpdate Veterinarian Information
+  const handleUpdateServices = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("service_id", servicesForm.service_id);
+    formData.append("service", servicesForm.service);
+    formData.append("price", servicesForm.price);
+
+    try {
+      const res = await axiosIntance.post(
+        "admin/veterinarian/UpdateVetSevices.php",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (res.data.success) {
+        console.log("Response : ", res.data.message);
+
+        // servicesData((prevData) =>
+        //   prevData.map((item) =>
+        //     Number(item.user_id) === Number(servicesForm.service_id)
+        //       ? { ...item, ...servicesData }
+        //       : item
+        //   )
+        // );
+        getServices();
+        setServicesForm({
+          service_id: "",
+          service: "",
+          price: "",
+        });
+        setActiveFormModal("");
+        showSuccessAlert_update_services();
+      } else {
+        console.log("Error : ", res.data);
+      }
+    } catch (error) {
+      console.log("Error : ", error);
+    }
   };
 
   return (
@@ -499,7 +569,18 @@ const ActiveVeterinarian = () => {
                     </tr>
                   ))
                 ) : (
-                  <Emptydata />
+                  <tr>
+                    <td
+                      colSpan={10}
+                      style={{
+                        padding: "10px",
+                        textAlign: "center",
+                        color: "#888",
+                      }}
+                    >
+                      No data available
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
@@ -745,19 +826,39 @@ const ActiveVeterinarian = () => {
                       <span className="title">SERVICES</span>
                     </div>
                     <div className="services-wrapper">
-                      {servicesData.length > 0 ? (
-                        servicesData.map((item, index) => (
-                          <div className="services-list">
-                            <span key={index}>{item.vservices}</span>
-                            <div className="actions">
-                              <FaTrashAlt className="icon-del" />
-                              <FaEdit className="icon-update" />
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <p>No Services yet</p>
-                      )}
+                      <table>
+                        <thead>
+                          <th>Service </th>
+                          <th>Price </th>
+                          <th>Action </th>
+                        </thead>
+
+                        <tbody>
+                          {servicesData.length > 0 ? (
+                            servicesData.map((item) => (
+                              <tr key={item.vsevice_id} className="service-row">
+                                <td>{item.vservices}</td>
+                                <td>{item.price}</td>
+                                <td>
+                                  <FaTrashAlt className="icon-del" />
+                                  <FaEdit
+                                    className="icon-update"
+                                    onClick={() =>
+                                      selectedServiceRow(
+                                        item.vservices_id,
+                                        item.vservices,
+                                        item.price
+                                      )
+                                    }
+                                  />
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <p>No Services yet</p>
+                          )}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 )}
@@ -833,61 +934,82 @@ const ActiveVeterinarian = () => {
         </div>
       )}
 
-      {showModalServices && (
-        <div className="addservices">
-          <motion.div
-            initial={{ opacity: 0, y: -200 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="container"
-          >
-            <div className="top">
-              <div className="left">
-                <h3>ADD SERVICES</h3>
+      {activeFormModal === "add-service" ||
+        (activeFormModal === "update-service" && (
+          <div className="addservices">
+            <motion.div
+              initial={{ opacity: 0, y: -200 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="container"
+            >
+              <div className="top">
+                <div className="left">
+                  <h3>
+                    {activeFormModal === "add-service"
+                      ? "ADD SERVICE"
+                      : activeFormModal === "update-service"
+                      ? "UPDATE SERVICE"
+                      : ""}
+                  </h3>
+                </div>
+
+                <IoMdClose
+                  className="icon"
+                  onClick={() => setActiveFormModal("")}
+                />
               </div>
 
-              <IoMdClose
-                className="icon"
-                onClick={() => setShowModalShowModalServcies(false)}
-              />
-            </div>
+              <div className="wrapper">
+                <div className="form">
+                  <div className="input-wrapper">
+                    <label htmlFor="service">Service</label>
+                    <input
+                      style={{ width: "100%" }}
+                      type="text"
+                      name="service"
+                      placeholder="Service"
+                      value={servicesForm.service}
+                      onChange={handleChangeServices}
+                    />
+                  </div>
+                  <div className="input-wrapper">
+                    <label htmlFor="price">Price</label>
+                    <input
+                      style={{ width: "100%" }}
+                      type="number"
+                      name="price"
+                      placeholder="Price"
+                      value={servicesForm.price}
+                      onChange={handleChangeServices}
+                    />
+                  </div>
+                </div>
 
-            <div className="wrapper">
-              <div className="form">
-                <div className="input-wrapper">
-                  <label htmlFor="service">Service</label>
-                  <input
-                    style={{ width: "100%" }}
-                    type="text"
-                    name="service"
-                    placeholder="Service"
-                    value={servicesForm.service}
-                    onChange={handleChangeServices}
-                  />
-                </div>
-                <div className="input-wrapper">
-                  <label htmlFor="price">Price</label>
-                  <input
-                    style={{ width: "100%" }}
-                    type="number"
-                    name="price"
-                    placeholder="Price"
-                    value={servicesForm.price}
-                    onChange={handleChangeServices}
-                  />
-                </div>
+                <button
+                  className="btn-add-service"
+                  onClick={
+                    activeFormModal === "add-service"
+                      ? handleSubmitServices
+                      : activeFormModal === "update-service"
+                      ? handleUpdateServices
+                      : ""
+                  }
+                >
+                  {showLoader ? (
+                    <Loader2 />
+                  ) : activeFormModal === "add-service" ? (
+                    "ADD"
+                  ) : activeFormModal === "update-service" ? (
+                    "UPDATE"
+                  ) : (
+                    ""
+                  )}
+                </button>
               </div>
-
-              <button
-                className="btn-add-service"
-                onClick={handleSubmitServices}
-              >
-                {showLoader ? <Loader2 /> : "SUBMIT"}
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      )}
+            </motion.div>
+          </div>
+        ))}
 
       {showDelForm !== null && (
         <div className="delete-overlay">

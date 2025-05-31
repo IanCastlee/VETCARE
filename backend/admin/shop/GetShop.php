@@ -5,7 +5,7 @@ include("../../header.php");
 include("../../databaseConnection.php");
 
 
-$getShop = $conn->prepare("SELECT * FROM shop");
+$getShop = $conn->prepare("SELECT * FROM shop WHERE status = 1");
 
 $getShop->execute();
 $result =  $getShop->get_result();

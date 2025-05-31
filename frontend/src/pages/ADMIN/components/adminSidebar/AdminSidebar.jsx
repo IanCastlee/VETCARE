@@ -63,7 +63,16 @@ const AdminSidebar = () => {
                 Appointment
               </Link>
               <Link to="/admin/done-appointment/" className="btn-li">
-                Done Appointment
+                Copleted Appointment
+              </Link>
+              <Link to="/admin/followup-appointment/" className="btn-li">
+                Follow-up Appointment
+              </Link>
+              <Link
+                to="/admin/completed-followup-appointment/"
+                className="btn-li"
+              >
+                Copleted FA
               </Link>
             </div>
           )}
@@ -87,14 +96,14 @@ const AdminSidebar = () => {
                 className="btn-li"
                 to="/admin/active-veterinarian/"
               >
-                Active
+                Active Veterinarian
               </Link>
               <Link
                 onClick={toggleSidebar}
                 to="/admin/not-active-veterinarian/"
                 className="btn-li"
               >
-                Not Active
+                Not-active Veterinarian
               </Link>
             </div>
           )}
